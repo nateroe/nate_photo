@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>NatePhoto</groupId>
+	<artifactId>NatePhotoMain</artifactId>
+	<version>1.0.0</version>
+
+	<name>NatePhotoMain</name>
+
+	<properties>
+		<!-- build -->
+		<java-version>1.8</java-version>
+		<maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
+		<maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
+		<maven-surefire-plugin-version>2.17</maven-surefire-plugin-version>
+		<maven-dependency-plugin-version>2.8</maven-dependency-plugin-version>
+		<maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
+		<exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
+		<maven-source-plugin-version>2.0.4</maven-source-plugin-version>
+
+		<!-- reports -->
+		<maven-site-plugin-version>3.3</maven-site-plugin-version>
+		<maven-project-info-reports-plugin-version>2.6</maven-project-info-reports-plugin-version>
+		<maven-surefire-report-plugin-version>2.17</maven-surefire-report-plugin-version>
+		<maven-jxr-plugin-version>2.4</maven-jxr-plugin-version>
+		<maven-pmd-plugin-version>3.1</maven-pmd-plugin-version>
+		<cobertura-maven-plugin-version>2.6</cobertura-maven-plugin-version>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- basic compiler plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin-version}</version>
+					<configuration>
+						<source>${java-version}</source>
+						<target>${java-version}</target>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${maven-dependency-plugin-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${maven-assembly-plugin-version}</version>
+				</plugin>
+
+				<!-- codehaus plugins -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>${exec-maven-plugin-version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<reporting>
+		<plugins>
+			<!-- standard reports -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${maven-project-info-reports-plugin-version}</version>
+				<reportSets>
+					<reportSet>
+						<reports><!-- select reports -->
+							<report>index</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+
+			<!-- surefire - test results -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${maven-surefire-report-plugin-version}</version>
+			</plugin>
+
+		</plugins>
+	</reporting>
+
+	<packaging>pom</packaging>
+
+	<dependencyManagement>
+		<dependencies>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<modules>
+		<module>FrontEnd</module>
+		<module>BackEnd</module>
+	</modules>
+	
+</project>
