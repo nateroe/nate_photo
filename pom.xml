@@ -12,6 +12,7 @@
 	<properties>
 		<!-- build -->
 		<java-version>1.8</java-version>
+		
 		<maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
 		<maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
 		<maven-surefire-plugin-version>2.17</maven-surefire-plugin-version>
