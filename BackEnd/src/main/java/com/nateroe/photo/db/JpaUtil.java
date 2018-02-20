@@ -1,5 +1,10 @@
 package com.nateroe.photo.db;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+
 /**
  * NatePhoto - A photo catalog and presentation application.
  * Copyright (C) 2018 Nathaniel Roe
@@ -21,13 +26,6 @@ package com.nateroe.photo.db;
  */
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 /**
  * Hibernate session-keeping. Uses ThreadLocal to provide the same session to the same Thread during
@@ -35,53 +33,38 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
  * 
  * @author nate
  */
-public class HibernateUtil {
-	private static final Logger LOGGER = Logger.getLogger(HibernateUtil.class);
+public class JpaUtil {
+	private static final Logger LOGGER = Logger.getLogger(JpaUtil.class);
 
-	private static StandardServiceRegistry registry;
-	private static SessionFactory sessionFactory;
+	private static EntityManagerFactory entityManagerFactory;
 
-	private static final ThreadLocal<Session> LOCAL_SESSION = new ThreadLocal<>();
+	private static final ThreadLocal<EntityManager> LOCAL_ENTITY_MANAGER = new ThreadLocal<>();
 
-	public static SessionFactory getSessionFactory() {
-		if (sessionFactory == null) {
+	public static EntityManagerFactory getEntityManagerFactory() {
+		if (entityManagerFactory == null) {
 			try {
-				// Create registry
-				registry = new StandardServiceRegistryBuilder().configure().build();
-
-				// Create MetadataSources
-				MetadataSources sources = new MetadataSources(registry);
-
-				// Create Metadata
-				Metadata metadata = sources.getMetadataBuilder().build();
-
-				// Create SessionFactory
-				sessionFactory = metadata.getSessionFactoryBuilder().build();
-
+				entityManagerFactory = Persistence.createEntityManagerFactory("NatePhotoDB");
 			} catch (Exception e) {
-				e.printStackTrace();
-				if (registry != null) {
-					StandardServiceRegistryBuilder.destroy(registry);
-				}
+				LOGGER.warn("Failed to create EntityManagerFactory", e);
 			}
 		}
-		return sessionFactory;
+		return entityManagerFactory;
 	}
 
 	/**
-	 * Get the session for the current Thread, creating a new session if
+	 * Get the EntityManager for the current Thread, creating a new session if
 	 * necessary.
 	 * 
 	 * @return a {@link org.hibernate.Session Session} instance
 	 */
-	public static Session getSession() {
+	public static EntityManager getEntityManager() {
 		LOGGER.debug("getSession()");
-		Session returnVal = LOCAL_SESSION.get();
+		EntityManager returnVal = LOCAL_ENTITY_MANAGER.get();
 
 		if (returnVal == null) {
-			LOGGER.debug("getSession() -- new session.");
-			returnVal = getSessionFactory().openSession();
-			LOCAL_SESSION.set(returnVal);
+			LOGGER.debug("getEntityManager() -- new EntityManager.");
+			returnVal = getEntityManager();
+			LOCAL_ENTITY_MANAGER.set(returnVal);
 		}
 
 		return returnVal;
@@ -90,14 +73,14 @@ public class HibernateUtil {
 	/**
 	 * Close this thread's current session, if any.
 	 */
-	public static void closeSession() {
-		LOGGER.debug("closeSession()");
+	public static void closeEntityManager() {
+		LOGGER.debug("closeEntityManager()");
 
-		Session session = LOCAL_SESSION.get();
-		if (session != null) {
-			LOGGER.debug("closeSession() -- really close");
-			session.close();
-			LOCAL_SESSION.set(null);
+		EntityManager entityManager = LOCAL_ENTITY_MANAGER.get();
+		if (entityManager != null) {
+			LOGGER.debug("closeEntityManager() for real");
+			entityManager.close();
+			LOCAL_ENTITY_MANAGER.set(null);
 		}
 	}
 
@@ -107,18 +90,16 @@ public class HibernateUtil {
 	 * 
 	 * @return a Transaction instance
 	 */
-	public static Transaction beginTransaction() {
+	public static EntityTransaction beginTransaction() {
 		LOGGER.debug("beginTransaction()");
-		return getSession().beginTransaction();
+		EntityTransaction entityTransaction = getEntityManager().getTransaction();
+		entityTransaction.begin();
+		return entityTransaction;
 	}
 
 	static void shutdown() {
-		if (sessionFactory != null) {
-			sessionFactory.close();
-		}
-
-		if (registry != null) {
-			StandardServiceRegistryBuilder.destroy(registry);
+		if (entityManagerFactory != null) {
+			entityManagerFactory.close();
 		}
 	}
 }
