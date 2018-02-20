@@ -30,8 +30,12 @@ public class TaxaHandler {
 			taxon = (Taxon) entityManager.find(Taxon.class, taxonId);
 
 			entityManager.getTransaction().commit();
+		} catch (Throwable t) {
+			logger.warn("Query failed", t);
 		} finally {
-			entityManager.close();
+			if (entityManager != null) {
+				entityManager.close();
+			}
 		}
 
 		return taxon;
