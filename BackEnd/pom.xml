@@ -138,5 +138,10 @@
 			<artifactId>spring-web</artifactId>
 			<version>4.3.14.RELEASE</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>24.0-jre</version>
+		</dependency>		
 	</dependencies>
 </project>
