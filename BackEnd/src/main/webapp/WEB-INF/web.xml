@@ -11,6 +11,7 @@
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+        <listener-class>com.nateroe.photo.init.WebAppContextListener</listener-class>
     </listener>
  
     <filter>
