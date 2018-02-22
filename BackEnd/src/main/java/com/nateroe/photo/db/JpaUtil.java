@@ -5,27 +5,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-/**
- * NatePhoto - A photo catalog and presentation application.
- * Copyright (C) 2018 Nathaniel Roe
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
- * Contact nate [at] nateroe [dot] com
- */
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Hibernate session-keeping. Uses ThreadLocal to provide the same session to the same Thread during
@@ -34,7 +15,7 @@ import org.apache.log4j.Logger;
  * @author nate
  */
 public class JpaUtil {
-	private static final Logger LOGGER = Logger.getLogger(JpaUtil.class);
+	private static final Logger LOGGER = LogManager.getLogger(JpaUtil.class);
 
 	private static EntityManagerFactory entityManagerFactory;
 
@@ -63,7 +44,7 @@ public class JpaUtil {
 
 		if (returnVal == null) {
 			LOGGER.debug("getEntityManager() -- new EntityManager.");
-			returnVal = getEntityManager();
+			returnVal = getEntityManagerFactory().createEntityManager();
 			LOCAL_ENTITY_MANAGER.set(returnVal);
 		}
 
@@ -77,7 +58,7 @@ public class JpaUtil {
 		LOGGER.debug("closeEntityManager()");
 
 		EntityManager entityManager = LOCAL_ENTITY_MANAGER.get();
-		if (entityManager != null) {
+		if (entityManager != null && entityManager.isOpen()) {
 			LOGGER.debug("closeEntityManager() for real");
 			entityManager.close();
 			LOCAL_ENTITY_MANAGER.set(null);

@@ -29,23 +29,28 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Make sure Hibernate sessions are always closed
  * 
  * @author nate
  */
 public class JpaFilter implements Filter {
+	private static final Logger LOGGER = LogManager.getLogger(JpaFilter.class);
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		// TODO Auto-generated method stub
+		LOGGER.info("doFilter");
 		chain.doFilter(request, response);
 		JpaUtil.closeEntityManager();
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
+		LOGGER.info("init filter");
 	}
 
 	@Override

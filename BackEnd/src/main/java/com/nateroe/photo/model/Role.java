@@ -1,5 +1,8 @@
 package com.nateroe.photo.model;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 /**
  * NatePhoto - A photo catalog and presentation application.
  * Copyright (C) 2018 Nathaniel Roe
@@ -22,6 +25,8 @@ package com.nateroe.photo.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hibernate.annotations.GenericGenerator;
+
 /**
  * User roles in order of increasing privilege. Each user has a single role. Roles are additive: a
  * User has all the privileges of a Guest, plus additional features.
@@ -32,6 +37,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public enum Role {
 	GUEST(1), USER(2), FRIEND(3), ADMIN(4);
 
+	@Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
 	private Long id;
 
 	private Role(long id) {
@@ -40,5 +48,10 @@ public enum Role {
 
 	public Long getId() {
 		return id;
+	}
+
+	@SuppressWarnings("unused")
+	private void setId(Long id) {
+		this.id = id;
 	}
 }

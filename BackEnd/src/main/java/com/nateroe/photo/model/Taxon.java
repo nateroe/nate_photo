@@ -1,52 +1,59 @@
 package com.nateroe.photo.model;
 
-/**
- * NatePhoto - A photo catalog and presentation application.
- * Copyright (C) 2018 Nathaniel Roe
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
- * Contact nate [at] nateroe [dot] com
- */
-
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import com.google.common.base.Objects;
 
 @XmlRootElement
-public class Taxon extends AbstractEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
-
+@Entity
+@Table(name = "Taxon")
+public class Taxon {
+	@Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
+	private Long id;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private TaxonomicRank rank;
 	private String name;
-	private List<String> commonNames = new LinkedList<>();
 	private int tsn;
-	private Set<Taxon> children = new HashSet<>();
 
-	@JsonIgnore
+	@XmlTransient
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Taxon parent;
 
+	@OneToMany(mappedBy = "parent")
+	private Set<Taxon> children = new HashSet<>();
+
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
+	private List<CommonName> commonNames = new LinkedList<>();
+
 	public Taxon() {
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	@SuppressWarnings("unused")
+	private void setId(Long id) {
+		this.id = id;
 	}
 
 	public TaxonomicRank getRank() {
@@ -65,16 +72,20 @@ public class Taxon extends AbstractEntity implements Serializable {
 		this.name = name;
 	}
 
-	public List<String> getCommonNames() {
+	public List<CommonName> getCommonNames() {
 		return commonNames;
 	}
 
-	public void addCommonName(String commonName) {
+	public void addCommonName(CommonName commonName) {
 		commonNames.add(commonName);
 	}
 
-	public void addCommonNames(List<String> commonNames) {
+	public void addCommonNames(List<CommonName> commonNames) {
 		this.commonNames.addAll(commonNames);
+	}
+
+	public void setCommonNames(List<CommonName> commonNames) {
+		this.commonNames = commonNames;
 	}
 
 	public int getTsn() {
@@ -83,17 +94,6 @@ public class Taxon extends AbstractEntity implements Serializable {
 
 	public void setTsn(int tsn) {
 		this.tsn = tsn;
-	}
-
-	public Taxon getParent() {
-		return parent;
-	}
-
-	public void setParent(Taxon parent) {
-		this.parent = parent;
-		if (parent != null) {
-			parent.addChild(this);
-		}
 	}
 
 	public Set<Taxon> getChildren() {
@@ -106,6 +106,18 @@ public class Taxon extends AbstractEntity implements Serializable {
 
 	public void addChild(Taxon child) {
 		this.children.add(child);
+	}
+
+	public void setChildren(Set<Taxon> children) {
+		this.children = children;
+	}
+
+	public Taxon getParent() {
+		return parent;
+	}
+
+	public void setParent(Taxon parent) {
+		this.parent = parent;
 	}
 
 	@Override

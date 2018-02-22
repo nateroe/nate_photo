@@ -1,44 +1,31 @@
 package com.nateroe.photo.model;
 
-/**
- * NatePhoto - A photo catalog and presentation application.
- * Copyright (C) 2018 Nathaniel Roe
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
- * Contact nate [at] nateroe [dot] com
- */
-
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.dom4j.tree.AbstractEntity;
+import org.hibernate.annotations.GenericGenerator;
 
 import com.google.common.base.Objects;
 
 /**
- * XXX why does this have to be Serializable?
  * 
  * @author nate
  */
 @XmlRootElement
-public class Photo extends AbstractEntity implements Serializable {
+public class Photo extends AbstractEntity {
 	private static final long serialVersionUID = 1L;
 
+	@Id
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
+	private Long id;
 	private String title;
 	private String description;
 	private Integer rating;
@@ -67,6 +54,15 @@ public class Photo extends AbstractEntity implements Serializable {
 	public Photo() {
 		visitCount = new AtomicLong(0);
 		favoriteCount = new AtomicLong(0);
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	@SuppressWarnings("unused")
+	private void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getTitle() {
@@ -109,6 +105,7 @@ public class Photo extends AbstractEntity implements Serializable {
 		this.height = height;
 	}
 
+	@Override
 	public String getPath() {
 		return path;
 	}
