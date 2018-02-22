@@ -13,8 +13,8 @@ import com.google.common.base.Objects;
 @Table(name = "TaxonomicRank")
 public class TaxonomicRank {
 	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
+	@GenericGenerator(name = "TaxonomicRank_pk_seq", strategy = "increment")
+	@GeneratedValue(generator = "TaxonomicRank_pk_seq")
 	private Long id;
 	private String name;
 	private Integer ordinal;

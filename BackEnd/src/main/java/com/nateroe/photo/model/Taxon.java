@@ -26,8 +26,8 @@ import com.google.common.base.Objects;
 @Table(name = "Taxon")
 public class Taxon {
 	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
+	@GenericGenerator(name = "Taxon_pk_seq", strategy = "increment")
+	@GeneratedValue(generator = "Taxon_pk_seq")
 	private Long id;
 	@ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private TaxonomicRank rank;

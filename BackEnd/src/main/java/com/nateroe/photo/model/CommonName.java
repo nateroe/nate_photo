@@ -16,8 +16,8 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "CommonName")
 public class CommonName {
 	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
+	@GeneratedValue(generator = "CommonName_pk_seq")
+	@GenericGenerator(name = "CommonName_pk_seq", strategy = "increment")
 	private Long id;
 
 	private String name;
