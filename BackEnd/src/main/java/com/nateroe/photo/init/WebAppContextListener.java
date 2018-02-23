@@ -39,18 +39,6 @@ public class WebAppContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		logger.info("Context initialized.");
-
-//		try {
-//			Context initContext = new InitialContext();
-//			Context webContext = (Context) initContext.lookup("java:/comp/env");
-//
-//			DataSource ds = (DataSource) webContext.lookup("java:/comp/env/jdbc/natephotodb");
-//			Connection dbCon = ds.getConnection();
-//			dbCon.close();
-//		} catch (Exception e) {
-//			logger.warn("failed to init datasource", e);
-//		}
-//
 	}
 
 	@Override
