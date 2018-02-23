@@ -1,11 +1,11 @@
 <persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
              http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd" version="2.1">
 
-	<persistence-unit name="NatePhotoDB" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="NatePhotoDB" transaction-type="JTA">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
 		<!-- JNDI resource is defined elsewhere (app server config) -->
-		<non-jta-data-source>java:comp/env/jdbc/natephotodb</non-jta-data-source>
+		<jta-data-source>java:jboss/datasources/natephotodb</jta-data-source>
 
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />

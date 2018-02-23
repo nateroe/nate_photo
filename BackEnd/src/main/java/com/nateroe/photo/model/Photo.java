@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.dom4j.tree.AbstractEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.google.common.base.Objects;
@@ -19,8 +18,7 @@ import com.google.common.base.Objects;
  * @author nate
  */
 @XmlRootElement
-public class Photo extends AbstractEntity {
-	private static final long serialVersionUID = 1L;
+public class Photo {
 
 	@Id
 	@GeneratedValue(generator = "increment")
@@ -105,7 +103,6 @@ public class Photo extends AbstractEntity {
 		this.height = height;
 	}
 
-	@Override
 	public String getPath() {
 		return path;
 	}

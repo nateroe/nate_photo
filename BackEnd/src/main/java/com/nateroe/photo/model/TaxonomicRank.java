@@ -4,11 +4,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import com.google.common.base.Objects;
 
+@XmlRootElement
 @Entity
 @Table(name = "TaxonomicRank")
 public class TaxonomicRank {

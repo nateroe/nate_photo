@@ -1,29 +1,40 @@
 package com.nateroe.photo.rest;
 
+import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.nateroe.photo.dao.TaxonDao;
 import com.nateroe.photo.model.Taxon;
 
 @Path("/taxa")
 public class TaxaHandler {
-	private static final Logger logger = LogManager.getLogger(TaxaHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TaxaHandler.class);
+
+	@EJB
+	private TaxonDao taxonDao;
+
+	public TaxaHandler() {
+		LOGGER.warn("TaxaHandler()");
+	}
 
 	@GET
 	@Path("{taxonId}")
 	@Produces({ "application/json" })
 	public Taxon getTaxonById(@PathParam("taxonId") long taxonId) {
-		logger.warn("getTaxonById(" + taxonId + ")");
+		LOGGER.warn("getTaxonById(" + taxonId + ")");
 
-//		Taxon taxon = new TaxonDao().findByPrimaryKey(taxonId);
-//		logger.info("Found taxon: {}", taxon);
+		Taxon taxon = taxonDao.findByPrimaryKey(taxonId);
+		LOGGER.info("Found taxon: {}", taxon);
+		return taxon;
+
+//		Taxon taxon = new Taxon();
+//		taxon.setName("WTF, Over.");
 //		return taxon;
-
-		return null;
 	}
 }

@@ -29,8 +29,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Make sure Hibernate sessions are always closed
@@ -38,7 +38,7 @@ import org.apache.logging.log4j.Logger;
  * @author nate
  */
 public class JpaFilter implements Filter {
-	private static final Logger LOGGER = LogManager.getLogger(JpaFilter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JpaFilter.class);
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

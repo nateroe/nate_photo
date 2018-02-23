@@ -5,8 +5,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate session-keeping. Uses ThreadLocal to provide the same session to the same Thread during
@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
  * @author nate
  */
 public class JpaUtil {
-	private static final Logger LOGGER = LogManager.getLogger(JpaUtil.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JpaUtil.class);
 
 	private static EntityManagerFactory entityManagerFactory;
 
@@ -39,7 +39,7 @@ public class JpaUtil {
 	 * @return a {@link org.hibernate.Session Session} instance
 	 */
 	public static EntityManager getEntityManager() {
-		LOGGER.debug("getSession()");
+		LOGGER.debug("getEntityManager()");
 		EntityManager returnVal = LOCAL_ENTITY_MANAGER.get();
 
 		if (returnVal == null) {

@@ -38,7 +38,7 @@ public class Taxon {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Taxon parent;
 
-	@OneToMany(mappedBy = "parent")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
 	private Set<Taxon> children = new HashSet<>();
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
