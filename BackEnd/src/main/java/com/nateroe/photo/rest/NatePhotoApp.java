@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ApplicationPath("/rest")
-public class MyApplication extends javax.ws.rs.core.Application {
-	private static final Logger LOGGER = LoggerFactory.getLogger(MyApplication.class);
+public class NatePhotoApp extends javax.ws.rs.core.Application {
+	private static final Logger LOGGER = LoggerFactory.getLogger(NatePhotoApp.class);
 
 	@Override
 	public Set<Class<?>> getClasses() {
