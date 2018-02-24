@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.nateroe</groupId>
-	<artifactId>DataModel</artifactId>
+	<artifactId>DataAccess</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>DataModel</name>
+	<name>DataAccess</name>
 
 	<parent>
 		<groupId>com.nateroe</groupId>
@@ -25,6 +25,18 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.nateroe</groupId>
+			<artifactId>DataModel</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>5.0.4.RELEASE</version>
+		</dependency>
+
+		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
@@ -36,19 +48,7 @@
 			<version>1.7.22</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>24.0-jre</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>5.2.13.Final</version>
-			<scope>provided</scope>
-		</dependency>
-
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

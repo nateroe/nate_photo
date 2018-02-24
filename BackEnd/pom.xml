@@ -76,6 +76,7 @@
 	</dependencies>
 
 	<modules>
+		<module>DataAccess</module>
 		<module>DataModel</module>
 		<module>WebApp</module>
 	</modules>
