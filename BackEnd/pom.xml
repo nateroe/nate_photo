@@ -78,6 +78,8 @@
 	<modules>
 		<module>DataAccess</module>
 		<module>DataModel</module>
+		<module>External</module>
+		<module>Tools</module>
 		<module>WebApp</module>
 	</modules>
 	
