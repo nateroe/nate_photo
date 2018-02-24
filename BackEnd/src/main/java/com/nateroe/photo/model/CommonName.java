@@ -30,6 +30,14 @@ public class CommonName {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Taxon parent;
 
+	public CommonName() {
+	}
+
+	public CommonName(String name, Taxon parent) {
+		this.name = name;
+		this.parent = parent;
+	}
+
 	public Long getId() {
 		return id;
 	}

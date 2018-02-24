@@ -14,7 +14,7 @@ public class NatePhotoApp extends javax.ws.rs.core.Application {
 
 	@Override
 	public Set<Class<?>> getClasses() {
-		LOGGER.warn("Someone called getClasses()!!");
+		LOGGER.info("Someone called getClasses()!!");
 
 		Set<Class<?>> s = new HashSet<>();
 		s.add(TaxaHandler.class);

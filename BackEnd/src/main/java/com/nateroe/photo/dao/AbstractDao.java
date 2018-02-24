@@ -14,7 +14,7 @@ public abstract class AbstractDao<T, ID extends Serializable> {
 	protected Class<T> entityClass;
 
 	@PersistenceContext(unitName = "NatePhotoDB")
-	EntityManager em;
+	protected EntityManager em;
 
 	@SuppressWarnings("unchecked")
 	public AbstractDao() {
