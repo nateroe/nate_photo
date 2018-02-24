@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>NatePhoto</groupId>
+	<groupId>com.nateroe</groupId>
 	<artifactId>NatePhotoMain</artifactId>
 	<version>1.0.0</version>
 
@@ -89,8 +89,8 @@
 	</dependencyManagement>
 
 	<modules>
-		<module>NatePhotoFrontEnd</module>
-		<module>NatePhotoBackEnd</module>
+		<module>FrontEnd</module>
+		<module>BackEnd</module>
 	</modules>
 	
 </project>

@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.nateroe</groupId>
-	<artifactId>NatePhotoFrontEnd</artifactId>
+	<artifactId>FrontEnd</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>NatePhotoFrontEnd</name>
+	<name>FrontEnd</name>
 
 	<parent>
-		<groupId>NatePhoto</groupId>
+		<groupId>com.nateroe</groupId>
 		<artifactId>NatePhotoMain</artifactId>
 		<version>1.0.0</version>
 		<relativePath>../pom.xml</relativePath>
