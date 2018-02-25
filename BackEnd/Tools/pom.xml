@@ -22,42 +22,17 @@
 	</build>
 
 	<dependencies>
+		<!-- com.nateroe -->
 		<dependency>
 			<groupId>com.nateroe</groupId>
 			<artifactId>External</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.8.2</version>
-		</dependency>
+		<!-- third-party -->
 
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.22</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.5.5</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- provided -->
 		
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
+		<!-- test -->
 	</dependencies>
 </project>
