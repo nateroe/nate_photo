@@ -8,6 +8,9 @@
 		<!-- JNDI resource is defined elsewhere (app server config) -->
 		<jta-data-source>java:jboss/datasources/natephotodb</jta-data-source>
 
+		<jar-file>lib/DataAccess-1.0-SNAPSHOT.jar</jar-file>
+		<jar-file>lib/DataModel-1.0-SNAPSHOT.jar</jar-file>
+				
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
 
