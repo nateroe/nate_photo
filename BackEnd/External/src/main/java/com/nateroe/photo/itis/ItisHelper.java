@@ -2,7 +2,8 @@ package com.nateroe.photo.itis;
 
 import java.util.Iterator;
 
-import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +24,14 @@ import com.nateroe.photo.model.TaxonomicRank;
  * 
  * @author nate
  */
+@Stateless
 public class ItisHelper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ItisHelper.class);
 
-	@EJB
+	@Inject
 	private TaxonDao taxonDao;
 
-	@EJB
+	@Inject
 	private TaxonomicRankDao rankDao;
 
 	/**
@@ -39,8 +41,7 @@ public class ItisHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public Taxon readTaxonomy(String tsnString) throws Exception {
-		Integer tsn = Integer.parseInt(tsnString.trim());
+	public Taxon readTaxonomy(Integer tsn) throws Exception {
 		Taxon returnVal = taxonDao.findByTsn(tsn);
 
 		if (returnVal == null) {
@@ -98,17 +99,18 @@ public class ItisHelper {
 			}
 
 			element = object.get("parentTSN");
-			String parentTsn = null;
+			String parentTsnString = null;
 			if (element != null && element.isJsonObject()) {
 				JsonObject parentTsnJson = element.getAsJsonObject();
 
 				LOGGER.debug("TSN: {}", parentTsnJson.get("tsn").getAsString());
-//			System.out.println("parentTSN: " + parentTsnJson.get("parentTsn").getAsString());
-				parentTsn = parentTsnJson.get("parentTsn").getAsString();
-			}
+				LOGGER.debug("parentTSN: " + parentTsnJson.get("parentTsn").getAsString());
+				parentTsnString = parentTsnJson.get("parentTsn").getAsString();
 
-			if (!parentTsn.equals("0")) {
-				returnVal.setParent(readTaxonomy(parentTsn));
+				if (!parentTsnString.equals("0")) {
+					Integer parentTsn = Integer.parseInt(parentTsnString.trim());
+					returnVal.setParent(readTaxonomy(parentTsn));
+				}
 			}
 		} else {
 			LOGGER.debug("Taxon found for " + returnVal.getName());

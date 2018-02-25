@@ -2,12 +2,14 @@ package com.nateroe.photo.dao;
 
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import com.nateroe.photo.model.TaxonomicRank;
 
+@Stateless
 public class TaxonomicRankDao extends AbstractDao<TaxonomicRank, Long> {
 	public TaxonomicRank findByName(String name) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
