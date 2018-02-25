@@ -1,3 +1,23 @@
+/**
+ * NatePhoto - A photo catalog and presentation application.
+ * Copyright (C) 2018 Nathaniel Roe
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contact nate [at] nateroe [dot] com
+ */
+
 package com.nateroe.photo.itis;
 
 import java.util.Iterator;
@@ -42,11 +62,11 @@ public class ItisHelper {
 	 * @throws Exception
 	 */
 	public Taxon readTaxonomy(Integer tsn) throws Exception {
-		Taxon returnVal = taxonDao.findByTsn(tsn);
+		Taxon targetTaxon = taxonDao.findByTsn(tsn);
 
-		if (returnVal == null) {
-			returnVal = new Taxon();
-			returnVal.setTsn(tsn);
+		if (targetTaxon == null) {
+			targetTaxon = new Taxon();
+			targetTaxon.setTsn(tsn);
 
 			String file = HttpClientHelper.downloadFileToString(
 					"http://www.itis.gov/ITISWebService/jsonservice/getFullRecordFromTSN?tsn="
@@ -63,18 +83,23 @@ public class ItisHelper {
 				JsonObject scientificName = element.getAsJsonObject();
 
 				LOGGER.debug("combinedName: {}", scientificName.get("combinedName").getAsString());
-				returnVal.setName(scientificName.get("combinedName").getAsString().trim());
+				targetTaxon.setName(scientificName.get("combinedName").getAsString().trim());
 			}
 
 			element = object.get("taxRank");
 			if (element != null && element.isJsonObject()) {
 				JsonObject taxRank = element.getAsJsonObject();
 
-				LOGGER.debug("rankName: {}", taxRank.get("rankName").getAsString());
+				String rankName = taxRank.get("rankName").getAsString().trim();
+				LOGGER.debug("rankName: {}", rankName);
 
-				TaxonomicRank rank = rankDao
-						.findByName(taxRank.get("rankName").getAsString().trim());
-				returnVal.setRank(rank);
+				TaxonomicRank rank = rankDao.findByName(rankName);
+				if (rank == null) {
+					rank = new TaxonomicRank();
+					rank.setName(rankName);
+				}
+
+				targetTaxon.setRank(rank);
 			}
 
 			element = object.get("commonNameList");
@@ -91,8 +116,9 @@ public class ItisHelper {
 								.equals("english")) {
 							LOGGER.debug("commonName: {}",
 									commonName.get("commonName").getAsString());
-							returnVal.addCommonName(new CommonName(
-									commonName.get("commonName").getAsString().trim(), returnVal));
+							targetTaxon.addCommonName(new CommonName(
+									commonName.get("commonName").getAsString().trim(),
+									targetTaxon));
 						}
 					}
 				}
@@ -109,13 +135,14 @@ public class ItisHelper {
 
 				if (!parentTsnString.equals("0")) {
 					Integer parentTsn = Integer.parseInt(parentTsnString.trim());
-					returnVal.setParent(readTaxonomy(parentTsn));
+					targetTaxon.setParent(readTaxonomy(parentTsn));
 				}
 			}
 		} else {
-			LOGGER.debug("Taxon found for " + returnVal.getName());
+			LOGGER.debug("Existing taxon found ({}) for {}", targetTaxon.getId(),
+					targetTaxon.getName());
 		}
 
-		return returnVal;
+		return targetTaxon;
 	}
 }

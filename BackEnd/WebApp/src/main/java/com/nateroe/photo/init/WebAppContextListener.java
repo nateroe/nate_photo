@@ -1,5 +1,3 @@
-package com.nateroe.photo.init;
-
 /**
  * NatePhoto - A photo catalog and presentation application.
  * Copyright (C) 2018 Nathaniel Roe
@@ -20,6 +18,8 @@ package com.nateroe.photo.init;
  * Contact nate [at] nateroe [dot] com
  */
 
+package com.nateroe.photo.init;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -39,6 +39,7 @@ public class WebAppContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		logger.info("Context initialized.");
+		logger.debug("logging test.");
 	}
 
 	@Override

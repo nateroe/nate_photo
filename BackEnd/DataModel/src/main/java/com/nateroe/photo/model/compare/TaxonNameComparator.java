@@ -1,5 +1,3 @@
-package com.nateroe.photo.model.compare;
-
 /**
  * NatePhoto - A photo catalog and presentation application.
  * Copyright (C) 2018 Nathaniel Roe
@@ -19,6 +17,8 @@ package com.nateroe.photo.model.compare;
  * 
  * Contact nate [at] nateroe [dot] com
  */
+
+package com.nateroe.photo.model.compare;
 
 import java.util.Comparator;
 

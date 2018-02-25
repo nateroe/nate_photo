@@ -1,4 +1,27 @@
+/**
+ * NatePhoto - A photo catalog and presentation application.
+ * Copyright (C) 2018 Nathaniel Roe
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contact nate [at] nateroe [dot] com
+ */
+
 package com.nateroe.photo.rest;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
@@ -10,6 +33,7 @@ import javax.ws.rs.Produces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.nateroe.photo.dao.TaxonDao;
 import com.nateroe.photo.itis.ItisHelper;
 import com.nateroe.photo.model.Taxon;
@@ -28,25 +52,38 @@ public class TaxaHandler {
 		LOGGER.debug("TaxaHandler()");
 	}
 
-	@GET
-	@Path("{taxonId}")
-	@Produces({ "application/json" })
-	public Taxon getTaxonById(@PathParam("taxonId") long taxonId) {
-		LOGGER.debug("getTaxonById({})", taxonId);
+	private List<Taxon> listWithParents(Taxon taxon) {
+		List<Taxon> returnVal = new LinkedList<>();
+		returnVal.add(taxon);
+		while (taxon.getParent() != null) {
+			taxon = taxon.getParent();
+			returnVal.add(taxon);
+		}
+		return Lists.reverse(returnVal);
+	}
 
-		Taxon taxon = taxonDao.findByPrimaryKey(taxonId);
+	@GET
+	@Path("{tsn}")
+	@Produces({ "application/json" })
+	public List<Taxon> getTaxonByTsn(@PathParam("tsn") int tsn) {
+		LOGGER.debug("getTaxonById({})", tsn);
+
+		Taxon taxon = taxonDao.findByTsn(tsn);
 		LOGGER.debug("Found taxon: {}", taxon);
-		return taxon;
+		return listWithParents(taxon);
 	}
 
 	@PUT
 	@Path("{tsn}")
 	@Produces({ "application/json" })
-	public Taxon putTaxonByTsn(@PathParam("tsn") int tsn) throws Exception {
+	public List<Taxon> putTaxonByTsn(@PathParam("tsn") int tsn) throws Exception {
 		LOGGER.debug("putTaxonByTsn({})", tsn);
 
 		Taxon taxon = itisHelper.readTaxonomy(tsn);
 		LOGGER.debug("Found taxon: {}", taxon);
-		return taxon;
+
+		taxonDao.save(taxon);
+
+		return listWithParents(taxon);
 	}
 }

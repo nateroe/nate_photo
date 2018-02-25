@@ -87,6 +87,11 @@
 		</dependency>
 
 		<!-- third-party -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>24.0-jre</version>
+		</dependency>
 
 		<!-- provided -->
 		<dependency>

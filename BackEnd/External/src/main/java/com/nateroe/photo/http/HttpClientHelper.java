@@ -1,3 +1,23 @@
+/**
+ * NatePhoto - A photo catalog and presentation application.
+ * Copyright (C) 2018 Nathaniel Roe
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contact nate [at] nateroe [dot] com
+ */
+
 package com.nateroe.photo.http;
 
 import java.io.BufferedInputStream;
@@ -6,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.MessageDigest;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -18,12 +37,11 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.cookie.BasicClientCookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpClientHelper {
-	private final static Logger log = LoggerFactory.getLogger(HttpClientHelper.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(HttpClientHelper.class);
 
 	public static final int TIMEOUT_MILLIS = 60000; // 60 seconds
 	public static final int MAX_RETRY = 3;
@@ -49,6 +67,13 @@ public class HttpClientHelper {
 		return client.execute(get);
 	}
 
+	/**
+	 * Request a given URL and return the result as a String
+	 * 
+	 * @param url
+	 * @return
+	 * @throws Exception
+	 */
 	public static String downloadFileToString(String url) throws Exception {
 		String returnVal = null;
 		int retry = 0;
@@ -58,69 +83,61 @@ public class HttpClientHelper {
 
 			int statusCode = response.getStatusLine().getStatusCode();
 
-			log.trace("response: " + response.getStatusLine());
+			LOGGER.trace("response: " + response.getStatusLine());
 
 			HttpEntity entity = response.getEntity();
 			if (statusCode == 200 && entity != null) {
 				InputStream inputStream = entity.getContent();
 				try {
-					log.trace("Content length: " + entity.getContentLength());
-					log.trace("Content type: " + entity.getContentType().getValue());
-					log.debug("Download content: " + url);
+					LOGGER.trace("Content length: " + entity.getContentLength());
+					LOGGER.trace("Content type: " + entity.getContentType().getValue());
+					LOGGER.debug("Download content: " + url);
 
-					@SuppressWarnings("unused")
-					String mimeType = entity.getContentType().getValue();
 					BufferedInputStream bis = new BufferedInputStream(inputStream);
 
-					// XXX could validate mimeType
 					ByteArrayOutputStream baos;
 					if (entity.getContentLength() > 0) {
 						baos = new ByteArrayOutputStream((int) (entity.getContentLength()));
 					} else {
 						baos = new ByteArrayOutputStream();
 					}
-					OutputStream out = new BufferedOutputStream(baos);
 
 					int byteCount = 0;
-
-					MessageDigest digest = MessageDigest.getInstance("MD5");
-
-					byte[] buf = new byte[4096];
-					int bytesRead = 0;
-					while ((bytesRead = bis.read(buf)) > 0) {
-						byteCount += bytesRead;
-						out.write(buf, 0, bytesRead);
-						digest.update(buf, 0, bytesRead);
+					try (OutputStream out = new BufferedOutputStream(baos)) {
+						byte[] buf = new byte[4096];
+						int bytesRead = 0;
+						while ((bytesRead = bis.read(buf)) > 0) {
+							byteCount += bytesRead;
+							out.write(buf, 0, bytesRead);
+						}
 					}
 
-					out.close();
+					LOGGER.debug("Downloaded " + byteCount + " bytes (of "
+							+ entity.getContentLength() + ")");
 
-					log.debug("Downloaded " + byteCount + " bytes (of " + entity.getContentLength()
-							+ ")");
-
-					byte[] imageBytes = baos.toByteArray();
+					byte[] contentBytes = baos.toByteArray();
 
 					// If a content length was specified, verify it
 					if (byteCount > 0 && entity.getContentLength() > 0
 							&& byteCount != entity.getContentLength()) {
 						retry++;
 						failed = true;
-						log.warn("        Warning: premature exit. Retry " + retry
+						LOGGER.warn("        Warning: premature exit. Retry " + retry
 								+ " initiated. Downloaded " + byteCount + " of "
 								+ entity.getContentLength() + " bytes.");
 					} else {
-						returnVal = new String(imageBytes, "UTF-8");
+						returnVal = new String(contentBytes, "UTF-8");
 
-						log.info("result: " + returnVal);
+						LOGGER.trace("result: {}", returnVal);
 					}
 
 				} catch (Exception e) {
-					log.info("failure (url: " + url + ")", e);
+					LOGGER.info("failure (url: " + url + ")", e);
 				} finally {
 					inputStream.close();
 				}
 			} else {
-				log.warn("    abort download, http status: " + statusCode + " url: " + url);
+				LOGGER.warn("    abort download, http status: " + statusCode + " url: " + url);
 			}
 		} while (failed == true && retry < MAX_RETRY);
 
@@ -129,14 +146,5 @@ public class HttpClientHelper {
 		}
 
 		return returnVal;
-	}
-
-	public static void main(String[] args) {
-		// example cookie
-		BasicClientCookie cookie = new BasicClientCookie("nateWasHere", "true");
-		cookie.setVersion(0);
-		cookie.setDomain(".phlake.org");
-		cookie.setPath("/");
-		cookieStore.addCookie(cookie);
 	}
 }

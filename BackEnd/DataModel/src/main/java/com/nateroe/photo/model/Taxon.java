@@ -1,3 +1,23 @@
+/**
+ * NatePhoto - A photo catalog and presentation application.
+ * Copyright (C) 2018 Nathaniel Roe
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contact nate [at] nateroe [dot] com
+ */
+
 package com.nateroe.photo.model;
 
 import java.util.Collection;
@@ -28,23 +48,27 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "Taxon")
 public class Taxon {
+	@XmlTransient
 	@Id
 	@GenericGenerator(name = "Taxon_pk_seq", strategy = "increment")
 	@GeneratedValue(generator = "Taxon_pk_seq")
 	private Long id;
-	@ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	private TaxonomicRank rank;
 	private String name;
 	private int tsn;
 
 	@XmlTransient
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Taxon parent;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
+	@XmlTransient
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
 	private Set<Taxon> children = new HashSet<>();
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL,
+			orphanRemoval = true)
 	private List<CommonName> commonNames = new LinkedList<>();
 
 	public Taxon() {
@@ -121,6 +145,7 @@ public class Taxon {
 
 	public void setParent(Taxon parent) {
 		this.parent = parent;
+		parent.addChild(this);
 	}
 
 	@Override
