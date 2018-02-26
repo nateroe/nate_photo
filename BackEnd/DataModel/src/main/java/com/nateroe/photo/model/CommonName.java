@@ -24,15 +24,15 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.hibernate.annotations.GenericGenerator;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -41,8 +41,8 @@ import org.hibernate.annotations.GenericGenerator;
 public class CommonName {
 	@XmlTransient
 	@Id
-	@GeneratedValue(generator = "CommonName_pk_seq")
-	@GenericGenerator(name = "CommonName_pk_seq", strategy = "increment")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
+	@SequenceGenerator(name = "increment", sequenceName = "CommonName_pk_seq")
 	private Long id;
 
 	private String name;

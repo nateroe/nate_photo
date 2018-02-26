@@ -25,10 +25,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import com.google.common.base.Objects;
 
@@ -36,8 +36,8 @@ import com.google.common.base.Objects;
 public class Expedition {
 
 	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
+	@SequenceGenerator(name = "increment", sequenceName = "Expedition_pk_seq")
 	private Long id;
 	private String name;
 	private String description;

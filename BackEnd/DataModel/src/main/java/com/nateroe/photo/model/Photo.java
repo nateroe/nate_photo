@@ -26,10 +26,10 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import com.google.common.base.Objects;
 
@@ -41,8 +41,8 @@ import com.google.common.base.Objects;
 public class Photo {
 
 	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
+	@SequenceGenerator(name = "increment", sequenceName = "Photo_pk_seq")
 	private Long id;
 	private String title;
 	private String description;

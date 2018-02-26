@@ -21,10 +21,10 @@
 package com.nateroe.photo.model;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import com.google.common.base.Objects;
 
@@ -32,8 +32,8 @@ import com.google.common.base.Objects;
 public class Tag {
 
 	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
+	@SequenceGenerator(name = "increment", sequenceName = "Tag_pk_seq")
 	private Long id;
 	private String value;
 

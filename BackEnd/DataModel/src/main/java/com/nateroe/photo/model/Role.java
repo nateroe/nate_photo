@@ -21,7 +21,9 @@
 package com.nateroe.photo.model;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  * NatePhoto - A photo catalog and presentation application.
@@ -45,8 +47,6 @@ import javax.persistence.Id;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hibernate.annotations.GenericGenerator;
-
 /**
  * User roles in order of increasing privilege. Each user has a single role. Roles are additive: a
  * User has all the privileges of a Guest, plus additional features.
@@ -58,8 +58,8 @@ public enum Role {
 	GUEST(1), USER(2), FRIEND(3), ADMIN(4);
 
 	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
+	@SequenceGenerator(name = "increment", sequenceName = "Role_pk_seq")
 	private Long id;
 
 	private Role(long id) {

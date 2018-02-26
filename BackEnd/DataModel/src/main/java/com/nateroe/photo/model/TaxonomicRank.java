@@ -22,14 +22,14 @@ package com.nateroe.photo.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import com.google.common.base.Objects;
 
@@ -40,8 +40,8 @@ import com.google.common.base.Objects;
 public class TaxonomicRank {
 	@XmlTransient
 	@Id
-	@GenericGenerator(name = "TaxonomicRank_pk_seq", strategy = "increment")
-	@GeneratedValue(generator = "TaxonomicRank_pk_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
+	@SequenceGenerator(name = "increment", sequenceName = "TaxonomicRank_pk_seq")
 	private Long id;
 	private String name;
 
