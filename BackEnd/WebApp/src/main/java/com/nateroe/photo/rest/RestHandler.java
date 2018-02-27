@@ -17,39 +17,20 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
-
 package com.nateroe.photo.rest;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.ApplicationPath;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Tell JAX-RS about our rest handlers.
+ * Decorate all services as @RestHandler. NatePhotoApp scans for these classes to register on
+ * startup.
  * 
  * @author nate
  */
-@ApplicationPath("/rest")
-public class NatePhotoApp extends javax.ws.rs.core.Application {
-	private static final Logger LOGGER = LoggerFactory.getLogger(NatePhotoApp.class);
-
-	@Override
-	public Set<Class<?>> getClasses() {
-		LOGGER.debug("getClasses()");
-
-		// Scan for all classes annotated @RestHandler in any "com.nateroe..." package
-		Set<Class<?>> s = new HashSet<>();
-		new FastClasspathScanner("com.nateroe").matchClassesWithAnnotation(RestHandler.class, c -> {
-			s.add(c);
-			LOGGER.debug("Found REST handler {}", c.getName());
-		}).scan();
-
-		return s;
-	}
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface RestHandler {
 }

@@ -21,8 +21,8 @@
 package com.nateroe.photo.model;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -44,8 +44,8 @@ public class Expedition {
 	private String mapUrl;
 	private Date beginDate;
 	private Date endDate;
-	private Place place;
-	private Set<Photo> highlights = new HashSet<>();
+	private List<Place> places = new LinkedList<>();
+	private List<Photo> highlights = new LinkedList<>();
 
 	public Expedition() {
 	}
@@ -99,25 +99,25 @@ public class Expedition {
 		this.endDate = endDate;
 	}
 
-	public Place getPlace() {
-		return place;
+	public void addPlace(Place place) {
+		places.add(place);
 	}
 
-	public void setPlace(Place place) {
-		this.place = place;
+	public List<Photo> getPlaces() {
+		return highlights;
 	}
 
 	public void addHighlight(Photo photo) {
 		highlights.add(photo);
 	}
 
-	public Set<Photo> getHighlights() {
+	public List<Photo> getHighlights() {
 		return highlights;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getId(), name, description, mapUrl, beginDate, endDate, place);
+		return Objects.hashCode(getId(), name, description, mapUrl, beginDate, endDate, places);
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class Expedition {
 					&& Objects.equal(this.mapUrl, other.mapUrl)
 					&& Objects.equal(this.beginDate, other.beginDate)
 					&& Objects.equal(this.endDate, other.endDate)
-					&& Objects.equal(this.place, other.place);
+					&& Objects.equal(this.places, other.places);
 		}
 
 		return returnVal;

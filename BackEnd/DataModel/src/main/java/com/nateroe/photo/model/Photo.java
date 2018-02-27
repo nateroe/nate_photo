@@ -20,15 +20,22 @@
 
 package com.nateroe.photo.model;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
@@ -38,6 +45,9 @@ import com.google.common.base.Objects;
  * @author nate
  */
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@Entity
+@Table(name = "Photo")
 public class Photo {
 
 	@Id
@@ -47,11 +57,7 @@ public class Photo {
 	private String title;
 	private String description;
 	private Integer rating;
-	private Integer width;
-	private Integer height;
-	private String path;
 	private Date date;
-	private String mapUrl;
 	private String camera;
 	private String lens;
 	private String aperture;
@@ -62,16 +68,22 @@ public class Photo {
 	private String copyright;
 	private Boolean isMakingOf;
 	private Boolean isPublished;
-	private final AtomicLong visitCount;
-	private final AtomicLong favoriteCount;
 
-	private Expedition expedition;
-	private Taxon taxon;
-	private Set<Tag> tags = new HashSet<>();
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL,
+			orphanRemoval = true)
+	private List<ImageResource> images = new LinkedList<>();
+
+// XXX ---- this stuff isn't required yet and it's easier to ignore it for now.
+//	private String mapUrl;
+
+//	private final AtomicLong visitCount;
+//	private final AtomicLong favoriteCount;
+
+//	private Expedition expedition;
+//	private Taxon taxon;
+//	private Set<Tag> tags = new HashSet<>();
 
 	public Photo() {
-		visitCount = new AtomicLong(0);
-		favoriteCount = new AtomicLong(0);
 	}
 
 	public Long getId() {
@@ -107,44 +119,12 @@ public class Photo {
 		this.rating = rating;
 	}
 
-	public Integer getWidth() {
-		return width;
-	}
-
-	public void setWidth(Integer width) {
-		this.width = width;
-	}
-
-	public Integer getHeight() {
-		return height;
-	}
-
-	public void setHeight(Integer height) {
-		this.height = height;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
 	public Date getDate() {
 		return date;
 	}
 
 	public void setDate(Date date) {
 		this.date = date;
-	}
-
-	public String getMapUrl() {
-		return mapUrl;
-	}
-
-	public void setMapUrl(String mapUrl) {
-		this.mapUrl = mapUrl;
 	}
 
 	public String getCamera() {
@@ -211,22 +191,6 @@ public class Photo {
 		this.copyright = copyright;
 	}
 
-	public Expedition getExpedition() {
-		return expedition;
-	}
-
-	public void setExpedition(Expedition expedition) {
-		this.expedition = expedition;
-	}
-
-	public Taxon getTaxon() {
-		return taxon;
-	}
-
-	public void setTaxon(Taxon taxon) {
-		this.taxon = taxon;
-	}
-
 	public Boolean isMakingOf() {
 		return isMakingOf;
 	}
@@ -243,53 +207,31 @@ public class Photo {
 		this.isPublished = isPublished;
 	}
 
-	public Set<Tag> getTags() {
-		return tags;
+	public List<ImageResource> getImageResources() {
+		return new ArrayList<>(images);
 	}
 
-	public void addTag(Tag tag) {
-		this.tags.add(tag);
+	public void addImageResource(ImageResource imageResource) {
+		images.add(imageResource);
+		imageResource.setParent(this);
 	}
 
-	/**
-	 * Threadsafe
-	 * 
-	 * @return the new value
-	 */
-	public long incrementVisitCount() {
-		return visitCount.incrementAndGet();
+	public void addImageResources(List<ImageResource> imageResources) {
+		this.images.addAll(imageResources);
+		for (ImageResource imageResource : imageResources) {
+			imageResource.setParent(this);
+		}
 	}
 
-	public long getVisitCount() {
-		return visitCount.get();
-	}
-
-	public void setVisitCount(long count) {
-		visitCount.set(count);
-	}
-
-	/**
-	 * Threadsafe
-	 * 
-	 * @return the new value
-	 */
-	public long incrementFavoriteCount() {
-		return favoriteCount.incrementAndGet();
-	}
-
-	public long getFavoriteCount() {
-		return favoriteCount.get();
-	}
-
-	public void setFavoriteCount(long count) {
-		favoriteCount.set(count);
+	public void setImageResources(List<ImageResource> imageResources) {
+		this.images.clear();
+		addImageResources(imageResources);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getId(), title, description, rating, width, height, path, date,
-				mapUrl, camera, lens, aperture, shutterSpeed, iso, isFlashFired, focusDistance,
-				copyright, expedition, taxon, isMakingOf, isPublished, tags);
+		return Objects.hashCode(getId(), title, description, rating, date, camera, lens, aperture,
+				shutterSpeed, iso, isFlashFired, focusDistance, copyright, isMakingOf, isPublished);
 	}
 
 	@Override
@@ -307,11 +249,7 @@ public class Photo {
 					&& Objects.equal(this.title, other.title) //
 					&& Objects.equal(this.description, other.description) //
 					&& Objects.equal(this.rating, other.rating) //
-					&& Objects.equal(this.width, other.width) //
-					&& Objects.equal(this.height, other.height) //
-					&& Objects.equal(this.path, other.path) //
 					&& Objects.equal(this.date, other.date) //
-					&& Objects.equal(this.mapUrl, other.mapUrl) //
 					&& Objects.equal(this.camera, other.camera) //
 					&& Objects.equal(this.lens, other.lens) //
 					&& Objects.equal(this.aperture, other.aperture) //
@@ -320,11 +258,8 @@ public class Photo {
 					&& Objects.equal(this.isFlashFired, other.isFlashFired) //
 					&& Objects.equal(this.focusDistance, other.focusDistance) //
 					&& Objects.equal(this.copyright, other.copyright) //
-					&& Objects.equal(this.expedition, other.expedition) //
-					&& Objects.equal(this.taxon, other.taxon) //
 					&& Objects.equal(this.isMakingOf, other.isMakingOf) //
-					&& Objects.equal(this.isPublished, other.isPublished) //
-					&& Objects.equal(this.tags, other.tags);
+					&& Objects.equal(this.isPublished, other.isPublished);
 		}
 
 		return returnVal;

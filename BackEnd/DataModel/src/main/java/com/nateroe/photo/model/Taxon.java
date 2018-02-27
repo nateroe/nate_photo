@@ -20,6 +20,7 @@
 
 package com.nateroe.photo.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -100,19 +101,24 @@ public class Taxon {
 	}
 
 	public List<CommonName> getCommonNames() {
-		return commonNames;
+		return new ArrayList<>(commonNames);
 	}
 
 	public void addCommonName(CommonName commonName) {
 		commonNames.add(commonName);
+		commonName.setParent(this);
 	}
 
 	public void addCommonNames(List<CommonName> commonNames) {
 		this.commonNames.addAll(commonNames);
+		for (CommonName commonName : commonNames) {
+			commonName.setParent(this);
+		}
 	}
 
 	public void setCommonNames(List<CommonName> commonNames) {
-		this.commonNames = commonNames;
+		this.commonNames.clear();
+		addCommonNames(commonNames);
 	}
 
 	public int getTsn() {

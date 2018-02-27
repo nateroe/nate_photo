@@ -20,7 +20,6 @@
 
 package com.nateroe.photo.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -48,7 +47,7 @@ public class CommonName {
 	private String name;
 
 	@XmlTransient
-	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Taxon parent;
 
 	public CommonName() {
