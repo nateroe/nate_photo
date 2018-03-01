@@ -1,0 +1,6 @@
+<div *ngIf="bestResource">
+	<div><img [attr.src]="bestResource.url" width="500" height="{{500 / (bestResource.width / bestResource.height)}}" /></div>
+	<div><h1>{{photo.title}}</h1></div>
+	<div><h2>{{photo.description}}</h2></div>
+</div>
+
