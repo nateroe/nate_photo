@@ -60,7 +60,7 @@
 											exec-maven-plugin
 										</artifactId>
 										<versionRange>
-											[1.2.1,)
+											[1.6.0,)
 										</versionRange>
 										<goals>
 											<goal>exec</goal>

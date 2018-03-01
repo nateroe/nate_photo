@@ -90,6 +90,7 @@ public class TaxaHandler {
 
 		Taxon taxon = itisHelper.readTaxonomy(tsn);
 		LOGGER.debug("Found taxon: {}", taxon);
+
 		if (taxon == null) {
 			throw new NotFoundException();
 		}
