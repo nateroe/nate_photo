@@ -1,0 +1,76 @@
+h1 {
+	font-size: 20px;
+	font-weight: 600;
+}
+
+p {
+	font-size: 16px;
+	font-weight: 400;
+}
+
+td {
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.exif {
+	font-weight: 600;
+	color: #add6ff;
+}
+
+.copyright {
+	font-size: 10px;
+	font-style: italic;
+	padding: 10px 0;
+}
+
+.center {
+	width: 100%;
+	height: auto;
+}
+
+.center img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	cursor: zoom-in;
+	width: 100%;
+}
+
+img.bg {
+	min-height: 100%;
+	min-width: 256px;
+
+}
+
+.row {
+	display: flex;
+}
+
+.leftColumn {
+	flex: 65%;
+}
+
+.rightColumn {
+	flex: 35%;
+}
+
+.debugDiv {
+	border: 1px solid;
+	color: red;
+}
+
+@media only screen and (max-width: 700px) {
+	.row {
+		display: block;
+	}
+	
+	.leftColumn {
+		flex: 100%;
+	}
+	
+	.rightColumn {
+		flex: 100%;
+	}
+}
+
