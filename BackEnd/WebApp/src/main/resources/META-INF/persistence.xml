@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd" version="2.1">
+
+	<persistence-unit name="NatePhotoDB" transaction-type="JTA">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+		<!-- JNDI resource is defined elsewhere (app server config) -->
+		<jta-data-source>java:jboss/datasources/natephotodb</jta-data-source>
+
+		<jar-file>lib/DataAccess-1.0-SNAPSHOT.jar</jar-file>
+		<jar-file>lib/DataModel-1.0-SNAPSHOT.jar</jar-file>
+				
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+		</properties>
+	</persistence-unit>
+</persistence>

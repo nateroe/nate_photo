@@ -1,0 +1,66 @@
+<div *ngIf="bestResource">
+	<div class="center">
+		<div class="center">
+			<img class="bg" [attr.src]="bestResource.url" />
+		</div>
+		<!--img [attr.src]="bestResource.url" width="1024"
+			height="{{1024 / (bestResource.width / bestResource.height)}}" /-->
+		<div class="row center">
+			<div class="leftColumn">
+				<h1>{{photo.title}}</h1>
+				<p>{{photo.description}}</p>
+			</div>
+			<div class="rightColumn">
+				<table>
+					<tr>
+						<td><span class="exif">Date</span></td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>{{photo.date | date:'MMMM d, yyyy'}}</td>
+					</tr>
+					<tr>
+						<td><span class="exif">Camera</span></td>
+						<td></td>
+						<td>{{photo.camera}}</td>
+					</tr>
+					<tr>
+						<td><span class="exif">Lens</span></td>
+						<td></td>
+						<td>{{photo.lens}}</td>
+					</tr>
+					<tr *ngIf="photo.focalLength">
+						<td><span class="exif">Focal Length</span></td>
+						<td></td>
+						<td>{{photo.focalLength}}s</td>
+					</tr>
+					<tr>
+						<td><span class="exif">Aperture</span></td>
+						<td></td>
+						<td>&#402;/{{photo.aperture}}</td>
+					</tr>
+					<tr>
+						<td><span class="exif">Shutter</span></td>
+						<td></td>
+						<td>{{photo.shutterSpeed}}s</td>
+					</tr>
+					<tr>
+						<td><span class="exif">ISO</span></td>
+						<td></td>
+						<td>{{photo.iso}}</td>
+					</tr>
+					<tr>
+						<td><span class="exif">Flash</span></td>
+						<td></td>
+						<td>{{photo.isFlashFired}}</td>
+					</tr>
+					<tr>
+						<td><span class="exif">Focus Dist</span></td>
+						<td></td>
+						<td>{{photo.focusDistance}}</td>
+					</tr>
+				</table>
+				<div class="copyright">{{photo.copyright}}</div>
+			</div>
+		</div>
+	</div>
+</div>
+
