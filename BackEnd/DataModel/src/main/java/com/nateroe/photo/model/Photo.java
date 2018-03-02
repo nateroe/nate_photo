@@ -64,6 +64,7 @@ public class Photo {
 	private String shutterSpeed;
 	private String iso;
 	private Boolean isFlashFired;
+	private Integer focalLength;
 	private Integer focusDistance; // in whole decimeters
 	private String copyright;
 	private Boolean isMakingOf;
@@ -175,6 +176,14 @@ public class Photo {
 		this.isFlashFired = isFlashFired;
 	}
 
+	public Integer getFocalLength() {
+		return focalLength;
+	}
+
+	public void setFocalLength(Integer focalLength) {
+		this.focalLength = focalLength;
+	}
+
 	public Integer getFocusDistance() {
 		return focusDistance;
 	}
@@ -231,7 +240,8 @@ public class Photo {
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(getId(), title, description, rating, date, camera, lens, aperture,
-				shutterSpeed, iso, isFlashFired, focusDistance, copyright, isMakingOf, isPublished);
+				shutterSpeed, iso, isFlashFired, focalLength, focusDistance, copyright, isMakingOf,
+				isPublished);
 	}
 
 	@Override
@@ -256,6 +266,7 @@ public class Photo {
 					&& Objects.equal(this.shutterSpeed, other.shutterSpeed) //
 					&& Objects.equal(this.iso, other.iso) //
 					&& Objects.equal(this.isFlashFired, other.isFlashFired) //
+					&& Objects.equal(this.focalLength, other.focalLength) //
 					&& Objects.equal(this.focusDistance, other.focusDistance) //
 					&& Objects.equal(this.copyright, other.copyright) //
 					&& Objects.equal(this.isMakingOf, other.isMakingOf) //
@@ -269,4 +280,5 @@ public class Photo {
 	public String toString() {
 		return getTitle() + "(" + getId() + ")";
 	}
+
 }
