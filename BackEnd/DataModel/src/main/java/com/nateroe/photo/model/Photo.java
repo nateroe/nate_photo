@@ -32,6 +32,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -64,7 +65,7 @@ public class Photo {
 	private String shutterSpeed;
 	private String iso;
 	private Boolean isFlashFired;
-	private Integer focalLength;
+	private String focalLength;
 	private Integer focusDistance; // in whole decimeters
 	private String copyright;
 	private Boolean isMakingOf;
@@ -72,6 +73,7 @@ public class Photo {
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL,
 			orphanRemoval = true)
+	@OrderBy("width DESC")
 	private List<ImageResource> images = new LinkedList<>();
 
 // XXX ---- this stuff isn't required yet and it's easier to ignore it for now.
@@ -176,11 +178,11 @@ public class Photo {
 		this.isFlashFired = isFlashFired;
 	}
 
-	public Integer getFocalLength() {
+	public String getFocalLength() {
 		return focalLength;
 	}
 
-	public void setFocalLength(Integer focalLength) {
+	public void setFocalLength(String focalLength) {
 		this.focalLength = focalLength;
 	}
 
