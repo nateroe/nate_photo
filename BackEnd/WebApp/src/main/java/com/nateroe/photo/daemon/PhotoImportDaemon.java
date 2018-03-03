@@ -131,6 +131,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				logger.error("Failed", x);
 			}
 
+			// this is not threadsafe but there's only supposed to be one Daemon thread anyway.
 			lastPolled = pollTime;
 		} catch (Throwable t) {
 			logger.error("Failed", t);
@@ -168,8 +169,9 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				photo.setShutterSpeed(
 						subIfdDirectory.getString(ExifDirectoryBase.TAG_SHUTTER_SPEED));
 				photo.setIso(subIfdDirectory.getString(ExifDirectoryBase.TAG_ISO_EQUIVALENT));
-				photo.setFlashFired(!subIfdDirectory.getString(ExifDirectoryBase.TAG_FLASH)
-						.contains("did not fire"));
+				photo.setFlashFired(subIfdDirectory.getString(ExifDirectoryBase.TAG_FLASH) != null
+						&& !subIfdDirectory.getString(ExifDirectoryBase.TAG_FLASH)
+								.contains("did not fire"));
 				photo.setFocalLength(subIfdDirectory.getString(ExifDirectoryBase.TAG_FOCAL_LENGTH));
 				// photo.setFocusDistance(...)
 				photo.setCopyright(iptcDirectory.getString(IptcDirectory.TAG_COPYRIGHT_NOTICE));
@@ -199,11 +201,13 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 						width = (int) (image.getWidth() * scalingFactor);
 					}
 
-					BufferedImage thumbImage = getScaledInstance(image, width, height);
+					BufferedImage scaledImage = getScaledInstance(image, width, height);
 
 					String fileName = appendFileName(jpegFile.getName(), "_" + maxDimension);
-					encodeJpeg(thumbImage, 0.9f,
+					encodeJpeg(scaledImage, 0.9f,
 							new File(DESTINATION_DIRECTORY + File.separator + fileName));
+
+					// XXX copy EXIF tags
 
 					ImageResource imageResource = new ImageResource();
 					imageResource.setUrl(URL_PATH + fileName);
@@ -265,11 +269,11 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 	private static void encodeJpeg(BufferedImage image, float quality, File file)
 			throws IOException {
-		final JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
+		JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
 		jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 		jpegParams.setCompressionQuality(quality);
 
-		final ImageWriter writer = ImageIO.getImageWritersByFormatName("JPEG").next();
+		ImageWriter writer = ImageIO.getImageWritersByFormatName("JPEG").next();
 		ImageOutputStream ios = ImageIO.createImageOutputStream(file);
 		writer.setOutput(ios);
 		writer.write(null, new IIOImage(image, null, null), jpegParams);
