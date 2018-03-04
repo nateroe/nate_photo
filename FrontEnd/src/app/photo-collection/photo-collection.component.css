@@ -1,0 +1,23 @@
+li {
+	list-style-type: none;
+	position: relative;
+}
+
+.wrapper {
+	position: relative;
+}
+
+.textover {
+	position: absolute;
+	bottom: 8px;
+	width: 100%;  
+	background: rgba(0, 0, 0, 0.4);  
+}
+
+.band {
+	back-ground-color: white;
+}
+
+a:link, a:visited, a:hover, a:active {
+	color: white;
+}

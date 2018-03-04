@@ -1,8 +1,13 @@
 <div *ngIf="photos">
 	<ul>
 		<li *ngFor="let photo of photos">
-			<img class="bg" [attr.src]="photoService.getBestResource( photo.images, 500 ).url" />
-			{{photo.title}}
+			<div class="wrapper">
+				<a routerLink="/photo/{{photo.id}}">
+					<img class="bg" [attr.src]="photoService.getBestResource( photo.images, 600, 400 ).url" />
+					<div class="textover">{{photo.title}}</div>
+					<div class="band textover"></div>
+				</a>
+			</div>
 		</li>
 	</ul>
 </div>

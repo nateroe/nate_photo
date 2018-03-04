@@ -37,19 +37,22 @@ export class PhotoService {
      * @param height
      */
     getBestResource( resources: ImageResource[], width: number, height: number ): ImageResource {
+        console.log( "---- getBestResource(...)" );
         let result: ImageResource = null;
         for ( let image of resources ) {
             result = image;
+            console.log( "Examine image resource " + result.url + " (req area: " + ( width * height ) + " >= image area: " + ( image.width * image.height ) + ")" );
+            // find first image smaller than or equal to the requested area
             if ( width * height >= image.width * image.height ) {
+                console.log( "Make a selection!" );
                 break;
             }
         }
 
-        // XXX point at 192.168.1.50 when desired 
-        //        let newUrl: string = 'http://192.168.1.50:8080' + result.url;
-        //        result.url = newUrl;
+        // XXX uncomment to point at 192.168.1.50 when desired 
+        result.url = 'http://192.168.1.50:8080' + result.url;
 
-        console.log( "Returning best image resource " + result.url );
+        console.log( "Returning best image resource " + result.url + " (width: " + width + " >= " + result.width );
         return result;
     }
 }

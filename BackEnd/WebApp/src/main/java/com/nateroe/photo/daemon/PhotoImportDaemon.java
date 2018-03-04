@@ -182,6 +182,8 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				// Process Image
 				// =============
 				BufferedImage image = ImageIO.read(jpegFile);
+				int origWidth = image.getWidth();
+				int origHeight = image.getHeight();
 
 				// Generate scaled image resources for every power of 2 division between LARGE_WIDTH
 				// and SMALL_WIDTH
@@ -214,6 +216,9 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 					imageResource.setWidth(width);
 					imageResource.setHeight(height);
 					photo.addImageResource(imageResource);
+
+					// use this mipmap for next scaling operation
+					image = scaledImage;
 				}
 
 				// Move the original image to destination
@@ -223,8 +228,8 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 				ImageResource imageResource = new ImageResource();
 				imageResource.setUrl(URL_PATH + fileName);
-				imageResource.setWidth(image.getWidth());
-				imageResource.setHeight(image.getHeight());
+				imageResource.setWidth(origWidth);
+				imageResource.setHeight(origHeight);
 				photo.addImageResource(imageResource);
 
 				// Persist the domain object
@@ -260,7 +265,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 		BufferedImage returnVal = new BufferedImage(targetWidth, targetHeight, type);
 		Graphics2D g2 = returnVal.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g2.drawImage(image, 0, 0, targetWidth, targetHeight, null);
 		g2.dispose();
 

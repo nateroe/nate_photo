@@ -8,7 +8,6 @@ import { PhotoService } from '../photo.service';
     styleUrls: ['./photo-collection.component.css']
 } )
 export class PhotoCollectionComponent implements OnInit {
-    width: number = 512;
     photos: Photo[];
     bestImages: ImageResource[];
 
@@ -20,8 +19,10 @@ export class PhotoCollectionComponent implements OnInit {
         this.photoService.getPhotos().subscribe(
             photos => {
                 this.photos = photos;
-                // and ... do something
-                this.bestImages = photos.map( photo => this.photoService.getBestResource( photo.images, this.width, this.width ) );
+                // and ... do something?
             } );
+    }
+
+    onSelect( photo: Photo ): void {
     }
 }
