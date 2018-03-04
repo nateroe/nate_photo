@@ -5,6 +5,6 @@
     <description>NatePhoto JAX-RS Service</description>
 
     <listener>
-        <listener-class>com.nateroe.photo.init.WebAppContextListener</listener-class>
+        <listener-class>com.nateroe.photo.daemon.PhotoImportDaemon</listener-class>
     </listener>
  </web-app>

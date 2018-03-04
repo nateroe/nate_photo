@@ -52,7 +52,7 @@ public class ImageResource {
 	private int width;
 	private int height;
 
-	private ImageResource() {
+	public ImageResource() {
 	}
 
 	public Long getId() {

@@ -32,26 +32,7 @@ export class PhotoComponent implements OnInit {
             .subscribe(
             photo => {
                 this.photo = photo;
-                this.bestResource = this.getBestResource( this.width, this.width );
+                this.bestResource = this.photoService.getBestResource( this.photo.images, this.width, this.width );
             } );
-    }
-
-    /**
-     * Assuming that images is ordered by decreasing size, choose the largest image that fits in the requested area.
-     * 
-     * @param width
-     * @param height
-     */
-    getBestResource( width: number, height: number ): ImageResource {
-        var result: ImageResource = null;
-        for ( let image of this.photo.images ) {
-            result = image;
-            if ( width * height >= image.width * image.height ) {
-                break;
-            }
-        }
-
-        console.log( "Returning best image resource " + result.url );
-        return result;
     }
 }

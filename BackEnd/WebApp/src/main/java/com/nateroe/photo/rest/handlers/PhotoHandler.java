@@ -19,6 +19,8 @@
  */
 package com.nateroe.photo.rest.handlers;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -38,7 +40,7 @@ public class PhotoHandler {
 	private PhotoDao photoDao;
 
 	@GET
-	@Path("{photoId}")
+	@Path("id/{photoId}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Photo getTaxonByTsn(@PathParam("photoId") long photoId) {
 		Photo photo = photoDao.findByPrimaryKey(photoId);
@@ -47,5 +49,17 @@ public class PhotoHandler {
 		}
 
 		return photo;
+	}
+
+	@GET
+	@Path("all")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<Photo> getTaxonByTsn() {
+		List<Photo> photos = photoDao.findAll();
+		if (photos == null) {
+			throw new NotFoundException();
+		}
+
+		return photos;
 	}
 }
