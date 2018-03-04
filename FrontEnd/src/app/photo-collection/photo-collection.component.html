@@ -1,0 +1,8 @@
+<div *ngIf="photos">
+	<ul>
+		<li *ngFor="let photo of photos">
+			<img class="bg" [attr.src]="photoService.getBestResource( photo.images, 500 ).url" />
+			{{photo.title}}
+		</li>
+	</ul>
+</div>
