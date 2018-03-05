@@ -28,12 +28,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -49,12 +45,7 @@ import com.google.common.base.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "Photo")
-public class Photo {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
-	@SequenceGenerator(name = "increment", sequenceName = "Photo_pk_seq")
-	private Long id;
+public class Photo extends AbstractEntity {
 	private String title;
 	private String description;
 	private Integer rating;
@@ -146,10 +137,6 @@ public class Photo {
 		return focusDistance;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
 	public List<ImageResource> getImageResources() {
 		return new ArrayList<>(images);
 	}
@@ -228,11 +215,6 @@ public class Photo {
 
 	public void setFocusDistance(Float focusDistance) {
 		this.focusDistance = focusDistance;
-	}
-
-	@SuppressWarnings("unused")
-	private void setId(Long id) {
-		this.id = id;
 	}
 
 	public void setImageResources(List<ImageResource> imageResources) {

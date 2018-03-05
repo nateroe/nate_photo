@@ -30,12 +30,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -48,13 +44,7 @@ import com.google.common.base.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "Taxon")
-public class Taxon {
-	@XmlTransient
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
-	@SequenceGenerator(name = "increment", sequenceName = "Taxon_pk_seq")
-	private Long id;
-
+public class Taxon extends AbstractEntity {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private TaxonomicRank rank;
 	private String name;
@@ -73,15 +63,6 @@ public class Taxon {
 	private List<CommonName> commonNames = new LinkedList<>();
 
 	public Taxon() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	@SuppressWarnings("unused")
-	private void setId(Long id) {
-		this.id = id;
 	}
 
 	public TaxonomicRank getRank() {

@@ -20,11 +20,7 @@
 
 package com.nateroe.photo.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import com.google.common.base.Objects;
 
@@ -38,12 +34,7 @@ import com.google.common.base.Objects;
  * @author nate
  */
 @XmlRootElement
-public class User {
-
-	@Id
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
-	private Long id;
+public class User extends AbstractEntity {
 	private String email;
 	private String password;
 	private String salt;
@@ -51,15 +42,6 @@ public class User {
 	private Role role;
 
 	public User() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	@SuppressWarnings("unused")
-	private void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getEmail() {

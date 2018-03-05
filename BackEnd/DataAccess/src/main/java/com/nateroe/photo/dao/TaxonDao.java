@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.nateroe.photo.model.Taxon;
 
 @Stateless
-public class TaxonDao extends AbstractDao<Taxon, Long> {
+public class TaxonDao extends AbstractEntityDao<Taxon> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaxonDao.class);
 
 	@EJB
@@ -43,9 +43,9 @@ public class TaxonDao extends AbstractDao<Taxon, Long> {
 	public Taxon findByTsn(Integer tsn) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		CriteriaQuery<Taxon> criteria = builder.createQuery(Taxon.class);
-		Root<Taxon> taxonRoot = criteria.from(Taxon.class);
-		criteria.select(taxonRoot);
-		criteria.where(builder.equal(taxonRoot.get("tsn"), tsn));
+		Root<Taxon> root = criteria.from(Taxon.class);
+		criteria.select(root);
+		criteria.where(builder.equal(root.get("tsn"), tsn));
 
 		Taxon returnVal = null;
 		List<Taxon> results = em.createQuery(criteria).getResultList();

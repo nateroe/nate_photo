@@ -30,13 +30,13 @@ import javax.persistence.criteria.Root;
 import com.nateroe.photo.model.TaxonomicRank;
 
 @Stateless
-public class TaxonomicRankDao extends AbstractDao<TaxonomicRank, Long> {
+public class TaxonomicRankDao extends AbstractEntityDao<TaxonomicRank> {
 	public TaxonomicRank findByName(String name) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		CriteriaQuery<TaxonomicRank> criteria = builder.createQuery(TaxonomicRank.class);
-		Root<TaxonomicRank> rankRoot = criteria.from(TaxonomicRank.class);
-		criteria.select(rankRoot);
-		criteria.where(builder.equal(rankRoot.get("name"), name));
+		Root<TaxonomicRank> root = criteria.from(TaxonomicRank.class);
+		criteria.select(root);
+		criteria.where(builder.equal(root.get("name"), name));
 
 		TaxonomicRank returnVal = null;
 		List<TaxonomicRank> results = em.createQuery(criteria).getResultList();

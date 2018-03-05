@@ -21,42 +21,44 @@
 package com.nateroe.photo.model;
 
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 
 @XmlRootElement
-public class Expedition {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
-	@SequenceGenerator(name = "increment", sequenceName = "Expedition_pk_seq")
-	private Long id;
+@XmlAccessorType(XmlAccessType.FIELD)
+@Entity
+@Table(name = "Expedition")
+public class Expedition extends AbstractEntity {
 	private String name;
 	private String description;
-	private String mapUrl;
 	private Date beginDate;
 	private Date endDate;
-	private List<Place> places = new LinkedList<>();
-	private List<Photo> highlights = new LinkedList<>();
+
+	/**
+	 * systemName is used by the importer to match known, previously-imported Expeditions when an
+	 * expedition is updated by a new import. "systemName" is the file name of the directory from
+	 * which the expedition was imported.
+	 */
+	private String systemName;
+
+	// XXX it's too early to deal with Places
+//	private List<Place> places = new LinkedList<>();
 
 	public Expedition() {
 	}
 
-	public Long getId() {
-		return id;
+	public String getSystemName() {
+		return systemName;
 	}
 
-	@SuppressWarnings("unused")
-	private void setId(Long id) {
-		this.id = id;
+	public void setSystemName(String systemName) {
+		this.systemName = systemName;
 	}
 
 	public String getName() {
@@ -75,14 +77,6 @@ public class Expedition {
 		this.description = description;
 	}
 
-	public String getMapUrl() {
-		return mapUrl;
-	}
-
-	public void setMapUrl(String mapUrl) {
-		this.mapUrl = mapUrl;
-	}
-
 	public Date getBeginDate() {
 		return beginDate;
 	}
@@ -99,25 +93,9 @@ public class Expedition {
 		this.endDate = endDate;
 	}
 
-	public void addPlace(Place place) {
-		places.add(place);
-	}
-
-	public List<Photo> getPlaces() {
-		return highlights;
-	}
-
-	public void addHighlight(Photo photo) {
-		highlights.add(photo);
-	}
-
-	public List<Photo> getHighlights() {
-		return highlights;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getId(), name, description, mapUrl, beginDate, endDate, places);
+		return Objects.hashCode(getId(), name, systemName, description, beginDate, endDate);
 	}
 
 	@Override
@@ -131,15 +109,15 @@ public class Expedition {
 		} else {
 			Expedition other = (Expedition) obj;
 
-			returnVal = Objects.equal(this.getId(), other.getId()) //
+			returnVal = Objects.equal(this.getId(), other.getId())
 					&& Objects.equal(this.name, other.name)
+					&& Objects.equal(this.systemName, other.systemName)
 					&& Objects.equal(this.description, other.description)
-					&& Objects.equal(this.mapUrl, other.mapUrl)
 					&& Objects.equal(this.beginDate, other.beginDate)
-					&& Objects.equal(this.endDate, other.endDate)
-					&& Objects.equal(this.places, other.places);
+					&& Objects.equal(this.endDate, other.endDate);
 		}
 
 		return returnVal;
 	}
+
 }

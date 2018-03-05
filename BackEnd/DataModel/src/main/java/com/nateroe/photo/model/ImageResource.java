@@ -21,11 +21,7 @@ package com.nateroe.photo.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -38,12 +34,7 @@ import com.google.common.base.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "ImageResource")
-public class ImageResource {
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
-	@SequenceGenerator(name = "increment", sequenceName = "ImageResource_pk_seq")
-	private Long id;
-
+public class ImageResource extends AbstractEntity {
 	@XmlTransient
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Photo parent;
@@ -53,14 +44,6 @@ public class ImageResource {
 	private int height;
 
 	public ImageResource() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Photo getParent() {
