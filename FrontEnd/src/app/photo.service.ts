@@ -18,14 +18,16 @@ export class PhotoService {
 
     getPhoto( id: number ): Observable<Photo> {
         // XXX this URL is just temporary for dev. 
-        const url = `http://192.168.1.50:8080/NatePhotoWebApp/rest/photo/id/${id}`;
+        //        const url = `http://192.168.1.50:8080/NatePhotoWebApp/rest/photo/id/${id}`;
+        const url = `/NatePhotoWebApp/rest/photo/id/${id}`;
         console.log( "PhotoServce.getPhoto(" + id + ")" );
         return this.http.get<Photo>( url ).pipe( tap( data => console.log( "PhotoService.getPhoto(...) results: " + data ) ) );
     }
 
     getPhotos(): Observable<Photo[]> {
         // XXX this URL is just temporary for dev. 
-        const url = `http://192.168.1.50:8080/NatePhotoWebApp/rest/photo/all`;
+        //        const url = `http://192.168.1.50:8080/NatePhotoWebApp/rest/photo/all`;
+        const url = `/NatePhotoWebApp/rest/photo/all`;
         console.log( "PhotoServce.getPhotos()" );
         return this.http.get<Photo[]>( url ).pipe( tap( data => console.log( "PhotoService.getPhotos() results: " + data ) ) );
     }
@@ -50,7 +52,7 @@ export class PhotoService {
         }
 
         // XXX uncomment to point at 192.168.1.50 when desired 
-        result.url = 'http://192.168.1.50:8080' + result.url;
+        //        result.url = 'http://192.168.1.50:8080' + result.url;
 
         console.log( "Returning best image resource " + result.url + " (width: " + width + " >= " + result.width );
         return result;

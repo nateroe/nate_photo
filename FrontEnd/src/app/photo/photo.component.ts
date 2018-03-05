@@ -35,4 +35,8 @@ export class PhotoComponent implements OnInit {
                 this.bestResource = this.photoService.getBestResource( this.photo.images, this.width, this.width );
             } );
     }
+
+    getFlashString(): string {
+        return ( ( this.photo.flash & 0x01 ) != 0 ) ? "Yes" : "No";
+    }
 }

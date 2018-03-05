@@ -7,12 +7,16 @@ export class Photo {
     camera: string;
     lens: string;
     aperture: string;
-    iso: string;
     shutterSpeed: string;
-    isFlashFired: boolean;
+    iso: string;
+    flash: number;
+    focalLength: number;
     focusDistance: number;
+    latitude: number;
+    longitude: number;
+    altitude: number;
     copyright: string;
-    isMakingOf: boolean;
+    usageTerms: string;
     isPublished: boolean;
     images: ImageResource[];
 }
