@@ -1,5 +1,5 @@
 import { environment } from '../environments/environment';
-import { ImageResource } from './image_resource';
+import { ImageResource } from './image-resource';
 
 export class Photo {
     id: number;

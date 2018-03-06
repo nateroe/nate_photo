@@ -3,17 +3,17 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import { Photo } from '../photo';
 import { PhotoService } from '../photo.service';
-import { ImageResource } from '../image_resource';
+import { ImageResource } from '../image-resource';
 
 /*
  * Component for a single Photo
  */
 @Component( {
     selector: 'app-photo',
-    templateUrl: './photo.component.html',
-    styleUrls: ['./photo.component.css']
+    templateUrl: './photo-detail.component.html',
+    styleUrls: ['./photo-detail.component.css']
 } )
-export class PhotoComponent implements OnInit {
+export class PhotoDetailComponent implements OnInit {
     width: number = 1024;
     photo: Photo;
     bestResource: ImageResource;

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Photo } from '../photo';
-import { ImageResource } from '../image_resource';
+import { ImageResource } from '../image-resource';
 import { PhotoService } from '../photo.service';
 
 @Component( {

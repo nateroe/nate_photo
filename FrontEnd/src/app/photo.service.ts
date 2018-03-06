@@ -8,8 +8,8 @@ import { catchError } from 'rxjs/operators/catchError';
 
 import { environment } from '../environments/environment';
 import { Photo } from './photo';
-import { ImageResource } from './image_resource';
-import { PHOTO } from './mock_photo';
+import { ImageResource } from './image-resource';
+import { PHOTO } from './mock-photo';
 
 /**
  * Service to request Photo data

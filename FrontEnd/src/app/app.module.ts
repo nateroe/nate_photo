@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 
 import { AppComponent } from './app.component';
-import { PhotoComponent } from './photo/photo.component';
+import { PhotoDetailComponent } from './photo-detail/photo-detail.component';
 import { PhotoService } from './photo.service';
 import { AppRoutingModule } from './/app-routing.module';
 import { PhotoCollectionComponent } from './photo-collection/photo-collection.component';
@@ -13,7 +13,7 @@ import { PhotoCollectionComponent } from './photo-collection/photo-collection.co
 @NgModule( {
     declarations: [
         AppComponent,
-        PhotoComponent,
+        PhotoDetailComponent,
         PhotoCollectionComponent
     ],
     imports: [
