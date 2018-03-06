@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Photo } from '../photo';
+import { ImageResource } from '../image_resource';
 import { PhotoService } from '../photo.service';
 
 @Component( {
@@ -17,9 +18,12 @@ export class PhotoCollectionComponent implements OnInit {
 
     ngOnInit() {
         this.photoService.getPhotos().subscribe(
-            photos => {
-                this.photos = photos;
-                // and ... do something?
+            jsonPhotos => {
+                // clear this.photos
+                this.photos = new Array();
+                for ( let jsonPhoto of jsonPhotos ) {
+                    this.photos.push( new Photo().copyFrom( jsonPhoto ) );
+                }
             } );
     }
 

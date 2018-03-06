@@ -1,4 +1,4 @@
-class ImageResource {
+export class ImageResource {
     id: number;
     url: string;
     width: number;

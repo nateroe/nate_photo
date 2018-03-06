@@ -3,6 +3,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import { Photo } from '../photo';
 import { PhotoService } from '../photo.service';
+import { ImageResource } from '../image_resource';
 
 /*
  * Component for a single Photo
@@ -31,8 +32,7 @@ export class PhotoComponent implements OnInit {
             } )
             .subscribe(
             jsonPhoto => {
-                this.photo = new Photo();
-                Object.assign( this.photo, jsonPhoto );
+                this.photo = new Photo().copyFrom( jsonPhoto );
                 this.bestResource = this.photo.getBestResource( this.width, this.width );
             } );
     }

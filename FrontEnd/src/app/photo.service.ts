@@ -8,6 +8,7 @@ import { catchError } from 'rxjs/operators/catchError';
 
 import { environment } from '../environments/environment';
 import { Photo } from './photo';
+import { ImageResource } from './image_resource';
 import { PHOTO } from './mock_photo';
 
 /**
@@ -29,31 +30,4 @@ export class PhotoService {
         console.log( "PhotoServce.getPhotos()" );
         return this.http.get<Photo[]>( url ).pipe( tap( data => console.log( "PhotoService.getPhotos() results: " + data ) ) );
     }
-    /**
-     * Assuming that images is ordered by decreasing size, choose the largest image that fits in the requested area.
-     * 
-     * @param width
-     * @param height
-     */
-    getBestResource( resources: ImageResource[], width: number, height: number ): ImageResource {
-        console.log( "---- PHOTO SERVICE getBestResource(...)" );
-        let result: ImageResource = null;
-        for ( let image of resources ) {
-            result = image;
-            console.log( "Examine image resource " + result.url + " (req area: " + ( width * height ) + " >= image area: " + ( image.width * image.height ) + ")" );
-            // find first image smaller than or equal to the requested area
-            if ( width * height >= image.width * image.height ) {
-                console.log( "Make a selection!" );
-                break;
-            }
-        }
-
-        if ( !result.url.startsWith( 'environment.restBaseUrl' ) ) {
-            result.url = environment.restBaseUrl + result.url;
-        }
-
-        console.log( "Returning best image resource " + result.url + " (width: " + width + " >= " + result.width );
-        return result;
-    }
-
 }

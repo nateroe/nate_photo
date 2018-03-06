@@ -1,4 +1,5 @@
 import { environment } from '../environments/environment';
+import { ImageResource } from './image_resource';
 
 export class Photo {
     id: number;
@@ -22,8 +23,21 @@ export class Photo {
     isPublished: boolean;
     images: ImageResource[];
 
+    copyFrom( that: Photo ): Photo {
+        Object.assign( this, that );
+
+        this.images = new Array();
+        for ( let thatImage of that.images ) {
+            let thisImage = new ImageResource();
+            Object.assign( thisImage, thatImage );
+            this.images.push( thisImage );
+        }
+
+        return this;
+    }
+
     getBestResource( width: number, height: number ): ImageResource {
-        console.log( "---- getBestResource(...)" );
+        console.log( "----> photo.getBestResource(...)" );
         let result: ImageResource = null;
         for ( let image of this.images ) {
             result = image;
@@ -39,7 +53,7 @@ export class Photo {
             result.url = environment.restBaseUrl + result.url;
         }
 
-        console.log( "Returning best image resource " + result.url + " (width: " + width + " >= " + result.width );
+        console.log( "----< Returning best image resource " + result.url + " (width: " + width + " >= " + result.width );
         return result;
     }
 
