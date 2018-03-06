@@ -40,6 +40,7 @@ public class ImageResource extends AbstractEntity {
 	private Photo parent;
 
 	private String url;
+	private String fileName;
 	private int width;
 	private int height;
 
@@ -62,6 +63,14 @@ public class ImageResource extends AbstractEntity {
 		this.url = url;
 	}
 
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 	public int getWidth() {
 		return width;
 	}
@@ -80,7 +89,7 @@ public class ImageResource extends AbstractEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getId(), parent, url, width, height);
+		return Objects.hashCode(getId(), parent, url, fileName, width, height);
 	}
 
 	@Override
@@ -97,6 +106,7 @@ public class ImageResource extends AbstractEntity {
 			returnVal = Objects.equal(this.getId(), other.getId()) //
 					&& Objects.equal(this.parent, other.parent) //
 					&& Objects.equal(this.url, other.url) //
+					&& Objects.equal(this.fileName, other.fileName) //
 					&& Objects.equal(this.width, other.width) //
 					&& Objects.equal(this.height, other.height) //
 			;

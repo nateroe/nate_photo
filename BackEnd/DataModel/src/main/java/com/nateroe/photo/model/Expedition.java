@@ -53,6 +53,28 @@ public class Expedition extends AbstractEntity {
 	public Expedition() {
 	}
 
+	/**
+	 * Copy non-null data from that expedition to this one. Ignores ID field.
+	 * 
+	 * @param expedition
+	 */
+	public void copyFrom(Expedition that) {
+		if (that != null) {
+			if (that.name != null) {
+				this.name = that.name;
+			}
+			if (that.description != null) {
+				this.description = that.description;
+			}
+			if (that.beginDate != null) {
+				this.beginDate = that.beginDate;
+			}
+			if (that.endDate != null) {
+				this.endDate = that.endDate;
+			}
+		}
+	}
+
 	public String getSystemName() {
 		return systemName;
 	}

@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Objects;
 
@@ -64,6 +65,9 @@ public class Photo extends AbstractEntity {
 	private String copyright;
 	private String usageTerms;
 	private Boolean isPublished;
+
+	@XmlTransient
+	private String origFileName;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL,
 			orphanRemoval = true)
@@ -101,120 +105,84 @@ public class Photo extends AbstractEntity {
 		return altitude;
 	}
 
-	public String getAperture() {
-		return aperture;
-	}
-
-	public String getCamera() {
-		return camera;
-	}
-
-	public String getCopyright() {
-		return copyright;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public Long getExpeditionId() {
-		return expeditionId;
-	}
-
-	public Integer getFlash() {
-		return flash;
-	}
-
-	public Float getFocalLength() {
-		return focalLength;
-	}
-
-	public Float getFocusDistance() {
-		return focusDistance;
-	}
-
-	public List<ImageResource> getImageResources() {
-		return new ArrayList<>(images);
-	}
-
-	public String getIso() {
-		return iso;
-	}
-
-	public Float getLatitude() {
-		return latitude;
-	}
-
-	public String getLens() {
-		return lens;
-	}
-
-	public Float getLongitude() {
-		return longitude;
-	}
-
-	public Integer getRating() {
-		return rating;
-	}
-
-	public String getShutterSpeed() {
-		return shutterSpeed;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public String getUsageTerms() {
-		return usageTerms;
-	}
-
-	public Boolean isPublished() {
-		return isPublished;
-	}
-
 	public void setAltitude(Float altitude) {
 		this.altitude = altitude;
+	}
+
+	public String getAperture() {
+		return aperture;
 	}
 
 	public void setAperture(String aperture) {
 		this.aperture = aperture;
 	}
 
+	public String getCamera() {
+		return camera;
+	}
+
 	public void setCamera(String camera) {
 		this.camera = camera;
+	}
+
+	public String getCopyright() {
+		return copyright;
 	}
 
 	public void setCopyright(String copyright) {
 		this.copyright = copyright;
 	}
 
+	public Date getDate() {
+		return date;
+	}
+
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public void setExpedition(Long expeditionId) {
+	public Long getExpeditionId() {
+		return expeditionId;
+	}
+
+	public void setExpeditionId(Long expeditionId) {
 		this.expeditionId = expeditionId;
+	}
+
+	public Integer getFlash() {
+		return flash;
 	}
 
 	public void setFlash(Integer flash) {
 		this.flash = flash;
 	}
 
+	public Float getFocalLength() {
+		return focalLength;
+	}
+
 	public void setFocalLength(Float focalLength) {
 		this.focalLength = focalLength;
 	}
 
+	public Float getFocusDistance() {
+		return focusDistance;
+	}
+
 	public void setFocusDistance(Float focusDistance) {
 		this.focusDistance = focusDistance;
+	}
+
+	public List<ImageResource> getImageResources() {
+		return new ArrayList<>(images);
 	}
 
 	public void setImageResources(List<ImageResource> imageResources) {
@@ -222,40 +190,84 @@ public class Photo extends AbstractEntity {
 		addImageResources(imageResources);
 	}
 
+	public String getIso() {
+		return iso;
+	}
+
 	public void setIso(String iso) {
 		this.iso = iso;
+	}
+
+	public Float getLatitude() {
+		return latitude;
 	}
 
 	public void setLatitude(Float latitude) {
 		this.latitude = latitude;
 	}
 
+	public String getLens() {
+		return lens;
+	}
+
 	public void setLens(String lens) {
 		this.lens = lens;
+	}
+
+	public Float getLongitude() {
+		return longitude;
 	}
 
 	public void setLongitude(Float longitude) {
 		this.longitude = longitude;
 	}
 
+	public Boolean isPublished() {
+		return isPublished;
+	}
+
 	public void setPublished(Boolean isPublished) {
 		this.isPublished = isPublished;
+	}
+
+	public Integer getRating() {
+		return rating;
 	}
 
 	public void setRating(Integer rating) {
 		this.rating = rating;
 	}
 
+	public String getShutterSpeed() {
+		return shutterSpeed;
+	}
+
 	public void setShutterSpeed(String shutterSpeed) {
 		this.shutterSpeed = shutterSpeed;
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	public String getUsageTerms() {
+		return usageTerms;
+	}
+
 	public void setUsageTerms(String usageTerms) {
 		this.usageTerms = usageTerms;
+	}
+
+	public String getOrigFileName() {
+		return origFileName;
+	}
+
+	public void setOrigFileName(String origFileName) {
+		this.origFileName = origFileName;
 	}
 
 	@Override
@@ -299,4 +311,5 @@ public class Photo extends AbstractEntity {
 	public String toString() {
 		return getTitle() + "(" + getId() + ")";
 	}
+
 }

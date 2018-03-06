@@ -35,6 +35,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ScheduledFuture;
@@ -59,7 +61,11 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.nateroe.photo.dao.ExpeditionDao;
 import com.nateroe.photo.dao.PhotoDao;
+import com.nateroe.photo.model.Expedition;
 import com.nateroe.photo.model.ImageResource;
 import com.nateroe.photo.model.Photo;
 import com.nateroe.photo.util.SystemUtil;
@@ -96,13 +102,15 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 	@EJB
 	PhotoDao photoDao;
+	@EJB
+	ExpeditionDao expeditionDao;
 
 	private long lastPolled = 0;
 	private ScheduledFuture<?> future;
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-		future = scheduler.scheduleAtFixedRate(this, 0, 10, TimeUnit.SECONDS);
+		future = scheduler.scheduleAtFixedRate(this, 10, 20, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -114,6 +122,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 	public void run() {
 		try {
 			final long pollTime = System.currentTimeMillis();
+			LOGGER.debug("--------- BEGIN POLLING ---------");
 
 			// Filter for files modified after the last poll time and before this poll time.
 			DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
@@ -140,13 +149,19 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
 				for (Path entry : stream) {
-					if (LOGGER.isInfoEnabled()) {
-						LOGGER.info("Found new file " + entry.toAbsolutePath().toString()
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Found new file " + entry.toAbsolutePath().toString()
 								+ " pollDate: " + dateFormatter.format(new Date(pollTime))
 								+ " last polled: " + dateFormatter.format(new Date(lastPolled)));
 					}
 					try {
-						acceptImage(entry);
+						if (entry.toFile().isDirectory()) {
+							// import directory as an expedition
+							acceptExpedition(entry);
+						} else if (entry.toFile().isFile()) {
+							// import file as an image
+							acceptImage(entry, null);
+						} // else ignore
 					} catch (IOException ioe) {
 						LOGGER.warn("Failed to import image " + entry, ioe);
 					}
@@ -157,15 +172,87 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 			// this is not threadsafe but there's only supposed to be one Daemon thread anyway.
 			lastPolled = pollTime;
+			LOGGER.debug("--------- END POLLING ---------");
 		} catch (Throwable t) {
 			LOGGER.error("Failed", t);
 		}
 	}
 
-	private void acceptImage(Path imagePath) throws IOException {
+	private void acceptExpedition(Path expeditionPath) throws IOException {
+		// If present in the expedition folder, expedition.json will be read
+		File jsonFile = expeditionPath.resolve("expedition.json").toFile();
+
+		Expedition expedition = null;
+		if (jsonFile.exists()) {
+			try {
+				String json = new String(Files.readAllBytes(jsonFile.toPath()), "UTF-8");
+				Gson gson = new GsonBuilder().create();
+				expedition = gson.fromJson(json, Expedition.class);
+
+				LOGGER.debug("Read expedition.json:\n{}", json);
+			} catch (Throwable ignore) {
+				LOGGER.debug("Failed to read file " + jsonFile, ignore);
+			}
+		} else {
+			LOGGER.debug("File not found: {}", jsonFile);
+		}
+
+		if (expedition == null) {
+			expedition = new Expedition();
+			expedition.setName(expeditionPath.getFileName().toString());
+		}
+		expedition.setSystemName(expeditionPath.getFileName().toString());
+
+		Expedition existingExpedition = expeditionDao.findByNames(expedition.getSystemName());
+		if (existingExpedition != null) {
+			existingExpedition.copyFrom(expedition);
+			expedition = existingExpedition;
+		}
+		expedition = expeditionDao.saveOrUpdate(expedition);
+
+		// If we imported the expedition okay (haven't thrown so far)
+		FileUtils.deleteQuietly(jsonFile);
+
+		int failCount = 0;
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(expeditionPath)) {
+			for (Path entry : stream) {
+				try {
+					if (entry.toFile().isFile()) {
+						// import as an image, updating the Expedition if necessary
+						acceptImage(entry, expedition);
+					} // else ignore
+				} catch (IOException ioe) {
+					failCount++;
+					LOGGER.warn("Failed to import image " + entry, ioe);
+				}
+			}
+		}
+
+		// persist any changes to the Expedition
+		expeditionDao.saveOrUpdate(expedition);
+
+		// If everything went well
+		if (failCount == 0) {
+			// Delete the entire expedition from the handoff area
+			FileUtils.deleteQuietly(expeditionPath.toFile());
+		}
+	}
+
+	/**
+	 * Import an image from the given image path, joining it to the Expedition if specified.
+	 * Modifies the begin/end dates of the Expedition (if any) if necessary based on this photo's
+	 * date, if any.
+	 * 
+	 * @param imagePath
+	 * @param expedition
+	 *            nullable, if not null begin/end dates MAY be updated by acceptImage(...)
+	 * @throws IOException
+	 */
+	private void acceptImage(Path imagePath, Expedition expedition) throws IOException {
 		long startTime = System.currentTimeMillis();
 
 		File jpegFile = imagePath.toFile();
+		LOGGER.debug("accept image: {}", jpegFile);
 
 		// Read the first two bytes for JPEG magic number
 		boolean isJpeg = false;
@@ -174,7 +261,6 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 		}
 
 		if (isJpeg) {
-			Photo photo = new Photo();
 			try {
 				// =========
 				// Read EXIF
@@ -204,10 +290,26 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 					});
 				}
 
+				Date date = parseDate(tagMap.get("-DateTimeOriginal"));
+
+				Photo photo = photoDao.findByOrigFilename(imagePath.getFileName().toString(), date);
+				List<ImageResource> oldResources = new LinkedList<>();
+				if (photo == null) {
+					photo = new Photo();
+				} else {
+					// We are re-importing an existing photo so we need to remove the old images
+					// we don't want to delete them here because processing has not yet occurred,
+					// but we need to cache them and then clear the list of resources so it will
+					// only contain new images
+					oldResources.addAll(photo.getImageResources());
+					photo.getImageResources().clear();
+				}
+				photo.setOrigFileName(imagePath.getFileName().toString());
+
 				photo.setTitle(tagMap.get("-Title"));
 				photo.setDescription(tagMap.get("-Description"));
 				photo.setRating(parseInt(tagMap.get("-Rating")));
-				photo.setDate(parseDate(tagMap.get("-DateTimeOriginal")));
+				photo.setDate(date);
 				photo.setCamera(tagMap.get("-Model"));
 				photo.setLens(tagMap.get("-LensModel"));
 				photo.setAperture(tagMap.get("-FNumber"));
@@ -240,11 +342,22 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				photo.setAltitude(parseFloat("-GPSAltitude"));
 				photo.setCopyright(tagMap.get("-Rights"));
 				photo.setUsageTerms(tagMap.get("-UsageTerms"));
+				photo.setExpeditionId(expedition != null ? expedition.getId() : null);
 
 				// XXX for now, just auto-publish each photo on import
 				photo.setPublished(true);
 
-				LOGGER.info("Exposure time: {}", photo.getShutterSpeed());
+				// Maybe update the Expedition if new begin or end date
+				if (expedition != null) {
+					if (photo.getDate() != null && (expedition.getBeginDate() == null
+							|| photo.getDate().before(expedition.getBeginDate()))) {
+						expedition.setBeginDate(photo.getDate());
+					}
+					if (photo.getDate() != null && (expedition.getEndDate() == null
+							|| photo.getDate().after(expedition.getEndDate()))) {
+						expedition.setEndDate(photo.getDate());
+					}
+				}
 
 				// =============
 				// Process Image
@@ -320,10 +433,21 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				photo.addImageResource(imageResource);
 
 				// Persist the domain object
-				photoDao.save(photo);
+				photoDao.saveOrUpdate(photo);
 
 				// Delete original file last, if import completely succeeded.
 				FileUtils.deleteQuietly(jpegFile);
+
+				// XXX at this point, delete all old resources
+				// oldResources
+				for (ImageResource resource : oldResources) {
+					Path resourcePath = Paths.get(DESTINATION_DIRECTORY + File.separator
+							+ File.separator + resource.getFileName());
+					File resourceFile = resourcePath.toFile();
+					if (resourceFile.exists()) {
+						FileUtils.deleteQuietly(resourceFile);
+					}
+				}
 
 				if (LOGGER.isInfoEnabled()) {
 					float seconds = (float) (System.currentTimeMillis() - startTime) / 1000.0f;

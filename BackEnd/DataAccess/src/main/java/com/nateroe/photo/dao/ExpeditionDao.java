@@ -31,7 +31,7 @@ import com.nateroe.photo.model.Expedition;
 
 @Stateless
 public class ExpeditionDao extends AbstractEntityDao<Expedition> {
-	public Expedition findBySystemName(String systemName) {
+	public Expedition findByNames(String systemName) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		CriteriaQuery<Expedition> criteria = builder.createQuery(Expedition.class);
 		Root<Expedition> root = criteria.from(Expedition.class);
