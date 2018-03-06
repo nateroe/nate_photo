@@ -6,6 +6,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -18,6 +19,18 @@ import com.nateroe.photo.rest.RestHandler;
 public class ExpeditionHandler {
 	@EJB
 	private ExpeditionDao expeditionDao;
+
+	@GET
+	@Path("id/{expeditionId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Expedition getExpeditionbyId(@PathParam("expeditionId") long expeditionId) {
+		Expedition expedition = expeditionDao.findByPrimaryKey(expeditionId);
+		if (expedition == null) {
+			throw new NotFoundException();
+		}
+
+		return expedition;
+	}
 
 	@GET
 	@Path("all")
