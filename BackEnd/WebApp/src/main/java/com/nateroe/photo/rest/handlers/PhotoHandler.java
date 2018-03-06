@@ -42,7 +42,7 @@ public class PhotoHandler {
 	@GET
 	@Path("id/{photoId}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Photo getTaxonByTsn(@PathParam("photoId") long photoId) {
+	public Photo getPhotobyId(@PathParam("photoId") long photoId) {
 		Photo photo = photoDao.findByPrimaryKey(photoId);
 		if (photo == null) {
 			throw new NotFoundException();
@@ -54,7 +54,7 @@ public class PhotoHandler {
 	@GET
 	@Path("all")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public List<Photo> getTaxonByTsn() {
+	public List<Photo> getAllPhotos() {
 		List<Photo> photos = photoDao.findAll();
 		if (photos == null) {
 			throw new NotFoundException();
