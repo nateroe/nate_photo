@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { tap } from 'rxjs/operators/tap';
 import { catchError } from 'rxjs/operators/catchError';
+
+import { environment } from '../environments/environment';
 import { Photo } from './photo';
 import { PHOTO } from './mock_photo';
 
@@ -17,17 +19,13 @@ export class PhotoService {
     }
 
     getPhoto( id: number ): Observable<Photo> {
-        // XXX this URL is just temporary for dev. 
-        //        const url = `http://192.168.1.50:8080/NatePhotoWebApp/rest/photo/id/${id}`;
-        const url = `/NatePhotoWebApp/rest/photo/id/${id}`;
+        const url = environment.restBaseUrl + `NatePhotoWebApp/rest/photo/id/${id}`;
         console.log( "PhotoServce.getPhoto(" + id + ")" );
         return this.http.get<Photo>( url ).pipe( tap( data => console.log( "PhotoService.getPhoto(...) results: " + data ) ) );
     }
 
     getPhotos(): Observable<Photo[]> {
-        // XXX this URL is just temporary for dev. 
-        //        const url = `http://192.168.1.50:8080/NatePhotoWebApp/rest/photo/all`;
-        const url = `/NatePhotoWebApp/rest/photo/all`;
+        const url = environment.restBaseUrl + `NatePhotoWebApp/rest/photo/all`;
         console.log( "PhotoServce.getPhotos()" );
         return this.http.get<Photo[]>( url ).pipe( tap( data => console.log( "PhotoService.getPhotos() results: " + data ) ) );
     }
@@ -51,8 +49,9 @@ export class PhotoService {
             }
         }
 
-        // XXX uncomment to point at 192.168.1.50 when desired 
-        //        result.url = 'http://192.168.1.50:8080' + result.url;
+        if ( !result.url.startsWith( 'environment.restBaseUrl' ) ) {
+            result.url = environment.restBaseUrl + result.url;
+        }
 
         console.log( "Returning best image resource " + result.url + " (width: " + width + " >= " + result.width );
         return result;

@@ -30,13 +30,10 @@ export class PhotoComponent implements OnInit {
                 return this.photoService.getPhoto( photoId );
             } )
             .subscribe(
-            photo => {
-                this.photo = photo;
-                this.bestResource = this.photoService.getBestResource( this.photo.images, this.width, this.width );
+            jsonPhoto => {
+                this.photo = new Photo();
+                Object.assign( this.photo, jsonPhoto );
+                this.bestResource = this.photo.getBestResource( this.width, this.width );
             } );
-    }
-
-    getFlashString(): string {
-        return ( ( this.photo.flash & 0x01 ) != 0 ) ? "Yes" : "No";
     }
 }
