@@ -5,5 +5,5 @@
 
 export const environment = {
     production: false,
-    restBaseUrl: 'http://192.168.1.50:8080/'
+    restBaseUrl: 'http://192.168.1.50:8080'
 };

@@ -19,17 +19,16 @@ export class PhotoService {
     }
 
     getPhoto( id: number ): Observable<Photo> {
-        const url = environment.restBaseUrl + `NatePhotoWebApp/rest/photo/id/${id}`;
+        const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/id/${id}`;
         console.log( "PhotoServce.getPhoto(" + id + ")" );
         return this.http.get<Photo>( url ).pipe( tap( data => console.log( "PhotoService.getPhoto(...) results: " + data ) ) );
     }
 
     getPhotos(): Observable<Photo[]> {
-        const url = environment.restBaseUrl + `NatePhotoWebApp/rest/photo/all`;
+        const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/all`;
         console.log( "PhotoServce.getPhotos()" );
         return this.http.get<Photo[]>( url ).pipe( tap( data => console.log( "PhotoService.getPhotos() results: " + data ) ) );
     }
-
     /**
      * Assuming that images is ordered by decreasing size, choose the largest image that fits in the requested area.
      * 
@@ -37,7 +36,7 @@ export class PhotoService {
      * @param height
      */
     getBestResource( resources: ImageResource[], width: number, height: number ): ImageResource {
-        console.log( "---- getBestResource(...)" );
+        console.log( "---- PHOTO SERVICE getBestResource(...)" );
         let result: ImageResource = null;
         for ( let image of resources ) {
             result = image;
@@ -56,4 +55,5 @@ export class PhotoService {
         console.log( "Returning best image resource " + result.url + " (width: " + width + " >= " + result.width );
         return result;
     }
+
 }
