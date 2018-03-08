@@ -22,7 +22,7 @@ export class PhotoGalleryComponent implements OnInit {
     photos: RenderedPhoto[];
 
     // photos arranged in rows (see layout()) 
-    photoRows: any[] = [];
+    photoRows: RenderedPhoto[][] = new Array();
 
     constructor( private photoService: PhotoService, public changeDetectorRef: ChangeDetectorRef ) {
     }

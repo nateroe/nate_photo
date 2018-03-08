@@ -1,7 +1,7 @@
 <div #wrapper class="wrapper">
 	<div class="inner">
 		<div *ngFor='let photoRow of photoRows' class="row">
-			<div  *ngFor='let photo of photoRow'>
+			<div *ngFor='let photo of photoRow' class="photo">
 				<a routerLink="/photo/{{photo.id}}" >
 					<img
 						[style.width.px]="photo.width"

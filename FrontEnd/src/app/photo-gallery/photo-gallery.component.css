@@ -9,12 +9,10 @@
 }
 
 .row {
-	margin-right: 1px;
-	margin-bottom: 5px;
 	overflow: hidden;
 	display: flex;
 }
 
-.row img {
+.photo {
 	margin-right: 5px;
 }
