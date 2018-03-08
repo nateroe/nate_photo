@@ -33,7 +33,7 @@ export class PhotoDetailComponent implements OnInit {
             .subscribe(
             jsonPhoto => {
                 this.photo = new Photo().copyFrom( jsonPhoto );
-                this.bestResource = this.photo.getBestResource( this.width, this.width );
+                this.bestResource = this.photo.getBestResourceByArea( this.width * this.width );
             } );
     }
 }

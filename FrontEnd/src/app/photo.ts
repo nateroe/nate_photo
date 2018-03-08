@@ -1,6 +1,9 @@
 import { environment } from '../environments/environment';
 import { ImageResource } from './image-resource';
 
+/**
+ * Corresponds to the back end Photo. Contains EXIF data and a list (an Array here) of ImageResources.
+ */
 export class Photo {
     id: number;
     title: string;
@@ -36,24 +39,22 @@ export class Photo {
         return this;
     }
 
-    getBestResource( width: number, height: number ): ImageResource {
-        console.log( "----> photo.getBestResource(...)" );
+    getBestResourceByArea( area: number ): ImageResource {
         let result: ImageResource = null;
         for ( let image of this.images ) {
             result = image;
-            console.log( "Examine image resource " + result.url + " (req area: " + ( width * height ) + " >= image area: " + ( image.width * image.height ) + ")" );
-            // find first image smaller than or equal to the requested area
-            if ( width * height >= image.width * image.height ) {
-                console.log( "Make a selection!" );
+            // find first image smaller than or equal to one and a half times the requested area
+            // (mipmap transition occurs halfway to next size)
+            if ( area * 1.5 >= image.width * image.height ) {
+                //                console.log( "Make a selection!" );
                 break;
             }
         }
 
-        if ( !result.url.startsWith( 'environment.restBaseUrl' ) ) {
+        if ( !result.url.startsWith( environment.restBaseUrl ) ) {
             result.url = environment.restBaseUrl + result.url;
         }
 
-        console.log( "----< Returning best image resource " + result.url + " (width: " + width + " >= " + result.width );
         return result;
     }
 

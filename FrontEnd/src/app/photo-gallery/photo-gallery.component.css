@@ -1,0 +1,20 @@
+.wrapper {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+.inner {
+	position: relative;
+}
+
+.row {
+	margin-right: 1px;
+	margin-bottom: 5px;
+	overflow: hidden;
+	display: flex;
+}
+
+.row img {
+	margin-right: 5px;
+}

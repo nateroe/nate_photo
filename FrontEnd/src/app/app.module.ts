@@ -7,14 +7,14 @@ import { AppComponent } from './app.component';
 import { PhotoDetailComponent } from './photo-detail/photo-detail.component';
 import { PhotoService } from './photo.service';
 import { AppRoutingModule } from './/app-routing.module';
-import { PhotoCollectionComponent } from './photo-collection/photo-collection.component';
+import { PhotoGalleryComponent } from './photo-gallery/photo-gallery.component';
 
 
 @NgModule( {
     declarations: [
         AppComponent,
         PhotoDetailComponent,
-        PhotoCollectionComponent
+        PhotoGalleryComponent
     ],
     imports: [
         BrowserModule,

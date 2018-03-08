@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PhotoDetailComponent } from './photo-detail/photo-detail.component';
-import { PhotoCollectionComponent } from './photo-collection/photo-collection.component';
+import { PhotoGalleryComponent } from './photo-gallery/photo-gallery.component';
 
 const routes: Routes = [
-    { path: '', component: PhotoCollectionComponent },
+    { path: '', component: PhotoGalleryComponent },
     { path: 'photo/:photoId', component: PhotoDetailComponent }
 ];
 
