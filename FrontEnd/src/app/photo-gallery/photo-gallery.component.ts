@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Output, ViewChild } from '@angular/core';
 import { RenderedPhoto } from '../rendered-photo';
 import { ImageResource } from '../image-resource';
 import { PhotoService } from '../photo.service';
@@ -28,13 +28,10 @@ export class PhotoGalleryComponent implements OnInit {
     }
 
     ngOnInit() {
+        // XXX fixme
         this.photoService.getPhotos().subscribe(
-            jsonPhotos => {
-                this.photos = new Array();
-                for ( let jsonPhoto of jsonPhotos ) {
-                    this.photos.push( new RenderedPhoto().copyFrom( jsonPhoto ) );
-                }
-
+            data => {
+                this.photos = data;
                 this.layout();
             } );
     }
@@ -64,7 +61,7 @@ export class PhotoGalleryComponent implements OnInit {
 
         // calculate the ideal image size based on landscape orientation 3:2 aspect
         let nominalWidth: number = ( wrapperWidth - this.MARGIN * 2 ) / numPhotosPerRow;
-        let nominalHeight: number = nominalWidth * 0.66;
+        let nominalHeight: number = nominalWidth * 0.666;
         let nominalArea: number = nominalWidth * nominalHeight;
 
         for ( let photo of this.photos ) {
