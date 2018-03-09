@@ -64,7 +64,7 @@ public class PhotoHandler {
 	}
 
 	@GET
-	@Path("expeditionId/{expeditionId}")
+	@Path("expedition/{expeditionId}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public List<Photo> getPhotosById(@PathParam("expeditionId") long expeditionId) {
 		return photoDao.findByExpeditionId(expeditionId);
