@@ -4,13 +4,13 @@ import { HttpClientModule } from '@angular/common/http';
 
 
 import { AppComponent } from './app.component';
-import { PhotoDetailComponent } from './photo-detail/photo-detail.component';
-import { PhotoService } from './photo.service';
-import { ExpeditionService } from './expedition.service';
+import { PhotoDetailComponent } from './components/photo-detail/photo-detail.component';
+import { PhotoService } from './services/photo.service';
+import { ExpeditionService } from './services/expedition.service';
 import { AppRoutingModule } from './/app-routing.module';
-import { PhotoGalleryComponent } from './photo-gallery/photo-gallery.component';
-import { ExpeditionDetailComponent } from './expedition-detail/expedition-detail.component';
-import { ExpeditionGalleryComponent } from './expedition-gallery/expedition-gallery.component';
+import { PhotoGalleryComponent } from './components/photo-gallery/photo-gallery.component';
+import { ExpeditionDetailComponent } from './components/expedition-detail/expedition-detail.component';
+import { ExpeditionGalleryComponent } from './components/expedition-gallery/expedition-gallery.component';
 
 
 @NgModule( {
@@ -27,9 +27,9 @@ import { ExpeditionGalleryComponent } from './expedition-gallery/expedition-gall
         AppRoutingModule
     ],
     providers: [
-PhotoService
+        PhotoService
 ExpeditionService
-],
+    ],
     bootstrap: [AppComponent]
 } )
 export class AppModule { }

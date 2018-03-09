@@ -6,8 +6,8 @@ import { map } from 'rxjs/operators/map';
 import { tap } from 'rxjs/operators/tap';
 import { catchError } from 'rxjs/operators/catchError';
 
-import { environment } from '../environments/environment';
-import { Expedition } from './expedition';
+import { environment } from '../../environments/environment';
+import { Expedition } from '../model/expedition';
 
 @Injectable()
 export class ExpeditionService {

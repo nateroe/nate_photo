@@ -10,10 +10,10 @@ import { switchMap } from 'rxjs/operators/switchmap';
 import { tap } from 'rxjs/operators/tap';
 import { catchError } from 'rxjs/operators/catchError';
 
-import { environment } from '../environments/environment';
-import { Photo } from './photo';
-import { RenderedPhoto } from './rendered-photo';
-import { ImageResource } from './image-resource';
+import { environment } from '../../environments/environment';
+import { Photo } from '../model/photo';
+import { RenderedPhoto } from '../model/rendered-photo';
+import { ImageResource } from '../model/image-resource';
 import { PHOTO } from './mock-photo';
 
 /**

@@ -1,9 +1,9 @@
 import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
-import { Photo } from '../photo';
-import { PhotoService } from '../photo.service';
-import { ImageResource } from '../image-resource';
+import { Photo } from '../../model/photo';
+import { PhotoService } from '../../services/photo.service';
+import { ImageResource } from '../../model/image-resource';
 
 /*
  * Component for a single Photo

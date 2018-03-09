@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Output, ViewChild } from '@angular/core';
-import { RenderedPhoto } from '../rendered-photo';
-import { ImageResource } from '../image-resource';
-import { PhotoService } from '../photo.service';
+import { RenderedPhoto } from '../../model/rendered-photo';
+import { ImageResource } from '../../model/image-resource';
+import { PhotoService } from '../../services/photo.service';
 
 @Component( {
     selector: 'app-photo-gallery',

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Expedition } from '../expedition';
-import { ExpeditionService } from '../expedition.service';
-import { PhotoService } from '../photo.service';
+import { Expedition } from '../../model/expedition';
+import { RenderedPhoto } from '../../model/rendered-photo';
+import { ExpeditionService } from '../../services/expedition.service';
+import { PhotoService } from '../../services/photo.service';
 
 @Component( {
     selector: 'app-expedition-gallery',
