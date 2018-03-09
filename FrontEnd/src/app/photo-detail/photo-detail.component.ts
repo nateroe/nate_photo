@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import { Photo } from '../photo';
@@ -14,7 +14,8 @@ import { ImageResource } from '../image-resource';
     styleUrls: ['./photo-detail.component.css']
 } )
 export class PhotoDetailComponent implements OnInit {
-    width: number = 1024;
+    @ViewChild( 'wrapper' ) wrapper: ElementRef
+
     photo: Photo;
     bestResource: ImageResource;
 
@@ -32,8 +33,9 @@ export class PhotoDetailComponent implements OnInit {
             } )
             .subscribe(
             jsonPhoto => {
-                this.photo = new Photo().copyFrom( jsonPhoto );
-                this.bestResource = this.photo.getBestResourceByArea( this.width * this.width );
+                this.photo = jsonPhoto;
+                let width: number = this.wrapper.nativeElement.clientWidth;
+                this.bestResource = this.photo.getBestResourceByArea( width * width * 0.666 );
             } );
     }
 }
