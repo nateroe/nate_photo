@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import { Photo } from '../photo';
@@ -16,6 +16,10 @@ import { ImageResource } from '../image-resource';
 export class PhotoDetailComponent implements OnInit {
     @ViewChild( 'wrapper' ) wrapper: ElementRef
 
+    @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
+        this.chooseBestResource();
+    }
+
     photo: Photo;
     bestResource: ImageResource;
 
@@ -32,10 +36,14 @@ export class PhotoDetailComponent implements OnInit {
                 return this.photoService.getPhoto( photoId );
             } )
             .subscribe(
-            jsonPhoto => {
-                this.photo = jsonPhoto;
-                let width: number = this.wrapper.nativeElement.clientWidth;
-                this.bestResource = this.photo.getBestResourceByArea( width * width * 0.666 );
+            data => {
+                this.photo = data;
+                this.chooseBestResource();
             } );
+    }
+
+    chooseBestResource() {
+        let width: number = this.wrapper.nativeElement.clientWidth;
+        this.bestResource = this.photo.getBestResourceByArea( width * width * 0.666 );
     }
 }
