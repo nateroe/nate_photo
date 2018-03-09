@@ -1,5 +1,5 @@
 <div class="wrapper">
-	<div *ngFor='let expedition of expeditions'>
+	<div *ngFor='let expedition of expeditions' class="inner">
 		<div>
 			{{expedition.name}}
 		</div>
@@ -10,8 +10,8 @@
 		<div>
 			<hr>
 		</div>
-		<div *ngIf='expeditionHighlights && expeditionHighlights.get(expedition.id)'>
-			<div *ngFor='let photo of expeditionHighlights.get(expedition.id)'>
+		<div *ngIf='expeditionHighlights && expeditionHighlights.get(expedition.id)' class="row">
+			<div *ngFor='let photo of expeditionHighlights.get(expedition.id)' class="photo">
 				<a routerLink="/photo/{{photo.id}}">
 					<img
 						[style.width.px]="photo.width"
