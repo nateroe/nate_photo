@@ -36,7 +36,7 @@ export class PhotoService {
     }
 
     getPhotosByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
-        const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/expedition/${expeditionId}`;
+        const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/expedition/${expeditionId}`;
         console.log( "PhotoServce.getPhotosByExpedition(" + expeditionId + ")" );
         return this.http.get<RenderedPhoto[]>( url ).pipe(
             map(( data: Photo[] ) => {
@@ -51,7 +51,24 @@ export class PhotoService {
             tap( data => console.log( "PhotoService.getPhotosByExpedition(...) results: " + data ) ) );
     }
 
-    getPhotos(): Observable<RenderedPhoto[]> {
+    getPhotoHighlightsByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
+        const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/expeditionHighlight/${expeditionId}`;
+        console.log( "PhotoServce.getPhotoHighlightsByExpedition(" + expeditionId + ")" );
+        return this.http.get<RenderedPhoto[]>( url ).pipe(
+            map(( data: Photo[] ) => {
+                let result: RenderedPhoto[] = new Array();
+
+                for ( let photo of data ) {
+                    result.push( new RenderedPhoto().copyFrom( photo ) );
+                }
+
+                return result;
+            } ),
+            tap( data => console.log( "PhotoService.getPhotoHighlightsByExpedition(...) results: " + data ) ) );
+    }
+
+
+    getAllPhotos(): Observable<RenderedPhoto[]> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/all`;
         console.log( "PhotoServce.getPhotos()" );
         return this.http.get<Photo[]>( url ).pipe( map(( data: Photo[] ) => {

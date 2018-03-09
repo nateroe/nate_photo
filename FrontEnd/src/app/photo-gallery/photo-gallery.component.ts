@@ -29,7 +29,7 @@ export class PhotoGalleryComponent implements OnInit {
 
     ngOnInit() {
         // XXX fixme
-        this.photoService.getPhotos().subscribe(
+        this.photoService.getAllPhotos().subscribe(
             data => {
                 this.photos = data;
                 this.layout();
