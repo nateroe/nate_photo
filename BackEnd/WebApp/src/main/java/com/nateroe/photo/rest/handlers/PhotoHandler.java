@@ -66,7 +66,15 @@ public class PhotoHandler {
 	@GET
 	@Path("expedition/{expeditionId}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public List<Photo> getPhotosById(@PathParam("expeditionId") long expeditionId) {
+	public List<Photo> getPhotosByExpedition(@PathParam("expeditionId") long expeditionId) {
 		return photoDao.findByExpeditionId(expeditionId);
+	}
+
+	@GET
+	@Path("expeditionHighlight/{expeditionId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<Photo> getPhotosByExpeditionHighlight(
+			@PathParam("expeditionId") long expeditionId) {
+		return photoDao.findHighlightsByExpeditionId(expeditionId);
 	}
 }

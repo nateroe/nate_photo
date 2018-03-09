@@ -58,4 +58,17 @@ public class PhotoDao extends AbstractEntityDao<Photo> {
 
 		return em.createQuery(criteria).getResultList();
 	}
+
+	public List<Photo> findHighlightsByExpeditionId(Long expeditionId) {
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Photo> criteria = builder.createQuery(Photo.class);
+		Root<Photo> root = criteria.from(Photo.class);
+		criteria.select(root);
+		criteria.where(builder.and( //
+				builder.equal(root.get("expeditionId"), expeditionId),
+				builder.ge(root.get("rating"), 4)));
+		criteria.orderBy(builder.desc(root.get("rating")));
+
+		return em.createQuery(criteria).setMaxResults(5).getResultList();
+	}
 }
