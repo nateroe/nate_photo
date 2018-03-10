@@ -2,7 +2,9 @@
 	<div *ngFor='let expedition of expeditions' class="inner">
 		<div class="row">
 			<div class="leftColumn title">
-				{{expedition.name}}
+				<a routerLink="/expedition/{{expedition.id}}" >
+					{{expedition.name}}
+				</a>
 			</div>
 			<div class="rightColumn dateRange">
 				{{expedition.beginDate | date:'MMMM d, y'}}

@@ -62,8 +62,7 @@ export class PhotoDetailComponent implements OnInit {
     }
 
     chooseBestResource() {
-        //        let width: number = this.wrapper.nativeElement.clientWidth;
-        //        this.bestResource = this.photo.getBestResourceByArea( width * width * 0.666 );
-        this.bestResource = this.photo.getBestResourceByArea( 1024 * 1024 * 0.666 );
+        let width: number = this.wrapper.nativeElement.clientWidth;
+        this.bestResource = this.photo.getBestResourceByArea( width * width * 0.666 );
     }
 }

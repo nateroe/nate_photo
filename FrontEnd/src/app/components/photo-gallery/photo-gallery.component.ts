@@ -17,7 +17,7 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { RenderedPhoto } from '../../model/rendered-photo';
 import { ImageResource } from '../../model/image-resource';
 import { PhotoService } from '../../services/photo.service';
@@ -27,7 +27,7 @@ import { PhotoService } from '../../services/photo.service';
     templateUrl: './photo-gallery.component.html',
     styleUrls: ['./photo-gallery.component.css']
 } )
-export class PhotoGalleryComponent implements OnInit {
+export class PhotoGalleryComponent implements OnChanges {
     @ViewChild( 'wrapper' ) wrapper: ElementRef
 
     @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
@@ -38,6 +38,7 @@ export class PhotoGalleryComponent implements OnInit {
     readonly MARGIN: number = 5;
 
     // photos in the collection
+    @Input()
     photos: RenderedPhoto[];
 
     // photos arranged in rows (see layout()) 
@@ -46,13 +47,10 @@ export class PhotoGalleryComponent implements OnInit {
     constructor( private photoService: PhotoService, public changeDetectorRef: ChangeDetectorRef ) {
     }
 
-    ngOnInit() {
-        // XXX fixme
-        this.photoService.getAllPhotos().subscribe(
-            data => {
-                this.photos = data;
-                this.layout();
-            } );
+    ngOnChanges() {
+        console.log( "PhotoGalleryComponent.onChanges() ---->" );
+        this.layout();
+        console.log( "PhotoGalleryComponent.onChanges() <----" );
     }
 
     /**
