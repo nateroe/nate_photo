@@ -59,6 +59,7 @@ public class PhotoDao extends AbstractEntityDao<Photo> {
 		criteria.where(builder.and( //
 				builder.equal(root.get("expeditionId"), expeditionId),
 				builder.ge(root.get("rating"), MIN_RATING)));
+		criteria.orderBy(builder.desc(root.get("date")));
 
 		return em.createQuery(criteria).getResultList();
 	}
@@ -71,7 +72,7 @@ public class PhotoDao extends AbstractEntityDao<Photo> {
 		criteria.where(builder.and( //
 				builder.equal(root.get("expeditionId"), expeditionId),
 				builder.ge(root.get("rating"), 4)));
-		criteria.orderBy(builder.desc(root.get("rating")));
+		criteria.orderBy(builder.desc(root.get("rating")), builder.desc(root.get("date")));
 
 		return em.createQuery(criteria).setMaxResults(5).getResultList();
 	}
@@ -83,6 +84,7 @@ public class PhotoDao extends AbstractEntityDao<Photo> {
 		Root<Photo> root = criteria.from(Photo.class);
 		criteria.select(root);
 		criteria.where(builder.ge(root.get("rating"), MIN_RATING));
+		criteria.orderBy(builder.desc(root.get("date")));
 
 		return em.createQuery(criteria).getResultList();
 	}
