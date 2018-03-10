@@ -26,6 +26,7 @@ import { ImageResource } from './image-resource';
 export class RenderedPhoto extends Photo {
     width: number;
     height: number;
+    isVisible: boolean = true;
 
     copyFrom( that: Photo ): RenderedPhoto {
         super.copyFrom( that );

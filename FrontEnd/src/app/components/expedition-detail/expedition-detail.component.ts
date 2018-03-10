@@ -53,8 +53,15 @@ export class ExpeditionDetailComponent implements OnInit {
                     data => {
                         console.log( "ExpeditionDetailComponent.ngOnInit() ---->" );
                         this.photos = data;
+                        this.sortPhotos();
                         console.log( "ExpeditionDetailComponent.ngOnInit() <----" );
                     } );
             } );
+    }
+
+    sortPhotos(): void {
+        this.photos.sort(( a: RenderedPhoto, b: RenderedPhoto ) => {
+            return a.date.getTime() - b.date.getTime();
+        } );
     }
 }

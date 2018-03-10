@@ -82,7 +82,6 @@ export class PhotoGalleryComponent implements OnChanges {
         let nominalArea: number = nominalWidth * nominalHeight;
 
         for ( let photo of this.photos ) {
-
             let bestResource: ImageResource = photo.getBestResourceByArea( nominalArea );
 
             // scale factor of the best resource to nominal height
@@ -138,7 +137,7 @@ export class PhotoGalleryComponent implements OnChanges {
      */
     private resize() {
         for ( let photoRow of this.photoRows ) {
-            // calculate nominal row width
+            // calculate unscaled row width
             let rowWidth: number = 0;
             for ( let photo of photoRow ) {
                 rowWidth += photo.width;
@@ -151,7 +150,7 @@ export class PhotoGalleryComponent implements OnChanges {
             // determine the scale factor for the row
             let rowScale: number;
             if ( photoRow === this.photoRows[this.photoRows.length - 1] ) {
-                // if this is  the last row, natural size
+                // if this is  the last row, no scaling
                 rowScale = 1.0;
             } else {
                 // all other rows scale to fit width
