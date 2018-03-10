@@ -2,9 +2,66 @@
 body {
 	background-color: black;
 	color: white;
-	font-family: helvetica,arial,sans-serif;
+	font-family: helvetica, arial, sans-serif;
 }
 
+hr {
+	border: 0;
+	margin: 0 0 5px 0; height : 1px;
+	background: #FFFFFF;
+	height: 1px;
+}
+
+.title {
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.copy {
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.smallText {
+	font-size: 12px;
+	font-weight: 400;
+}
+
+a:link, a:visited {
+	text-decoration: none;
+	color: white;
+}
+
+a:hover, a.active {
+	text-decoration: none;
+	color: #ffc000;
+}
+
+.finePrint {
+	font-size: 10px;
+	font-style: italic;
+	padding: 10px 0;
+}
+
+.row {
+	display: flex;
+}
+
+.leftColumn {
+	flex: 65%;
+}
+
+.rightColumn {
+	flex: 35%;
+}
+
+.rightAligned {
+	text-align: right;
+}
+
+.bottomAligned {
+	align-self: flex-end;
+}
 
 .debugBorder {
 	border-width: 1px;

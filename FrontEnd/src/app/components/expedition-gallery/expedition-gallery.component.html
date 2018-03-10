@@ -1,12 +1,12 @@
 <div #wrapper class="wrapper">
 	<div *ngFor='let expedition of expeditions' class="inner">
 		<div class="row">
-			<div class="leftColumn title">
+			<div class="leftColumn title bottomAligned">
 				<a routerLink="/expedition/{{expedition.id}}" >
-					{{expedition.name}}
+					{{expedition.name}} <img src="assets/icons_arrows.png">
 				</a>
 			</div>
-			<div class="rightColumn dateRange">
+			<div class="rightColumn smallText bottomAligned rightAligned">
 				{{expedition.beginDate | date:'MMMM d, y'}}
 				<span *ngIf='expedition.isMultiDay()'>- {{expedition.endDate | date:'MMMM d, y'}}</span>
 			</div>

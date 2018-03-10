@@ -2,7 +2,7 @@
 	<div class="leftColumn title">
 			{{expedition.name}}
 	</div>
-	<div class="rightColumn dateRange">
+	<div class="rightColumn smallText bottomAligned rightAligned">
 		{{expedition.beginDate | date:'MMMM d, y'}} <span
 			*ngIf='expedition.isMultiDay()'>- {{expedition.endDate |
 			date:'MMMM d, y'}}</span>
