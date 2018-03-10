@@ -26,7 +26,8 @@ import { ExpeditionGalleryComponent } from './components/expedition-gallery/expe
 
 const routes: Routes = [
     { path: '', component: ExpeditionGalleryComponent },
-    { path: 'photo/:photoId', component: PhotoDetailComponent }
+    { path: 'photo/:photoId', component: PhotoDetailComponent },
+    { path: 'expedition/:expeditionId', component: ExpeditionDetailComponent }
 ];
 
 @NgModule( {
