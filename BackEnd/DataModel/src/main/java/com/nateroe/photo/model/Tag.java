@@ -20,33 +20,15 @@
 
 package com.nateroe.photo.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 
 @XmlRootElement
-public class Tag {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
-	@SequenceGenerator(name = "increment", sequenceName = "Tag_pk_seq")
-	private Long id;
+public class Tag extends AbstractEntity {
 	private String value;
 
 	public Tag() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	@SuppressWarnings("unused")
-	private void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getValue() {

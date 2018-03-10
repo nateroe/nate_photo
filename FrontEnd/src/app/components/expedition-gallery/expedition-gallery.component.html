@@ -1,0 +1,30 @@
+<div #wrapper class="wrapper">
+	<div *ngFor='let expedition of expeditions' class="inner">
+		<div class="row">
+			<div class="leftColumn title bottomAligned">
+				<a routerLink="/expedition/{{expedition.id}}" >
+					{{expedition.name}} <img src="assets/icons_arrows.png">
+				</a>
+			</div>
+			<div class="rightColumn smallText bottomAligned rightAligned">
+				{{expedition.beginDate | date:'MMMM d, y'}}
+				<span *ngIf='expedition.isMultiDay()'>- {{expedition.endDate | date:'MMMM d, y'}}</span>
+			</div>
+		</div>
+		<div>
+			<hr>
+		</div>
+		<div *ngIf='expeditionHighlights && expeditionHighlights.get(expedition.id)' class="row">
+			<div *ngFor='let photo of expeditionHighlights.get(expedition.id)' class="photo">
+				<div *ngIf='photo.isVisible'>
+					<a routerLink="/photo/{{photo.id}}">
+						<img
+							[style.width.px]="photo.width"
+							[style.height.px]="photo.height" 
+							[src]="photo.getBestResource().url" />
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -20,10 +20,30 @@
 
 package com.nateroe.photo.dao;
 
-import javax.ejb.Stateless;
+import java.util.List;
 
-import com.nateroe.photo.model.CommonName;
+import javax.ejb.Stateless;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+import com.nateroe.photo.model.Expedition;
 
 @Stateless
-public class CommonNameDao extends AbstractEntityDao<CommonName> {
+public class ExpeditionDao extends AbstractEntityDao<Expedition> {
+	public Expedition findByNames(String systemName) {
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Expedition> criteria = builder.createQuery(Expedition.class);
+		Root<Expedition> root = criteria.from(Expedition.class);
+		criteria.select(root);
+		criteria.where(builder.equal(root.get("systemName"), systemName));
+
+		Expedition returnVal = null;
+		List<Expedition> results = em.createQuery(criteria).getResultList();
+		if (results.size() > 0) {
+			returnVal = results.get(0);
+		}
+
+		return returnVal;
+	}
 }

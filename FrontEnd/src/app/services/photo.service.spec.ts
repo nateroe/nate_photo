@@ -17,13 +17,18 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
+import { TestBed, inject } from '@angular/core/testing';
 
-package com.nateroe.photo.dao;
+import { PhotoService } from './photo.service';
 
-import javax.ejb.Stateless;
+describe( 'PhotoService', () => {
+    beforeEach(() => {
+        TestBed.configureTestingModule( {
+            providers: [PhotoService]
+        } );
+    } );
 
-import com.nateroe.photo.model.CommonName;
-
-@Stateless
-public class CommonNameDao extends AbstractEntityDao<CommonName> {
-}
+    it( 'should be created', inject( [PhotoService], ( service: PhotoService ) => {
+        expect( service ).toBeTruthy();
+    } ) );
+} );

@@ -1,5 +1,5 @@
-<div *ngIf="bestResource">
-	<div class="center">
+<div #wrapper class="wrapper">
+	<div class="center" *ngIf="bestResource">
 		<div class="center">
 			<img class="bg" [attr.src]="bestResource.url" />
 		</div>
@@ -7,8 +7,8 @@
 			height="{{1024 / (bestResource.width / bestResource.height)}}" /-->
 		<div class="row center">
 			<div class="leftColumn">
-				<h1>{{photo.title}}</h1>
-				<p>{{photo.description}}</p>
+				<div class="title">{{photo.title}}</div>
+				<div class="copy">{{photo.description}}</div>
 			</div>
 			<div class="rightColumn">
 				<table>
@@ -30,7 +30,12 @@
 					<tr *ngIf="photo.focalLength">
 						<td><span class="exif">Focal Length</span></td>
 						<td></td>
-						<td>{{photo.focalLength}}s</td>
+						<td>{{photo.focalLength}} mm</td>
+					</tr>
+					<tr *ngIf="photo.focusDistance">
+						<td><span class="exif">Focus Dist</span></td>
+						<td></td>
+						<td>{{photo.focusDistance}} m (approx.)</td>
 					</tr>
 					<tr>
 						<td><span class="exif">Aperture</span></td>
@@ -47,18 +52,28 @@
 						<td></td>
 						<td>{{photo.iso}}</td>
 					</tr>
-					<tr>
+					<tr *ngIf="photo.flash">
 						<td><span class="exif">Flash</span></td>
 						<td></td>
-						<td>{{photo.isFlashFired}}</td>
+						<td>{{photo.getFlashString()}}</td>
 					</tr>
-					<tr>
-						<td><span class="exif">Focus Dist</span></td>
+					<tr *ngIf="photo.latitude">
+						<td><span class="exif">Latitude</span></td>
 						<td></td>
-						<td>{{photo.focusDistance}}</td>
+						<td>{{photo.latitude}}</td>
+					</tr>
+					<tr *ngIf="photo.longitude">
+						<td><span class="exif">Longitude</span></td>
+						<td></td>
+						<td>{{photo.longitude}}</td>
+					</tr>
+					<tr *ngIf="photo.altitude">
+						<td><span class="exif">Altitude</span></td>
+						<td></td>
+						<td>{{photo.altitude}}</td>
 					</tr>
 				</table>
-				<div class="copyright">{{photo.copyright}}</div>
+				<div class="finePrint">{{photo.copyright}} {{photo.usageTerms}}</div>
 			</div>
 		</div>
 	</div>

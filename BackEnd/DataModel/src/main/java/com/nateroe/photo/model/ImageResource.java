@@ -21,11 +21,7 @@ package com.nateroe.photo.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -38,29 +34,17 @@ import com.google.common.base.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "ImageResource")
-public class ImageResource {
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
-	@SequenceGenerator(name = "increment", sequenceName = "ImageResource_pk_seq")
-	private Long id;
-
+public class ImageResource extends AbstractEntity {
 	@XmlTransient
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Photo parent;
 
 	private String url;
+	private String fileName;
 	private int width;
 	private int height;
 
 	public ImageResource() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Photo getParent() {
@@ -77,6 +61,14 @@ public class ImageResource {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	public int getWidth() {
@@ -97,7 +89,7 @@ public class ImageResource {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getId(), parent, url, width, height);
+		return Objects.hashCode(getId(), parent, url, fileName, width, height);
 	}
 
 	@Override
@@ -114,6 +106,7 @@ public class ImageResource {
 			returnVal = Objects.equal(this.getId(), other.getId()) //
 					&& Objects.equal(this.parent, other.parent) //
 					&& Objects.equal(this.url, other.url) //
+					&& Objects.equal(this.fileName, other.fileName) //
 					&& Objects.equal(this.width, other.width) //
 					&& Objects.equal(this.height, other.height) //
 			;

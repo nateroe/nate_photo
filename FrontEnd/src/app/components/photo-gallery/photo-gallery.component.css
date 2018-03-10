@@ -1,0 +1,18 @@
+.wrapper {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+.inner {
+	position: relative;
+}
+
+.row {
+	overflow: hidden;
+	display: flex;
+}
+
+.photo {
+	margin-right: 5px;
+}

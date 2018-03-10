@@ -21,15 +21,10 @@
 package com.nateroe.photo.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Objects;
 
@@ -37,24 +32,10 @@ import com.google.common.base.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "TaxonomicRank")
-public class TaxonomicRank {
-	@XmlTransient
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
-	@SequenceGenerator(name = "increment", sequenceName = "TaxonomicRank_pk_seq")
-	private Long id;
+public class TaxonomicRank extends AbstractEntity {
 	private String name;
 
 	public TaxonomicRank() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	@SuppressWarnings("unused")
-	private void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {

@@ -22,11 +22,7 @@ package com.nateroe.photo.model;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,13 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "CommonName")
-public class CommonName {
-	@XmlTransient
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
-	@SequenceGenerator(name = "increment", sequenceName = "CommonName_pk_seq")
-	private Long id;
-
+public class CommonName extends AbstractEntity {
 	private String name;
 
 	@XmlTransient
@@ -56,15 +46,6 @@ public class CommonName {
 	public CommonName(String name, Taxon parent) {
 		this.name = name;
 		this.parent = parent;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	@SuppressWarnings("unused")
-	private void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {

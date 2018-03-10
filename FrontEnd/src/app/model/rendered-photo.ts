@@ -17,13 +17,27 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
+import { Photo } from './photo';
+import { ImageResource } from './image-resource';
 
-package com.nateroe.photo.dao;
+/**
+ * A rendered Photo is a Photo that is rendered at some on-screen size. 
+ */
+export class RenderedPhoto extends Photo {
+    width: number;
+    height: number;
+    isVisible: boolean = true;
 
-import javax.ejb.Stateless;
+    copyFrom( that: Photo ): RenderedPhoto {
+        super.copyFrom( that );
+        // width and height are ignored because "that" is a Photo (not RenderedPhoto)
+        return this;
+    }
 
-import com.nateroe.photo.model.CommonName;
-
-@Stateless
-public class CommonNameDao extends AbstractEntityDao<CommonName> {
+    /**
+     * Return the best ImageResource for this RenderedPhoto's intrinsic size
+     */
+    getBestResource(): ImageResource {
+        return super.getBestResourceByArea( this.width * this.height );
+    }
 }

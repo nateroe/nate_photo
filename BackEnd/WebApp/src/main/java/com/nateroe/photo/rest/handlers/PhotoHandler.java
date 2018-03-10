@@ -42,7 +42,7 @@ public class PhotoHandler {
 	@GET
 	@Path("id/{photoId}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Photo getTaxonByTsn(@PathParam("photoId") long photoId) {
+	public Photo getPhotobyId(@PathParam("photoId") long photoId) {
 		Photo photo = photoDao.findByPrimaryKey(photoId);
 		if (photo == null) {
 			throw new NotFoundException();
@@ -54,12 +54,27 @@ public class PhotoHandler {
 	@GET
 	@Path("all")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public List<Photo> getTaxonByTsn() {
+	public List<Photo> getAllPhotos() {
 		List<Photo> photos = photoDao.findAll();
 		if (photos == null) {
 			throw new NotFoundException();
 		}
 
 		return photos;
+	}
+
+	@GET
+	@Path("expedition/{expeditionId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<Photo> getPhotosByExpedition(@PathParam("expeditionId") long expeditionId) {
+		return photoDao.findByExpeditionId(expeditionId);
+	}
+
+	@GET
+	@Path("expeditionHighlight/{expeditionId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<Photo> getPhotosByExpeditionHighlight(
+			@PathParam("expeditionId") long expeditionId) {
+		return photoDao.findHighlightsByExpeditionId(expeditionId);
 	}
 }

@@ -1,2 +1,2 @@
 # nate_photo
-My photographer website
+A web app that implements a photography website to showcase a single photographer's work.

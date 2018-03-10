@@ -1,3 +1,23 @@
+/**
+ * NatePhoto - A photo catalog and presentation application.
+ * Copyright (C) 2018 Nathaniel Roe
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contact nate [at] nateroe [dot] com
+ */
+
 package com.nateroe.photo.daemon;
 
 import java.awt.Graphics2D;
@@ -14,8 +34,15 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -34,20 +61,23 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.ExifDirectoryBase;
-import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
-import com.drew.metadata.iptc.IptcDirectory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.nateroe.photo.dao.ExpeditionDao;
 import com.nateroe.photo.dao.PhotoDao;
+import com.nateroe.photo.model.Expedition;
 import com.nateroe.photo.model.ImageResource;
 import com.nateroe.photo.model.Photo;
+import com.nateroe.photo.util.SystemUtil;
 
+/**
+ * The PhotoImportDaemon is a simplistic file-system based import utility.
+ * 
+ * @author nate
+ */
 @WebListener
 public class PhotoImportDaemon implements ServletContextListener, Runnable {
-	private static final Logger logger = LoggerFactory.getLogger(PhotoImportDaemon.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PhotoImportDaemon.class);
 
 	/**
 	 * Files to be imported are dumped in the handoff directory by the user
@@ -72,13 +102,15 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 	@EJB
 	PhotoDao photoDao;
+	@EJB
+	ExpeditionDao expeditionDao;
 
 	private long lastPolled = 0;
 	private ScheduledFuture<?> future;
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-		future = scheduler.scheduleAtFixedRate(this, 0, 10, TimeUnit.SECONDS);
+		future = scheduler.scheduleAtFixedRate(this, 10, 20, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -90,6 +122,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 	public void run() {
 		try {
 			final long pollTime = System.currentTimeMillis();
+			LOGGER.debug("--------- BEGIN POLLING ---------");
 
 			// Filter for files modified after the last poll time and before this poll time.
 			DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
@@ -116,67 +149,215 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
 				for (Path entry : stream) {
-					if (logger.isInfoEnabled()) {
-						logger.info("Found new file " + entry.toAbsolutePath().toString()
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Found new file " + entry.toAbsolutePath().toString()
 								+ " pollDate: " + dateFormatter.format(new Date(pollTime))
 								+ " last polled: " + dateFormatter.format(new Date(lastPolled)));
 					}
 					try {
-						acceptImage(entry);
+						if (entry.toFile().isDirectory()) {
+							// import directory as an expedition
+							acceptExpedition(entry);
+						} else if (entry.toFile().isFile()) {
+							// import file as an image
+							acceptImage(entry, null);
+						} // else ignore
 					} catch (IOException ioe) {
-						logger.warn("Failed to import image " + entry, ioe);
+						LOGGER.warn("Failed to import image " + entry, ioe);
 					}
 				}
 			} catch (IOException x) {
-				logger.error("Failed", x);
+				LOGGER.error("Failed", x);
 			}
 
 			// this is not threadsafe but there's only supposed to be one Daemon thread anyway.
 			lastPolled = pollTime;
+			LOGGER.debug("--------- END POLLING ---------");
 		} catch (Throwable t) {
-			logger.error("Failed", t);
+			LOGGER.error("Failed", t);
 		}
 	}
 
-	private void acceptImage(Path imagePath) throws ImageProcessingException, IOException {
+	private void acceptExpedition(Path expeditionPath) throws IOException {
+		// If present in the expedition folder, expedition.json will be read
+		File jsonFile = expeditionPath.resolve("expedition.json").toFile();
+
+		Expedition expedition = null;
+		if (jsonFile.exists()) {
+			try {
+				String json = new String(Files.readAllBytes(jsonFile.toPath()), "UTF-8");
+				Gson gson = new GsonBuilder().create();
+				expedition = gson.fromJson(json, Expedition.class);
+
+				LOGGER.debug("Read expedition.json:\n{}", json);
+			} catch (Throwable ignore) {
+				LOGGER.debug("Failed to read file " + jsonFile, ignore);
+			}
+		} else {
+			LOGGER.debug("File not found: {}", jsonFile);
+		}
+
+		if (expedition == null) {
+			expedition = new Expedition();
+			expedition.setName(expeditionPath.getFileName().toString());
+		}
+		expedition.setSystemName(expeditionPath.getFileName().toString());
+
+		Expedition existingExpedition = expeditionDao.findByNames(expedition.getSystemName());
+		if (existingExpedition != null) {
+			existingExpedition.copyFrom(expedition);
+			expedition = existingExpedition;
+		}
+		expedition = expeditionDao.saveOrUpdate(expedition);
+
+		// If we imported the expedition okay (haven't thrown so far)
+		FileUtils.deleteQuietly(jsonFile);
+
+		int failCount = 0;
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(expeditionPath)) {
+			for (Path entry : stream) {
+				try {
+					if (entry.toFile().isFile()) {
+						// import as an image, updating the Expedition if necessary
+						acceptImage(entry, expedition);
+					} // else ignore
+				} catch (IOException ioe) {
+					failCount++;
+					LOGGER.warn("Failed to import image " + entry, ioe);
+				}
+			}
+		}
+
+		// persist any changes to the Expedition
+		expeditionDao.saveOrUpdate(expedition);
+
+		// If everything went well
+		if (failCount == 0) {
+			// Delete the entire expedition from the handoff area
+			FileUtils.deleteQuietly(expeditionPath.toFile());
+		}
+	}
+
+	/**
+	 * Import an image from the given image path, joining it to the Expedition if specified.
+	 * Modifies the begin/end dates of the Expedition (if any) if necessary based on this photo's
+	 * date, if any.
+	 * 
+	 * @param imagePath
+	 * @param expedition
+	 *            nullable, if not null begin/end dates MAY be updated by acceptImage(...)
+	 * @throws IOException
+	 */
+	private void acceptImage(Path imagePath, Expedition expedition) throws IOException {
+		long startTime = System.currentTimeMillis();
+
 		File jpegFile = imagePath.toFile();
+		LOGGER.debug("accept image: {}", jpegFile);
+
+		// Read the first two bytes for JPEG magic number
 		boolean isJpeg = false;
 		try (RandomAccessFile raf = new RandomAccessFile(jpegFile, "r")) {
 			isJpeg = raf.readShort() == (short) 0xFFD8;
 		}
 
 		if (isJpeg) {
-			Photo photo = new Photo();
 			try {
 				// =========
 				// Read EXIF
 				// =========
-				Metadata metadata = ImageMetadataReader.readMetadata(jpegFile);
+				// Note: I tried a couple Java-based photo metadata libraries but neither
+				// found all the tags I wanted to import, so ExifTool it is.
+				String command = "exiftool -args -n -Title -Description -Rating -DateTimeOriginal "
+						+ "-Model -LensModel -FocalLength -ApproximateFocusDistance -FNumber -ExposureTime "
+						+ "-ISO -Flash -Rights -UsageTerms -GPSLatitude -GPSLongitude -GPSAltitude -Subject ";
+				command += imagePath;
+				String exifString = SystemUtil.executeScript(command);
 
-				ExifIFD0Directory ifd0Directory = metadata
-						.getFirstDirectoryOfType(ExifIFD0Directory.class);
-				ExifSubIFDDirectory subIfdDirectory = metadata
-						.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-				IptcDirectory iptcDirectory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+				LOGGER.trace("Ran command:\n{}\nProduced Results:\n{}\n", command, exifString);
 
-				photo.setTitle(iptcDirectory.getString(IptcDirectory.TAG_OBJECT_NAME));
-				photo.setDescription(iptcDirectory.getString(IptcDirectory.TAG_CAPTION));
-				// photo.setRating(...)
-				photo.setDate(subIfdDirectory.getDate(ExifDirectoryBase.TAG_DATETIME_ORIGINAL));
-				photo.setCamera(ifd0Directory.getString(ExifDirectoryBase.TAG_MODEL));
-				photo.setLens(subIfdDirectory.getString(ExifDirectoryBase.TAG_LENS_MODEL));
-				photo.setAperture(subIfdDirectory.getString(ExifDirectoryBase.TAG_APERTURE));
-				photo.setShutterSpeed(
-						subIfdDirectory.getString(ExifDirectoryBase.TAG_SHUTTER_SPEED));
-				photo.setIso(subIfdDirectory.getString(ExifDirectoryBase.TAG_ISO_EQUIVALENT));
-				photo.setFlashFired(subIfdDirectory.getString(ExifDirectoryBase.TAG_FLASH) != null
-						&& !subIfdDirectory.getString(ExifDirectoryBase.TAG_FLASH)
-								.contains("did not fire"));
-				photo.setFocalLength(subIfdDirectory.getString(ExifDirectoryBase.TAG_FOCAL_LENGTH));
-				// photo.setFocusDistance(...)
-				photo.setCopyright(iptcDirectory.getString(IptcDirectory.TAG_COPYRIGHT_NOTICE));
-				photo.setMakingOf(false);
+				Pattern.compile("\n").splitAsStream(exifString);
+				Map<String, String> tagMap = new HashMap<>();
+				try (Stream<String> stream = Pattern.compile("\n").splitAsStream(exifString)) {
+					stream.forEach(line -> {
+						if (line.length() > 2) {
+							String[] pieces = line.split("=");
+							if (pieces.length == 2) {
+								tagMap.put(pieces[0].trim(), pieces[1].trim());
+							} else {
+								LOGGER.warn("Cannot parse invalid EXIFTool result: {}", line);
+							}
+						}
+					});
+				}
+
+				Date date = parseDate(tagMap.get("-DateTimeOriginal"));
+
+				Photo photo = photoDao.findByOrigFilename(imagePath.getFileName().toString(), date);
+				List<ImageResource> oldResources = new LinkedList<>();
+				if (photo == null) {
+					photo = new Photo();
+				} else {
+					// We are re-importing an existing photo so we need to remove the old images
+					// we don't want to delete them here because processing has not yet occurred,
+					// but we need to cache them and then clear the list of resources so it will
+					// only contain new images
+					oldResources.addAll(photo.getImageResources());
+					photo.getImageResources().clear();
+				}
+				photo.setOrigFileName(imagePath.getFileName().toString());
+
+				photo.setTitle(tagMap.get("-Title"));
+				photo.setDescription(tagMap.get("-Description"));
+				photo.setRating(parseInt(tagMap.get("-Rating")));
+				photo.setDate(date);
+				photo.setCamera(tagMap.get("-Model"));
+				photo.setLens(tagMap.get("-LensModel"));
+				photo.setAperture(tagMap.get("-FNumber"));
+
+				Float shutterSpeed = parseFloat(tagMap.get("-ExposureTime"));
+				if (shutterSpeed != null) {
+					Integer roundFraction = Math.round(1.0f / shutterSpeed);
+					if (roundFraction > 1) {
+						photo.setShutterSpeed("1/" + roundFraction);
+					} else {
+						photo.setShutterSpeed(Integer.toString(Math.round(shutterSpeed)));
+					}
+				} else {
+					photo.setShutterSpeed(null);
+				}
+
+				photo.setIso(tagMap.get("-ISO"));
+				photo.setFlash(parseInt(tagMap.get("-Flash")));
+				photo.setFocalLength(parseFloat(tagMap.get("-FocalLength")));
+				photo.setFocusDistance(parseFloat(tagMap.get("-ApproximateFocusDistance")));
+				if (photo.getFocusDistance() != null && photo.getFocusDistance() > 100000) {
+					// if the focus distance is very large (> 100km) it's probably being
+					// misinterpreted (for some photos I get values such as 4294967300 m)
+					// in these cases, "null" is closer to correct.
+					photo.setFocusDistance(null);
+				}
+
+				photo.setLatitude(parseFloat("-GPSLatitude"));
+				photo.setLongitude(parseFloat("-GPSLongitude"));
+				photo.setAltitude(parseFloat("-GPSAltitude"));
+				photo.setCopyright(tagMap.get("-Rights"));
+				photo.setUsageTerms(tagMap.get("-UsageTerms"));
+				photo.setExpeditionId(expedition != null ? expedition.getId() : null);
+
+				// XXX for now, just auto-publish each photo on import
 				photo.setPublished(true);
+
+				// Maybe update the Expedition if new begin or end date
+				if (expedition != null) {
+					if (photo.getDate() != null && (expedition.getBeginDate() == null
+							|| photo.getDate().before(expedition.getBeginDate()))) {
+						expedition.setBeginDate(photo.getDate());
+					}
+					if (photo.getDate() != null && (expedition.getEndDate() == null
+							|| photo.getDate().after(expedition.getEndDate()))) {
+						expedition.setEndDate(photo.getDate());
+					}
+				}
 
 				// =============
 				// Process Image
@@ -206,10 +387,16 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 					BufferedImage scaledImage = getScaledInstance(image, width, height);
 
 					String fileName = appendFileName(jpegFile.getName(), "_" + maxDimension);
-					encodeJpeg(scaledImage, 0.9f,
-							new File(DESTINATION_DIRECTORY + File.separator + fileName));
+					Path dest = Paths.get(DESTINATION_DIRECTORY + File.separator + fileName);
+					encodeJpeg(scaledImage, 0.9f, dest.toFile());
 
-					// XXX copy EXIF tags
+					// copy only specific EXIF tags
+					command = "exiftool -tagsFromFile " + imagePath
+							+ " -Title -Description -Rating -DateTimeOriginal "
+							+ "-Model -LensModel -FocalLength -ApproximateFocusDistance -FNumber -ExposureTime "
+							+ "-ISO -Flash -Rights -UsageTerms -GPSLatitude -GPSLongitude -GPSAltitude -Subject "
+							+ dest;
+					SystemUtil.executeScript(command);
 
 					ImageResource imageResource = new ImageResource();
 					imageResource.setUrl(URL_PATH + fileName);
@@ -221,10 +408,23 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 					image = scaledImage;
 				}
 
-				// Move the original image to destination
+				// Copy the original image to destination
 				String fileName = appendFileName(jpegFile.getName(), "_orig");
-				FileUtils.copyFile(jpegFile,
-						new File(DESTINATION_DIRECTORY + File.separator + fileName));
+				Path dest = Paths.get(DESTINATION_DIRECTORY + File.separator + fileName);
+				FileUtils.copyFile(jpegFile, dest.toFile());
+
+				// delete all EXIF tags from the new copy
+				// (imported photos have only the subset of metadata that the app actually displays)
+				command = "exiftool -all= " + dest;
+				SystemUtil.executeScript(command);
+
+				// copy only specific EXIF tags
+				command = "exiftool -tagsFromFile " + imagePath
+						+ " -Title -Description -Rating -DateTimeOriginal "
+						+ "-Model -LensModel -FocalLength -ApproximateFocusDistance -FNumber -ExposureTime "
+						+ "-ISO -Flash -Rights -UsageTerms -GPSLatitude -GPSLongitude -GPSAltitude -Subject "
+						+ dest;
+				SystemUtil.executeScript(command);
 
 				ImageResource imageResource = new ImageResource();
 				imageResource.setUrl(URL_PATH + fileName);
@@ -233,19 +433,34 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				photo.addImageResource(imageResource);
 
 				// Persist the domain object
-				photoDao.save(photo);
+				photoDao.saveOrUpdate(photo);
 
 				// Delete original file last, if import completely succeeded.
 				FileUtils.deleteQuietly(jpegFile);
 
-				logger.info("File import successful: {}", fileName);
+				// XXX at this point, delete all old resources
+				// oldResources
+				for (ImageResource resource : oldResources) {
+					Path resourcePath = Paths.get(DESTINATION_DIRECTORY + File.separator
+							+ File.separator + resource.getFileName());
+					File resourceFile = resourcePath.toFile();
+					if (resourceFile.exists()) {
+						FileUtils.deleteQuietly(resourceFile);
+					}
+				}
+
+				if (LOGGER.isInfoEnabled()) {
+					float seconds = (float) (System.currentTimeMillis() - startTime) / 1000.0f;
+					LOGGER.info("File import successful: {} in {}", fileName,
+							String.format("%3.1fs", seconds));
+				}
 			} catch (Throwable t) {
 				// If any exception, roll back the processed files
 				String fileFilter = jpegFile.getName() + "_*";
 				try (DirectoryStream<Path> stream = Files
 						.newDirectoryStream(Paths.get(DESTINATION_DIRECTORY), fileFilter)) {
 					for (Path path : stream) {
-						logger.info("Rolling back failed import. Delete file {}", path);
+						LOGGER.info("Rolling back failed import. Delete file {}", path);
 						Files.delete(path);
 					}
 				}
@@ -257,7 +472,57 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 		}
 	}
 
-	public static BufferedImage getScaledInstance(BufferedImage image, int targetWidth,
+	/**
+	 * Try to parse, returning null on failure (failing silently)
+	 * 
+	 * @param integerString
+	 * @return
+	 */
+	private static Integer parseInt(String integerString) {
+		Integer result = null;
+		try {
+			result = Integer.parseInt(integerString);
+		} catch (Exception ignore) {
+		}
+		return result;
+	}
+
+	/**
+	 * Try to parse, returning null on failure (failing silently)
+	 * 
+	 * @param floatString
+	 * @return
+	 */
+	private static Float parseFloat(String floatString) {
+		Float result = null;
+		try {
+			result = Float.parseFloat(floatString);
+		} catch (Exception ignore) {
+		}
+		return result;
+	}
+
+	/**
+	 * Try to parse, returning null on failure (failing silently)
+	 * 
+	 * @param dateString
+	 * @return
+	 */
+	private static Date parseDate(String dateString) {
+		Date result = null;
+		try {
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+			// XXX not sure what to do about the timezone, I don't see it in the ExifTool results.
+			// XXX my camera is pretty much always set to PDT (even in winter) so that's what I'm
+			// using for now...
+			formatter.setTimeZone(TimeZone.getTimeZone("PDT"));
+			result = formatter.parse(dateString);
+		} catch (Exception ignore) {
+		}
+		return result;
+	}
+
+	private static BufferedImage getScaledInstance(BufferedImage image, int targetWidth,
 			int targetHeight) {
 		int type = (image.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
 				: BufferedImage.TYPE_INT_ARGB;

@@ -17,13 +17,9 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
-
-package com.nateroe.photo.dao;
-
-import javax.ejb.Stateless;
-
-import com.nateroe.photo.model.CommonName;
-
-@Stateless
-public class CommonNameDao extends AbstractEntityDao<CommonName> {
+export class ImageResource {
+    id: number;
+    url: string;
+    width: number;
+    height: number;
 }

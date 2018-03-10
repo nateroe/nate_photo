@@ -17,13 +17,29 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
+import { Photo } from './photo';
 
-package com.nateroe.photo.dao;
+export class Expedition {
+    id: number;
+    name: string;
+    description: string;
+    beginDate: Date;
+    endDate: Date;
 
-import javax.ejb.Stateless;
+    copyFrom( that: Expedition ): Expedition {
+        Object.assign( this, that );
+        this.beginDate = new Date( that.beginDate );
+        this.endDate = new Date( that.endDate );
+        return this;
+    }
 
-import com.nateroe.photo.model.CommonName;
-
-@Stateless
-public class CommonNameDao extends AbstractEntityDao<CommonName> {
+    isMultiDay(): boolean {
+        let result: boolean = false;
+        if ( this.beginDate != null && this.endDate != null ) {
+            result = this.beginDate.getDate() != this.endDate.getDate()
+                || this.beginDate.getMonth() != this.endDate.getMonth()
+                || this.beginDate.getFullYear() != this.endDate.getFullYear();
+        }
+        return result;
+    }
 }

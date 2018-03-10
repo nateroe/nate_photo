@@ -17,13 +17,27 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
+package com.nateroe.photo.model;
 
-package com.nateroe.photo.dao;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 
-import javax.ejb.Stateless;
+@MappedSuperclass
+public abstract class AbstractEntity {
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "increment")
+	@SequenceGenerator(name = "increment", sequenceName = "CommonName_pk_seq")
+	private Long id;
 
-import com.nateroe.photo.model.CommonName;
+	public Long getId() {
+		return id;
+	}
 
-@Stateless
-public class CommonNameDao extends AbstractEntityDao<CommonName> {
+	@SuppressWarnings("unused")
+	private void setId(Long id) {
+		this.id = id;
+	}
 }
