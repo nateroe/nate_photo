@@ -32,6 +32,8 @@ import com.nateroe.photo.model.Photo;
 
 @Stateless
 public class PhotoDao extends AbstractEntityDao<Photo> {
+	private static final int MIN_RATING = 3;
+
 	public Photo findByOrigFilename(String fileName, Date date) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		CriteriaQuery<Photo> criteria = builder.createQuery(Photo.class);
@@ -54,7 +56,9 @@ public class PhotoDao extends AbstractEntityDao<Photo> {
 		CriteriaQuery<Photo> criteria = builder.createQuery(Photo.class);
 		Root<Photo> root = criteria.from(Photo.class);
 		criteria.select(root);
-		criteria.where(builder.equal(root.get("expeditionId"), expeditionId));
+		criteria.where(builder.and( //
+				builder.equal(root.get("expeditionId"), expeditionId),
+				builder.ge(root.get("rating"), MIN_RATING)));
 
 		return em.createQuery(criteria).getResultList();
 	}
@@ -70,5 +74,16 @@ public class PhotoDao extends AbstractEntityDao<Photo> {
 		criteria.orderBy(builder.desc(root.get("rating")));
 
 		return em.createQuery(criteria).setMaxResults(5).getResultList();
+	}
+
+	@Override
+	public List<Photo> findAll() {
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Photo> criteria = builder.createQuery(Photo.class);
+		Root<Photo> root = criteria.from(Photo.class);
+		criteria.select(root);
+		criteria.where(builder.ge(root.get("rating"), MIN_RATING));
+
+		return em.createQuery(criteria).getResultList();
 	}
 }
