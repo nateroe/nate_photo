@@ -46,8 +46,8 @@ import { ExpeditionGalleryComponent } from './components/expedition-gallery/expe
         AppRoutingModule
     ],
     providers: [
-        PhotoService
-ExpeditionService
+        PhotoService,
+        ExpeditionService
     ],
     bootstrap: [AppComponent]
 } )
