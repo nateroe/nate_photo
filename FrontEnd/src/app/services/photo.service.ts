@@ -21,11 +21,7 @@ import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
 import { map } from 'rxjs/operators/map';
-import 'rxjs/add/observable/from';
-import 'rxjs/add/operator/map';
-import { switchMap } from 'rxjs/operators/switchmap';
 import { tap } from 'rxjs/operators/tap';
 import { catchError } from 'rxjs/operators/catchError';
 

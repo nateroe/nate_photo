@@ -46,8 +46,9 @@ export class ExpeditionDetailComponent implements OnInit {
             .subscribe(
             expedition => {
                 this.expedition = expedition;
-                this.photoService.getAllPhotos()
-                    //                getPhotosByExpedition( expedition.id )
+                this.photoService
+                    //.getAllPhotos()
+                    .getPhotosByExpedition( expedition.id )
                     .subscribe(
                     data => {
                         console.log( "ExpeditionDetailComponent.ngOnInit() ---->" );
