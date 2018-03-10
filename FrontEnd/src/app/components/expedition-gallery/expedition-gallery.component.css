@@ -6,6 +6,7 @@
 
 .inner {
 	position: relative;
+	padding-bottom: 30px;	
 }
 
 .row {
@@ -15,3 +16,30 @@
 .photo {
 	margin-right: 5px;
 }
+
+.leftColumn {
+	flex: 65%;
+}
+
+.rightColumn {
+	flex: 35%;
+}
+
+.title {
+	font-size: 20px;
+	font-weight: 700;
+	align-self: flex-end;
+}
+
+.dateRange {
+	font-size: 12px;
+	font-weight: 400;	
+	align-self: flex-end;
+}
+
+hr {
+	border: 0;
+	height: 1px;
+	background: #FFFFFF;
+}
+

@@ -1,11 +1,13 @@
 <div class="wrapper">
 	<div *ngFor='let expedition of expeditions' class="inner">
-		<div>
-			{{expedition.name}}
-		</div>
-		<div>
-			{{expedition.beginDate | date:'MMMM d, y'}}
-			<span *ngIf='expedition.isMultiDay()'>- {{expedition.endDate | date:'MMMM d, y'}}</span>
+		<div class="row">
+			<div class="leftColumn title">
+				{{expedition.name}}
+			</div>
+			<div class="rightColumn dateRange">
+				{{expedition.beginDate | date:'MMMM d, y'}}
+				<span *ngIf='expedition.isMultiDay()'>- {{expedition.endDate | date:'MMMM d, y'}}</span>
+			</div>
 		</div>
 		<div>
 			<hr>

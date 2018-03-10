@@ -4,3 +4,10 @@ body {
 	color: white;
 	font-family: helvetica,arial,sans-serif;
 }
+
+
+.debugBorder {
+	border-width: 1px;
+	border-style: solid;
+	border-color: red;
+}
