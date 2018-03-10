@@ -74,7 +74,7 @@ public class PhotoDao extends AbstractEntityDao<Photo> {
 				builder.ge(root.get("rating"), 4)));
 		criteria.orderBy(builder.desc(root.get("rating")), builder.desc(root.get("date")));
 
-		return em.createQuery(criteria).setMaxResults(5).getResultList();
+		return em.createQuery(criteria).getResultList();
 	}
 
 	@Override
