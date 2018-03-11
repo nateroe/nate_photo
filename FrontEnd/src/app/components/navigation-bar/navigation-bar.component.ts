@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 } )
 export class NavigationBarComponent implements OnInit {
 
+    readonly SITE_TITLE: string = "nate roe";
+
     constructor( private router: Router ) { }
 
     ngOnInit() {
