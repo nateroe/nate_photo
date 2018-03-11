@@ -1,6 +1,7 @@
 <div class="row">
 	<div class="leftColumn bottomAligned">
-		<a routerLink="/"><img src="assets/home_logo.png"></a>
+		<a routerLink="/" *ngIf="!isOnHomePage()"><img src="assets/home_logo.png"></a>
+		<span *ngIf="isOnHomePage()"><img src="assets/home_logo.png"></span>
 	</div>
 	<div class="rightColumn bottomAligned">
 		<a routerLink="/expeditions">Expeditions</a>

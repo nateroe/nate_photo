@@ -181,7 +181,8 @@ export class ExpeditionGalleryComponent implements OnInit {
                 console.log( "rowWidth: " + rowWidth );
             }
         }
-        this.changeDetectorRef.detectChanges()
+
+        this.changeDetectorRef.detectChanges();
     }
 
     private getResponsiveColumns(): number {
@@ -195,7 +196,6 @@ export class ExpeditionGalleryComponent implements OnInit {
         } else {
             numPhotosPerRow = 2;
         }
-
 
         return numPhotosPerRow;
     }
