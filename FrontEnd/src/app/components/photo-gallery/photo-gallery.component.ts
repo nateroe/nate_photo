@@ -57,6 +57,7 @@ export class PhotoGalleryComponent implements OnChanges {
      * Arrange the photos into rows 
      */
     private layout() {
+        console.log( "PhotoGalleryComponent.layout() ---->  this.photos: " + this.photos );
         this.photoRows = new Array();
 
         let curRow: RenderedPhoto[] = new Array();
@@ -136,6 +137,7 @@ export class PhotoGalleryComponent implements OnChanges {
      * resize each row (by resizing all the photos in it)  to fit the screen
      */
     private resize() {
+        console.log( "PhotoGalleryComponent.resize() ---->" );
         for ( let photoRow of this.photoRows ) {
             // calculate unscaled row width
             let rowWidth: number = 0;

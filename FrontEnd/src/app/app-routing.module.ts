@@ -23,9 +23,10 @@ import { PhotoDetailComponent } from './components/photo-detail/photo-detail.com
 import { PhotoGalleryComponent } from './components/photo-gallery/photo-gallery.component';
 import { ExpeditionDetailComponent } from './components/expedition-detail/expedition-detail.component';
 import { ExpeditionGalleryComponent } from './components/expedition-gallery/expedition-gallery.component';
+import { BestOfGalleryComponent } from './components/best-of-gallery/best-of-gallery.component';
 
 const routes: Routes = [
-    { path: '', component: ExpeditionGalleryComponent },
+    { path: '', component: BestOfGalleryComponent },
     { path: 'photo/:photoId', component: PhotoDetailComponent },
     { path: 'expedition/:expeditionId', component: ExpeditionDetailComponent }
 ];

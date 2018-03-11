@@ -83,6 +83,20 @@ export class PhotoService {
     }
 
 
+    getBestPhotos(): Observable<RenderedPhoto[]> {
+        const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/highlights`;
+        console.log( "PhotoServce.getBestPhotos()" );
+        return this.http.get<Photo[]>( url ).pipe( map(( data: Photo[] ) => {
+            let result: RenderedPhoto[] = new Array();
+
+            for ( let photo of data ) {
+                result.push( new RenderedPhoto().copyFrom( photo ) );
+            }
+
+            return result;
+        } ), tap( data => console.log( "PhotoService.getBestPhotos() results: " + data ) ) );
+    }
+
     getAllPhotos(): Observable<RenderedPhoto[]> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/all`;
         console.log( "PhotoServce.getPhotos()" );

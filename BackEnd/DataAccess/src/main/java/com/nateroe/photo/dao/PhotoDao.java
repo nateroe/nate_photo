@@ -33,6 +33,7 @@ import com.nateroe.photo.model.Photo;
 @Stateless
 public class PhotoDao extends AbstractEntityDao<Photo> {
 	private static final int MIN_RATING = 3;
+	private static final int MIN_HIGHLIGHT_RATING = 4;
 
 	public Photo findByOrigFilename(String fileName, Date date) {
 		CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -71,10 +72,22 @@ public class PhotoDao extends AbstractEntityDao<Photo> {
 		criteria.select(root);
 		criteria.where(builder.and( //
 				builder.equal(root.get("expeditionId"), expeditionId),
-				builder.ge(root.get("rating"), 4)));
+				builder.ge(root.get("rating"), MIN_HIGHLIGHT_RATING)));
 		criteria.orderBy(builder.desc(root.get("rating")), builder.desc(root.get("date")));
 
 		return em.createQuery(criteria).getResultList();
+	}
+
+	public List<Photo> findAllHighlights() {
+		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaQuery<Photo> criteria = builder.createQuery(Photo.class);
+		Root<Photo> root = criteria.from(Photo.class);
+		criteria.select(root);
+		criteria.where(builder.ge(root.get("rating"), MIN_HIGHLIGHT_RATING));
+		criteria.orderBy(builder.desc(root.get("rating")), builder.desc(root.get("date")));
+
+		// limit all highlights to max 25.
+		return em.createQuery(criteria).setMaxResults(25).getResultList();
 	}
 
 	@Override
