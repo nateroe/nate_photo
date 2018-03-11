@@ -1,12 +1,12 @@
-.leftColumn {
-	flex: 25%;
+.nowrap {
+	flex-wrap: nowrap;
 }
 
-.rightColumn {
-	flex: 75%;
+.padLeft {
+	padding: 3px 20px;
 }
 
 .siteTitle {
-	font-size: 28px;
-	font-weight: 900;
+	font-size: 32px;
+	font-weight: 600;
 }

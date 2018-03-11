@@ -63,6 +63,10 @@ a:hover, a.active {
 	align-self: flex-end;
 }
 
+.nowrap {
+	flex-wrap: nowrap;
+}
+
 .debugBorder {
 	border-width: 1px;
 	border-style: solid;

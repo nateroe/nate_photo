@@ -1,9 +1,9 @@
 <div class="row">
-	<div class="leftColumn bottomAligned">
+	<div class="bottomAligned nowrap">
 		<a routerLink="/" *ngIf="!isOnHomePage()"><img src="assets/icons_home.png"> <span class="siteTitle">{{SITE_TITLE}}</span></a>
 		<span *ngIf="isOnHomePage()" class="siteTitle">{{SITE_TITLE}}</span>
 	</div>
-	<div class="rightColumn bottomAligned">
+	<div class="bottomAligned nowrap padLeft">
 		<a routerLink="/expeditions">Expeditions</a>
 	</div>
 </div>
