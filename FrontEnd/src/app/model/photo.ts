@@ -47,6 +47,7 @@ export class Photo {
 
     copyFrom( that: Photo ): Photo {
         Object.assign( this, that );
+        this.date = new Date( that.date );
 
         this.images = new Array();
         for ( let thatImage of that.images ) {

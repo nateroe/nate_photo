@@ -72,9 +72,12 @@ export class ExpeditionGalleryComponent implements OnInit {
         );
     }
 
+    /**
+     * Sort expeditions by date, descending (most recent first)
+     */
     sortExpeditions(): void {
         this.expeditions.sort(( a: Expedition, b: Expedition ) => {
-            return a.beginDate.getTime() - b.beginDate.getTime();
+            return b.beginDate.getTime() - a.beginDate.getTime();
         } );
     }
 
