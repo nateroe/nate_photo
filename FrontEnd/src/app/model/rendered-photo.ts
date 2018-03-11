@@ -36,8 +36,9 @@ export class RenderedPhoto extends Photo {
 
     /**
      * Return the best ImageResource for this RenderedPhoto's intrinsic size
+     * (or null if not isVisible).
      */
     getBestResource(): ImageResource {
-        return super.getBestResourceByArea( this.width * this.height );
+        return ( !this.isVisible ) ? null : super.getBestResourceByArea( this.width * this.height );
     }
 }
