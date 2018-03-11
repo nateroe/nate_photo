@@ -164,8 +164,8 @@ export class ExpeditionGalleryComponent implements OnInit {
                 let rowScale: number;
                 // try to fit width
                 rowScale = this.wrapper.nativeElement.clientWidth / rowWidth;
-                if ( Math.abs( rowScale - 1.0 ) > 0.5 ) {
-                    // if we are stretching too much, no scaling
+                if ( visibleHighlights < this.getResponsiveColumns() ) {
+                    // don't scale incomplete rows to fit width
                     rowScale = 1.0;
                 }
 
@@ -184,16 +184,16 @@ export class ExpeditionGalleryComponent implements OnInit {
         this.changeDetectorRef.detectChanges()
     }
 
-    private getResponsiveColumns() {
+    private getResponsiveColumns(): number {
         // "Responsive" -- the ideal number of photos per row depends on the wrapper width
         let numPhotosPerRow: number;
         let wrapperWidth: number = this.wrapper.nativeElement.clientWidth;
         if ( wrapperWidth >= 1024 ) {
-            numPhotosPerRow = 3;
+            numPhotosPerRow = 5;
         } else if ( wrapperWidth >= 600 ) {
-            numPhotosPerRow = 2;
+            numPhotosPerRow = 3;
         } else {
-            numPhotosPerRow = 1;
+            numPhotosPerRow = 2;
         }
 
 
