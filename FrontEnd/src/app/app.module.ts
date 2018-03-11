@@ -31,6 +31,7 @@ import { PhotoGalleryComponent } from './components/photo-gallery/photo-gallery.
 import { ExpeditionDetailComponent } from './components/expedition-detail/expedition-detail.component';
 import { ExpeditionGalleryComponent } from './components/expedition-gallery/expedition-gallery.component';
 import { BestOfGalleryComponent } from './components/best-of-gallery/best-of-gallery.component';
+import { NavigationBarComponent } from './components/navigation-bar/navigation-bar.component';
 
 
 @NgModule( {
@@ -40,7 +41,8 @@ import { BestOfGalleryComponent } from './components/best-of-gallery/best-of-gal
         PhotoGalleryComponent,
         ExpeditionDetailComponent,
         ExpeditionGalleryComponent,
-        BestOfGalleryComponent
+        BestOfGalleryComponent,
+        NavigationBarComponent
     ],
     imports: [
         BrowserModule,

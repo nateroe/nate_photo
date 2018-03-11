@@ -1,0 +1,7 @@
+.leftColumn {
+	flex: 25%;
+}
+
+.rightColumn {
+	flex: 75%;
+}

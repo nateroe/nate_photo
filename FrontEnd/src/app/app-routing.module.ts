@@ -28,6 +28,7 @@ import { BestOfGalleryComponent } from './components/best-of-gallery/best-of-gal
 const routes: Routes = [
     { path: '', component: BestOfGalleryComponent },
     { path: 'photo/:photoId', component: PhotoDetailComponent },
+    { path: 'expeditions', component: ExpeditionGalleryComponent },
     { path: 'expedition/:expeditionId', component: ExpeditionDetailComponent }
 ];
 
