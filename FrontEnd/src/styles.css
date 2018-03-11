@@ -47,12 +47,8 @@ a:hover, a.active {
 	display: flex;
 }
 
-.leftColumn {
-	flex: 65%;
-}
-
-.rightColumn {
-	flex: 35%;
+.grow {
+	flex-grow: 1;
 }
 
 .rightAligned {

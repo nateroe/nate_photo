@@ -1,14 +1,15 @@
 <div #wrapper class="wrapper">
 	<div *ngFor='let expedition of expeditions' class="inner">
 		<div class="row">
-			<div class="leftColumn title bottomAligned">
+			<div class="title bottomAligned grow">
 				<a routerLink="/expedition/{{expedition.id}}" >
-					{{expedition.name}} <img src="assets/icons_arrows.png">
+					<span>{{getTitleFirstWords(expedition)}}</span>
+					<span class="nowrap">{{getTitleLastWord(expedition)}} <img src="assets/icons_arrows.png"></span>
 				</a>
 			</div>
 			<div class="rightColumn smallText bottomAligned rightAligned">
-				{{expedition.beginDate | date:'MMMM d, y'}}
-				<span *ngIf='expedition.isMultiDay()'>- {{expedition.endDate | date:'MMMM d, y'}}</span>
+				<div class="beginDate">{{expedition.beginDate | date:'MMMM d, y'}}</div>
+				<div *ngIf='expedition.isMultiDay()' class="endDate">- {{expedition.endDate | date:'MMMM d, y'}}</div>
 			</div>
 		</div>
 		<div>
