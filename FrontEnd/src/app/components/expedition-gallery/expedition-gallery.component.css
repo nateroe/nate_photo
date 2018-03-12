@@ -12,15 +12,3 @@
 .photo {
 	margin-right: 5px;
 }
-
-.beginDate {
-	float: left;
-}
-
-.endDate {
-	float: right;
-}
-
-.nowrap {
-	white-space: nowrap;
-}

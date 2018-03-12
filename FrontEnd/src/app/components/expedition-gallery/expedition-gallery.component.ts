@@ -73,28 +73,6 @@ export class ExpeditionGalleryComponent implements OnInit {
     }
 
     /**
-     * Return all but the last word of the expedition title
-     */
-    getTitleFirstWords( expedition: Expedition ): string {
-        let words: string[] = expedition.name.split( ' ' );
-        console.log( "words: " + words );
-        let result: string = null;
-        for ( let i: number = 0; i < words.length - 1; i++ ) {
-            if ( i > 0 ) {
-                result += " " + words[i];
-            } else {
-                result = words[i];
-            }
-        }
-        return result;
-    }
-
-    getTitleLastWord( expedition: Expedition ): string {
-        let words: string[] = expedition.name.split( ' ' );
-        return words[words.length - 1];
-    }
-
-    /**
      * Sort expeditions by date, descending (most recent first)
      */
     sortExpeditions(): void {

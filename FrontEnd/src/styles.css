@@ -68,3 +68,7 @@ a:hover, a.active {
 	border-style: solid;
 	border-color: red;
 }
+
+.nowrap {
+	white-space: nowrap;
+}

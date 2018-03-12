@@ -1,14 +1,3 @@
-<div class="row" *ngIf="expedition">
-	<div class="leftColumn title">
-			{{expedition.name}}
-	</div>
-	<div class="rightColumn smallText bottomAligned rightAligned">
-		{{expedition.beginDate | date:'MMMM d, y'}} <span
-			*ngIf='expedition.isMultiDay()'>- {{expedition.endDate |
-			date:'MMMM d, y'}}</span>
-	</div>
-</div>
-
+<app-expedition-header [expedition]="expedition" [isLink]="false"  *ngIf="expedition"></app-expedition-header>
 <div *ngIf="expedition">{{expedition.description}}</div>
-
 <app-photo-gallery [photos]="photos" *ngIf="photos"></app-photo-gallery>

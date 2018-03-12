@@ -47,7 +47,6 @@ export class ExpeditionDetailComponent implements OnInit {
             expedition => {
                 this.expedition = expedition;
                 this.photoService
-                    //.getAllPhotos()
                     .getPhotosByExpedition( expedition.id )
                     .subscribe(
                     data => {
