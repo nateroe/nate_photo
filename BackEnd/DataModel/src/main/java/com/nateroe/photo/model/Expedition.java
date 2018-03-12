@@ -35,7 +35,7 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "Expedition")
 public class Expedition extends AbstractEntity {
-	private String name;
+	private String title;
 	private String description;
 	private Date beginDate;
 	private Date endDate;
@@ -60,8 +60,8 @@ public class Expedition extends AbstractEntity {
 	 */
 	public void copyFrom(Expedition that) {
 		if (that != null) {
-			if (that.name != null) {
-				this.name = that.name;
+			if (that.title != null) {
+				this.title = that.title;
 			}
 			if (that.description != null) {
 				this.description = that.description;
@@ -83,12 +83,12 @@ public class Expedition extends AbstractEntity {
 		this.systemName = systemName;
 	}
 
-	public String getName() {
-		return name;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getDescription() {
@@ -117,7 +117,7 @@ public class Expedition extends AbstractEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getId(), name, systemName, description, beginDate, endDate);
+		return Objects.hashCode(getId(), title, systemName, description, beginDate, endDate);
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class Expedition extends AbstractEntity {
 			Expedition other = (Expedition) obj;
 
 			returnVal = Objects.equal(this.getId(), other.getId())
-					&& Objects.equal(this.name, other.name)
+					&& Objects.equal(this.title, other.title)
 					&& Objects.equal(this.systemName, other.systemName)
 					&& Objects.equal(this.description, other.description)
 					&& Objects.equal(this.beginDate, other.beginDate)

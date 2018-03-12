@@ -199,7 +199,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 		if (expedition == null) {
 			expedition = new Expedition();
-			expedition.setName(expeditionPath.getFileName().toString());
+			expedition.setTitle(expeditionPath.getFileName().toString());
 		}
 		expedition.setSystemName(expeditionPath.getFileName().toString());
 
