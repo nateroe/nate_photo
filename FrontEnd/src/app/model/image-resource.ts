@@ -17,6 +17,10 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
+
+/**
+ * An image resource represents a specific image (one mipmap of a Photo)
+ */
 export class ImageResource {
     id: number;
     url: string;

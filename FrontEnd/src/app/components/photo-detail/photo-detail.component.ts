@@ -20,7 +20,7 @@
 import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
-import { Photo } from '../../model/photo';
+import { RenderedPhoto } from '../../model/rendered-photo';
 import { PhotoService } from '../../services/photo.service';
 import { ImageResource } from '../../model/image-resource';
 
@@ -39,7 +39,7 @@ export class PhotoDetailComponent implements OnInit {
         this.chooseBestResource();
     }
 
-    photo: Photo;
+    photo: RenderedPhoto;
     bestResource: ImageResource;
 
     constructor( private route: ActivatedRoute, private photoService: PhotoService ) {

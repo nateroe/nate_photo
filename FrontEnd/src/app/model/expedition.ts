@@ -17,8 +17,10 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
-import { Photo } from './photo';
 
+/**
+ * An Expedition is a trip during which many photos were captured.
+ */
 export class Expedition {
     id: number;
     title: string;

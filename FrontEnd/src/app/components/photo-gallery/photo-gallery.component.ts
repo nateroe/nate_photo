@@ -17,7 +17,10 @@
  * 
  * Contact nate [at] nateroe [dot] com
  */
-import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
+import {
+    ChangeDetectorRef, Component, ElementRef, HostListener, Input,
+    OnChanges, Output, QueryList, ViewChild, ViewChildren
+} from '@angular/core';
 import { RenderedPhoto } from '../../model/rendered-photo';
 import { ImageResource } from '../../model/image-resource';
 import { PhotoService } from '../../services/photo.service';
@@ -29,6 +32,11 @@ import { PhotoService } from '../../services/photo.service';
 } )
 export class PhotoGalleryComponent implements OnChanges {
     @ViewChild( 'wrapper' ) wrapper: ElementRef
+    @ViewChildren( 'photoChild' ) photoElements: QueryList<ElementRef>
+
+    @HostListener( 'window:scroll', ['$event'] ) triggerCycle( event: any ) {
+        this.resize();
+    }
 
     @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
         this.layout(); // includes resize
@@ -163,9 +171,37 @@ export class PhotoGalleryComponent implements OnChanges {
             for ( let photo of photoRow ) {
                 photo.width *= rowScale;
                 photo.height *= rowScale;
+                photo.isOnScreen = this.isPhotoOnScreen( photo.id );
             }
         }
 
         this.changeDetectorRef.detectChanges()
+    }
+
+    private isPhotoOnScreen( photoId: number ): boolean {
+        console.log( "--------------------------------------" );
+        console.log( "isPhotoOnScreen(" + photoId + ") called. Elements: " + this.photoElements );
+        let result: boolean = false;
+        if ( this.photoElements ) {
+            let element: any = this.photoElements.toArray().find( element => element.nativeElement.photoId == photoId );
+
+            for ( let el of this.photoElements.toArray() ) {
+                console.log( "el: " + el + " photoID: " + el.nativeElement.photoId );
+            }
+
+            if ( element != null ) {
+                let top: number = element.getBoundingClientRect().top
+                let bottom: number = element.getBoundingClientRect().bottom
+
+                // The element is on screen if either the top of the image is within the window,
+                // or the bottom of the image is within the window,
+                // or the top of the image is above the window and the bottom of the image is below.
+                return ( top >= 0 && top < window.innerHeight )
+                    || ( bottom >= 0 && bottom < window.innerHeight )
+                    || ( top < 0 && bottom >= window.innerHeight );
+            }
+        }
+
+        return result;
     }
 }
