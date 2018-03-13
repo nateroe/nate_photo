@@ -47,20 +47,22 @@ export class ExpeditionDetailComponent implements OnInit {
             expedition => {
                 this.expedition = expedition;
                 this.photoService
-                    //.getAllPhotos()
                     .getPhotosByExpedition( expedition.id )
                     .subscribe(
                     data => {
-                        console.log( "ExpeditionDetailComponent.ngOnInit() ---->" );
+                        console.log( "ExpeditionDetailComponent.sortPhotos() ---->" );
                         this.photos = data;
                         this.sortPhotos();
-                        console.log( "ExpeditionDetailComponent.ngOnInit() <----" );
+                        console.log( "ExpeditionDetailComponent.sortPhotos() <----" );
                     } );
             } );
     }
 
+    /**
+     * Sort photos by date, ascending (chronologically)
+     */
     sortPhotos(): void {
-        this.photos.sort(( a: RenderedPhoto, b: RenderedPhoto ) => {
+        this.photos = this.photos.sort(( a: RenderedPhoto, b: RenderedPhoto ) => {
             return a.date.getTime() - b.date.getTime();
         } );
     }

@@ -1,0 +1,13 @@
+<div class="row">
+	<div class="title bottomAligned grow">
+		<app-site-link linkDestination="/expedition/{{expedition.id}}"
+			linkText="{{expedition.title}}" imgSrc="assets/icons_arrows.png"
+			imgSrcHover="assets/icons_arrows_hover.png" *ngIf="isLink"> </app-site-link>
+		<span *ngIf="!isLink">{{expedition.title}}</span>
+	</div>
+	<div class="rightColumn smallText bottomAligned rightAligned">
+		<div class="beginDate">{{expedition.beginDate | date:'MMMM d, y'}}</div>
+		<div *ngIf='expedition.isMultiDay()' class="endDate">-
+			{{expedition.endDate | date:'MMMM d, y'}}</div>
+	</div>
+</div>

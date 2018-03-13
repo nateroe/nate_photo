@@ -47,6 +47,7 @@ export class Photo {
 
     copyFrom( that: Photo ): Photo {
         Object.assign( this, that );
+        this.date = new Date( that.date );
 
         this.images = new Array();
         for ( let thatImage of that.images ) {
@@ -60,6 +61,7 @@ export class Photo {
 
     getBestResourceByArea( area: number ): ImageResource {
         let result: ImageResource = null;
+
         for ( let image of this.images ) {
             result = image;
             // find first image smaller than or equal to one and a half times the requested area
@@ -70,7 +72,7 @@ export class Photo {
             }
         }
 
-        if ( !result.url.startsWith( environment.restBaseUrl ) ) {
+        if ( result && !result.url.startsWith( environment.restBaseUrl ) ) {
             result.url = environment.restBaseUrl + result.url;
         }
 

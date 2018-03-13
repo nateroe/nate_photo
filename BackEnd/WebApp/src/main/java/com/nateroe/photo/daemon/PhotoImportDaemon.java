@@ -122,7 +122,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 	public void run() {
 		try {
 			final long pollTime = System.currentTimeMillis();
-			LOGGER.debug("--------- BEGIN POLLING ---------");
+			LOGGER.trace("--------- BEGIN POLLING ---------");
 
 			// Filter for files modified after the last poll time and before this poll time.
 			DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
@@ -172,7 +172,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 			// this is not threadsafe but there's only supposed to be one Daemon thread anyway.
 			lastPolled = pollTime;
-			LOGGER.debug("--------- END POLLING ---------");
+			LOGGER.trace("--------- END POLLING ---------");
 		} catch (Throwable t) {
 			LOGGER.error("Failed", t);
 		}
@@ -199,7 +199,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 		if (expedition == null) {
 			expedition = new Expedition();
-			expedition.setName(expeditionPath.getFileName().toString());
+			expedition.setTitle(expeditionPath.getFileName().toString());
 		}
 		expedition.setSystemName(expeditionPath.getFileName().toString());
 

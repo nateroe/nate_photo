@@ -64,6 +64,18 @@ public class PhotoHandler {
 	}
 
 	@GET
+	@Path("highlights")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public List<Photo> getBestPhotos() {
+		List<Photo> photos = photoDao.findAllHighlights();
+		if (photos == null) {
+			throw new NotFoundException();
+		}
+
+		return photos;
+	}
+
+	@GET
 	@Path("expedition/{expeditionId}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public List<Photo> getPhotosByExpedition(@PathParam("expeditionId") long expeditionId) {

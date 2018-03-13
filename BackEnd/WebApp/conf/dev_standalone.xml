@@ -154,18 +154,7 @@
                         <password>FIXME</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:jboss/datasources/ExampleDS" pool-name="ExampleDS" enabled="true" use-java-context="true">
-                    <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE</connection-url>
-                    <driver>h2</driver>
-                    <security>
-                        <user-name>sa</user-name>
-                        <password>sa</password>
-                    </security>
-                </datasource>
                 <drivers>
-                    <driver name="h2" module="com.h2database.h2">
-                        <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
-                    </driver>
                     <driver name="postgresql" module="org.postgresql">
                         <xa-datasource-class>org.postgresql.Driver</xa-datasource-class>
                     </driver>
@@ -192,7 +181,7 @@
                     <managed-scheduled-executor-service name="PhotoImportDaemonExecutor" jndi-name="java:jboss/ee/concurrency/scheduler/PhotoImportDaemonExecutor" context-service="default" hung-task-threshold="36000000" keepalive-time="3000"/>
                 </managed-scheduled-executor-services>
             </concurrent>
-            <default-bindings context-service="java:jboss/ee/concurrency/context/default" datasource="java:jboss/datasources/ExampleDS" managed-executor-service="java:jboss/ee/concurrency/executor/default" managed-scheduled-executor-service="java:jboss/ee/concurrency/scheduler/default" managed-thread-factory="java:jboss/ee/concurrency/factory/default"/>
+            <default-bindings context-service="java:jboss/ee/concurrency/context/default" datasource="java:jboss/datasources/natephotodb" managed-executor-service="java:jboss/ee/concurrency/executor/default" managed-scheduled-executor-service="java:jboss/ee/concurrency/scheduler/default" managed-thread-factory="java:jboss/ee/concurrency/factory/default"/>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:ejb3:5.0">
             <session-bean>
@@ -485,7 +474,9 @@
                     <filter-ref name="Access-Control-Allow-Headers"/>
                     <filter-ref name="Access-Control-Allow-Credentials"/>
                     <filter-ref name="Access-Control-Max-Age"/>
-		    <filter-ref name="photo" predicate="path-prefix('/photo')"/>
+                    <filter-ref name="photo" predicate="path-prefix('/photo')"/>
+                    <filter-ref name="expedition" predicate="path-prefix('/expedition')"/>
+                    <filter-ref name="expeditions" predicate="path-prefix('/expeditions')"/>
                     <http-invoker security-realm="ApplicationRealm"/>
                 </host>
             </server>
@@ -505,7 +496,9 @@
                 <response-header name="Access-Control-Allow-Headers" header-name="Access-Control-Allow-Headers" header-value="accept, authorization,  content-type, x-requested-with"/>
                 <response-header name="Access-Control-Allow-Credentials" header-name="Access-Control-Allow-Credentials" header-value="true"/>
                 <response-header name="Access-Control-Max-Age" header-name="Access-Control-Max-Age" header-value="1"/>
-		<rewrite name="photo" redirect="false" target="/"/>
+                <rewrite name="photo" target="/" redirect="false"/>
+                <rewrite name="expedition" target="/" redirect="false"/>
+                <rewrite name="expeditions" target="/" redirect="false"/>
             </filters>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:webservices:2.0">

@@ -1,0 +1,10 @@
+<a routerLink="{{linkDestination}}" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+
+	<!-- isImageFirst: {{isImageFirst}} -->
+
+	<span class="nowrap" *ngIf="isImageFirst"> <img src="{{getImageSrc()}}"> {{getTitleFirstWord(linkText)}}</span>
+	<span *ngIf="isImageFirst">{{getTitleLastPart(linkText)}}</span>
+	
+	<span  *ngIf="!isImageFirst">{{getTitleFirstPart(linkText)}}</span>
+	<span class="nowrap" *ngIf="!isImageFirst">{{getTitleLastWord(linkText)}} <img src="{{getImageSrc()}}"></span>
+</a>

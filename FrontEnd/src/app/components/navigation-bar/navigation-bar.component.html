@@ -1,0 +1,15 @@
+<div class="wrapper">
+	<div class="row">
+		<div class="bottomAligned nowrap siteTitle">
+			<app-site-link linkDestination="/" isImageFirst="true"
+				linkText="{{SITE_TITLE}}" imgSrc="assets/icons_home.png"
+				imgSrcHover="assets/icons_home_hover.png" *ngIf="!isOnHomePage()">
+			</app-site-link>
+			<span *ngIf="isOnHomePage()" class="siteTitle">{{SITE_TITLE}}</span>
+		</div>
+		<div class="bottomAligned nowrap padLeft">
+			<a routerLink="/expeditions">Expeditions</a>
+		</div>
+	</div>
+	<hr>
+</div>

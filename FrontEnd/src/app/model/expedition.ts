@@ -21,7 +21,7 @@ import { Photo } from './photo';
 
 export class Expedition {
     id: number;
-    name: string;
+    title: string;
     description: string;
     beginDate: Date;
     endDate: Date;

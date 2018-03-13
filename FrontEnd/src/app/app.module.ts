@@ -30,6 +30,10 @@ import { AppRoutingModule } from './/app-routing.module';
 import { PhotoGalleryComponent } from './components/photo-gallery/photo-gallery.component';
 import { ExpeditionDetailComponent } from './components/expedition-detail/expedition-detail.component';
 import { ExpeditionGalleryComponent } from './components/expedition-gallery/expedition-gallery.component';
+import { BestOfGalleryComponent } from './components/best-of-gallery/best-of-gallery.component';
+import { NavigationBarComponent } from './components/navigation-bar/navigation-bar.component';
+import { SiteLinkComponent } from './components/site-link/site-link.component';
+import { ExpeditionHeaderComponent } from './components/expedition-header/expedition-header.component';
 
 
 @NgModule( {
@@ -38,7 +42,11 @@ import { ExpeditionGalleryComponent } from './components/expedition-gallery/expe
         PhotoDetailComponent,
         PhotoGalleryComponent,
         ExpeditionDetailComponent,
-        ExpeditionGalleryComponent
+        ExpeditionGalleryComponent,
+        BestOfGalleryComponent,
+        NavigationBarComponent,
+        SiteLinkComponent,
+        ExpeditionHeaderComponent
     ],
     imports: [
         BrowserModule,

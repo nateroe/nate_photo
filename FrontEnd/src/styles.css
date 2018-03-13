@@ -47,12 +47,8 @@ a:hover, a.active {
 	display: flex;
 }
 
-.leftColumn {
-	flex: 65%;
-}
-
-.rightColumn {
-	flex: 35%;
+.grow {
+	flex-grow: 1;
 }
 
 .rightAligned {
@@ -63,8 +59,16 @@ a:hover, a.active {
 	align-self: flex-end;
 }
 
+.nowrap {
+	flex-wrap: nowrap;
+}
+
 .debugBorder {
 	border-width: 1px;
 	border-style: solid;
 	border-color: red;
+}
+
+.nowrap {
+	white-space: nowrap;
 }

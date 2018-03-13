@@ -72,9 +72,12 @@ export class ExpeditionGalleryComponent implements OnInit {
         );
     }
 
+    /**
+     * Sort expeditions by date, descending (most recent first)
+     */
     sortExpeditions(): void {
         this.expeditions.sort(( a: Expedition, b: Expedition ) => {
-            return a.beginDate.getTime() - b.beginDate.getTime();
+            return b.beginDate.getTime() - a.beginDate.getTime();
         } );
     }
 
@@ -84,7 +87,6 @@ export class ExpeditionGalleryComponent implements OnInit {
      * also hiding highlight photos that don't fit in one row.
      */
     private layout(): void {
-        console.log( "layout--->" );
         let curRowWidth: number = 0;
         let curRowHeight: number = 0;
 
@@ -95,23 +97,16 @@ export class ExpeditionGalleryComponent implements OnInit {
         let nominalArea: number = nominalWidth * nominalHeight;
 
         for ( let expedition of this.expeditions ) {
-            console.log( "layout--->1" );
             let highlights: RenderedPhoto[] = this.expeditionHighlights.get( expedition.id );
             if ( highlights ) {
-                console.log( "expedition.id: " + expedition.id );
-                console.log( "highlights: " + highlights );
-                if ( highlights ) {
-                    console.log( "highlights.length: " + highlights.length );
-                }
-
-                console.log( "layout--->2" );
-
+                curRowWidth = 0;
                 for ( let photo of highlights ) {
-                    console.log( "layout--->3" );
                     let bestResource: ImageResource = photo.getBestResourceByArea( nominalArea );
 
                     // scale factor of the best resource to nominal height
                     let imageScale: number = nominalHeight / bestResource.height;
+
+                    // calculate the scaled rendered size
                     photo.width = bestResource.width * imageScale;
                     photo.height = bestResource.height * imageScale;
 
@@ -121,67 +116,87 @@ export class ExpeditionGalleryComponent implements OnInit {
                         newWidth += this.MARGIN;
                     }
 
-                    // difference between row width and actual width
+                    // difference between row width and browser width
+                    // (larger difference, more scaling)
                     let newDiff = Math.abs( newWidth - wrapperWidth );
                     let oldDiff = Math.abs( curRowWidth - wrapperWidth );
 
-                    // if this photo DOESN'T fit in curRow
-                    if ( newDiff > oldDiff ) {
-                        // hide it
-                        photo.isVisible = false;
+                    // photo is visible if it fits in curRow
+                    // (less scaling is better)
+                    photo.isVisible = newDiff <= oldDiff;
+                    if ( photo.isVisible ) {
+                        if ( curRowWidth > 0 ) {
+                            curRowWidth += this.MARGIN;
+                        }
+                        curRowWidth += photo.width;
                     }
                 }
             }
         }
 
         this.resize();
-        console.log( "layout---<" );
     }
 
-
-
+    /**
+     * resize each row (by resizing all the photos in it)  to fit the screen
+     */
     private resize(): void {
-        console.log( "resize--->" );
         for ( let expedition of this.expeditions ) {
             // contains only visible highlights
             let highlights: RenderedPhoto[] = this.expeditionHighlights.get( expedition.id );
             //           let highlights: RenderedPhoto[] = this.expeditionHighlights.get( expedition.id ).filter( photo => photo.isVisible );
             if ( highlights ) {
-
                 // calculate unscaled row width
                 let rowWidth: number = 0;
+                let visibleHighlights: number = 0;
                 for ( let photo of highlights ) {
-                    rowWidth += photo.width;
+                    if ( photo.isVisible ) {
+                        rowWidth += photo.width;
+                        visibleHighlights++;
+                    }
                 }
-                if ( highlights.length > 1 ) {
-                    rowWidth += this.MARGIN * ( highlights.length - 1 );
+
+                if ( visibleHighlights > 1 ) {
+                    rowWidth += this.MARGIN * ( visibleHighlights - 1 );
                 }
 
                 // determine the scale factor for the row
                 let rowScale: number;
                 // try to fit width
                 rowScale = this.wrapper.nativeElement.clientWidth / rowWidth;
-                if ( Math.abs( rowScale - 1.0 ) > 0.5 ) {
-                    // if we are stretching too much, no scaling
+                if ( visibleHighlights < this.getResponsiveColumns() ) {
+                    // don't scale incomplete rows to fit width
                     rowScale = 1.0;
                 }
+
+                // apply to the RenderedPhoto dimension
+                for ( let photo of highlights ) {
+                    if ( photo.isVisible ) {
+                        photo.width *= rowScale;
+                        photo.height *= rowScale;
+                    }
+                }
+                console.log( "------" );
+                console.log( "this.wrapper.nativeElement.clientWidth: " + this.wrapper.nativeElement.clientWidth );
+                console.log( "rowWidth: " + rowWidth );
             }
         }
-        this.changeDetectorRef.detectChanges()
-        console.log( "resize---<" );
+
+        this.changeDetectorRef.detectChanges();
     }
 
-    private getResponsiveColumns() {
+    private getResponsiveColumns(): number {
         // "Responsive" -- the ideal number of photos per row depends on the wrapper width
         let numPhotosPerRow: number;
         let wrapperWidth: number = this.wrapper.nativeElement.clientWidth;
         if ( wrapperWidth >= 1024 ) {
-            numPhotosPerRow = 3;
+            numPhotosPerRow = 5;
         } else if ( wrapperWidth >= 600 ) {
-            numPhotosPerRow = 2;
+            numPhotosPerRow = 3;
         } else {
-            numPhotosPerRow = 1;
+            numPhotosPerRow = 2;
         }
+
         return numPhotosPerRow;
     }
 }
