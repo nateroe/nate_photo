@@ -39,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -147,8 +148,10 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 			Path dir = Paths.get(HANDOFF_DIRECTORY);
 			// SimpleDateFormat is not threadsafe so instantiate a new one every time.
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			boolean hasDoneWork = false;
 			try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
 				for (Path entry : stream) {
+					hasDoneWork = true;
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("Found new file " + entry.toAbsolutePath().toString()
 								+ " pollDate: " + dateFormatter.format(new Date(pollTime))
@@ -170,7 +173,27 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				LOGGER.error("Failed", x);
 			}
 
-			// this is not threadsafe but there's only supposed to be one Daemon thread anyway.
+			if (hasDoneWork) {
+				// even when you tell it -overwrite_original, sometimes
+				// exiftool leaves "*_original" files behind,
+				// so if we did any image importing, then delete all
+				// such files from the destination directory
+				try (DirectoryStream<Path> dirStream = Files
+						.newDirectoryStream(Paths.get(DESTINATION_DIRECTORY), "*_original")) {
+					for (Path path : dirStream) {
+						delete(path);
+					}
+				}
+
+				// Log time elapsed when any files processed
+				if (LOGGER.isDebugEnabled()) {
+					String timeElapsed = String.format("%3.1f",
+							((System.currentTimeMillis() - pollTime) / 1000.0f));
+					LOGGER.debug("Import completed in {}", timeElapsed);
+				}
+			}
+
+			// this is not threadsafe but there's only supposed to be one daemon thread anyway.
 			lastPolled = pollTime;
 			LOGGER.trace("--------- END POLLING ---------");
 		} catch (Throwable t) {
@@ -386,12 +409,12 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 					BufferedImage scaledImage = getScaledInstance(image, width, height);
 
-					String fileName = appendFileName(jpegFile.getName(), "_" + maxDimension);
+					String fileName = generateFileName();
 					Path dest = Paths.get(DESTINATION_DIRECTORY + File.separator + fileName);
 					encodeJpeg(scaledImage, 0.9f, dest.toFile());
 
 					// copy only specific EXIF tags
-					command = "exiftool -tagsFromFile " + imagePath
+					command = "exiftool -overwrite_original -tagsFromFile " + imagePath
 							+ " -Title -Description -Rating -DateTimeOriginal "
 							+ "-Model -LensModel -FocalLength -ApproximateFocusDistance -FNumber -ExposureTime "
 							+ "-ISO -Flash -Rights -UsageTerms -GPSLatitude -GPSLongitude -GPSAltitude -Subject "
@@ -409,7 +432,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				}
 
 				// Copy the original image to destination
-				String fileName = appendFileName(jpegFile.getName(), "_orig");
+				String fileName = generateFileName();
 				Path dest = Paths.get(DESTINATION_DIRECTORY + File.separator + fileName);
 				FileUtils.copyFile(jpegFile, dest.toFile());
 
@@ -419,7 +442,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				SystemUtil.executeScript(command);
 
 				// copy only specific EXIF tags
-				command = "exiftool -tagsFromFile " + imagePath
+				command = "exiftool -overwrite_original -tagsFromFile " + imagePath
 						+ " -Title -Description -Rating -DateTimeOriginal "
 						+ "-Model -LensModel -FocalLength -ApproximateFocusDistance -FNumber -ExposureTime "
 						+ "-ISO -Flash -Rights -UsageTerms -GPSLatitude -GPSLongitude -GPSAltitude -Subject "
@@ -438,15 +461,11 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				// Delete original file last, if import completely succeeded.
 				FileUtils.deleteQuietly(jpegFile);
 
-				// XXX at this point, delete all old resources
-				// oldResources
+				// at this point, delete all old (original) resources
 				for (ImageResource resource : oldResources) {
-					Path resourcePath = Paths.get(DESTINATION_DIRECTORY + File.separator
-							+ File.separator + resource.getFileName());
-					File resourceFile = resourcePath.toFile();
-					if (resourceFile.exists()) {
-						FileUtils.deleteQuietly(resourceFile);
-					}
+					String pathString = DESTINATION_DIRECTORY + File.separator + File.separator
+							+ resource.getFileName();
+					delete(Paths.get(pathString));
 				}
 
 				if (LOGGER.isInfoEnabled()) {
@@ -549,14 +568,21 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 		writer.write(null, new IIOImage(image, null, null), jpegParams);
 	}
 
-	private static String appendFileName(String name, String append) {
-		int extensionStart = name.lastIndexOf(".");
+	private static String generateFileName() {
+		String result;
+		do {
+			result = UUID.randomUUID().toString() + ".jpg";
+		} while (new File(result).exists());
+		return result;
+	}
 
-		StringBuffer returnVal = new StringBuffer();
-		returnVal.append(name.substring(0, extensionStart));
-		returnVal.append(append);
-		returnVal.append(".jpg");
-
-		return returnVal.toString();
+	/**
+	 * Quietly attempt to delete the given regular file
+	 */
+	private static void delete(Path path) {
+		File file = path.toFile();
+		if (file.exists()) {
+			FileUtils.deleteQuietly(file);
+		}
 	}
 }
