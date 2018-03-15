@@ -50,6 +50,33 @@ export class PhotoGalleryComponent implements OnInit, OnChanges {
     // photos in the collection
     @Input()
     photos: RenderedPhoto[];
+
+    /**
+     * Approximate number of columns for wide layout
+     */
+    @Input()
+    colsMax: number = 3;
+
+    /**
+     * Approximate number of columns for medium layout
+     */
+    @Input()
+    colsMed: number = 2;
+
+    /**
+     * Approximate number of columns for narrow layout
+     */
+    @Input()
+    colsMin: number = 1;
+
+    /**
+     * Maximum number of rows, no matter how many photos in the gallery.
+     * "0" means "unlimited".
+     */
+    @Input()
+    rowsMax: number = 0;
+
+
     photosById: Map<number, RenderedPhoto>;
 
     // photos arranged in rows (see layout()) 
@@ -59,12 +86,10 @@ export class PhotoGalleryComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-        console.log( "ngOnInit--------- " );
         this.photosById = new Map();
         for ( let photo of this.photos ) {
             photo.isLoaded = false; // no autoload
             this.photosById.set( photo.id, photo );
-            console.log( "map photo: " + photo.id );
         }
         this.layout();
     }
@@ -93,15 +118,9 @@ export class PhotoGalleryComponent implements OnInit, OnChanges {
         this.photoRows.push( curRow );
 
         // "Responsive" -- the ideal number of photos per row depends on the wrapper width
-        let numPhotosPerRow: number;
+        let numPhotosPerRow: number = this.getResponsiveColumns();
         let wrapperWidth: number = this.wrapper.nativeElement.clientWidth;
-        if ( wrapperWidth >= 1024 ) {
-            numPhotosPerRow = 3;
-        } else if ( wrapperWidth >= 600 ) {
-            numPhotosPerRow = 2;
-        } else {
-            numPhotosPerRow = 1;
-        }
+        let rowCount: number = 1;
 
         // calculate the ideal image size based on landscape orientation 3:2 aspect
         let nominalWidth: number = ( wrapperWidth - this.MARGIN * 2 ) / numPhotosPerRow;
@@ -140,19 +159,27 @@ export class PhotoGalleryComponent implements OnInit, OnChanges {
 
             // if this photo DOESN'T fit in curRow
             // (which is to say, if the natural width of the old row is closer to ideal) 
+            photo.isVisible = true;
             if ( newDiff > oldDiff ) {
-                // start a new row.
-                curRow = new Array();
-                this.photoRows.push( curRow );
-                curRowWidth = 0;
-                console.log( ">> New Row." );
+                if ( this.rowsMax == 0 || rowCount < this.rowsMax ) {
+                    // start a new row.
+                    console.log( ">> New Row. rowCount: " + rowCount + " (of " + this.rowsMax + ")" );
+                    rowCount++;
+                    curRow = new Array();
+                    this.photoRows.push( curRow );
+                    curRowWidth = 0;
+                } else {
+                    photo.isVisible = false;
+                }
             }
 
-            // Add the photo to curRow
-            curRow.push( photo );
-            curRowWidth += photo.width;
-            if ( curRow.length > 1 ) {
-                newWidth += this.MARGIN;
+            if ( photo.isVisible ) {
+                // Add the photo to curRow
+                curRow.push( photo );
+                curRowWidth += photo.width;
+                if ( curRow.length > 1 ) {
+                    newWidth += this.MARGIN;
+                }
             }
         }
 
@@ -216,13 +243,26 @@ export class PhotoGalleryComponent implements OnInit, OnChanges {
                         || ( bottom >= 0 && bottom < window.innerHeight )
                         || ( top < 0 && bottom >= window.innerHeight );
 
-                    console.log( "photo " + photo.id + " isLoaded: " + photo.isLoaded + " isOnScreen: " + isOnScreen );
                     photo.isLoaded = photo.isLoaded || isOnScreen;
-                    console.log( "NOW photo " + photo.id + " isLoaded: " + photo.isLoaded );
                 } else {
                     console.log( "No photo for " + photoId );
                 }
             }
         }
+    }
+
+    private getResponsiveColumns(): number {
+        // "Responsive" -- the ideal number of photos per row depends on the wrapper width
+        let numPhotosPerRow: number;
+        let wrapperWidth: number = this.wrapper.nativeElement.clientWidth;
+        if ( wrapperWidth >= 1024 ) {
+            numPhotosPerRow = this.colsMax;
+        } else if ( wrapperWidth >= 600 ) {
+            numPhotosPerRow = this.colsMed;
+        } else {
+            numPhotosPerRow = this.colsMin;
+        }
+
+        return numPhotosPerRow;
     }
 }
