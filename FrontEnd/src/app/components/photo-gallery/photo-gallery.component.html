@@ -1,15 +1,7 @@
 <div #wrapper class="wrapper">
-	<div class="inner">
-		<div *ngFor='let photoRow of photoRows' class="row">
-			<div *ngFor='let photo of photoRow' class="photo">
-				<a routerLink="/photo/{{photo.id}}" >
-					<img #photoChild
-						[style.width.px]="photo.width"
-						[style.height.px]="photo.height" 
-						[src]="photo.getBestResourceUrl()"
-						[attr.photoId]="photo.id" />
-				</a>
-			</div>
+	<div *ngFor='let photoRow of photoRows' class="row">
+		<div *ngFor='let photo of photoRow' class="photo">
+			<app-thumbnail [photo]="photo" #photoChild></app-thumbnail>
 		</div>
 	</div>
 </div>

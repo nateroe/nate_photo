@@ -34,6 +34,7 @@ import { BestOfGalleryComponent } from './components/best-of-gallery/best-of-gal
 import { NavigationBarComponent } from './components/navigation-bar/navigation-bar.component';
 import { SiteLinkComponent } from './components/site-link/site-link.component';
 import { ExpeditionHeaderComponent } from './components/expedition-header/expedition-header.component';
+import { ThumbnailComponent } from './components/thumbnail/thumbnail.component';
 
 
 @NgModule( {
@@ -46,7 +47,8 @@ import { ExpeditionHeaderComponent } from './components/expedition-header/expedi
         BestOfGalleryComponent,
         NavigationBarComponent,
         SiteLinkComponent,
-        ExpeditionHeaderComponent
+        ExpeditionHeaderComponent,
+        ThumbnailComponent
     ],
     imports: [
         BrowserModule,

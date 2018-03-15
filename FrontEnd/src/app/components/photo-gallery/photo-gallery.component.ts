@@ -24,15 +24,16 @@ import {
 import { RenderedPhoto } from '../../model/rendered-photo';
 import { ImageResource } from '../../model/image-resource';
 import { PhotoService } from '../../services/photo.service';
+import { ThumbnailComponent } from '../thumbnail/thumbnail.component';
 
 @Component( {
     selector: 'app-photo-gallery',
     templateUrl: './photo-gallery.component.html',
     styleUrls: ['./photo-gallery.component.css']
 } )
-export class PhotoGalleryComponent implements OnInit, OnChanges {
-    @ViewChild( 'wrapper' ) wrapper: ElementRef
-    @ViewChildren( 'photoChild' ) photoElements: QueryList<ElementRef>
+export class PhotoGalleryComponent implements OnInit {
+    @ViewChild( 'wrapper' ) wrapper: ElementRef;
+    @ViewChildren( 'photoChild' ) photoElements: QueryList<ThumbnailComponent>;
 
     @HostListener( 'window:scroll', ['$event'] ) triggerCycle( event: any ) {
         this.resize();
@@ -92,9 +93,6 @@ export class PhotoGalleryComponent implements OnInit, OnChanges {
             this.photosById.set( photo.id, photo );
         }
         this.layout();
-    }
-
-    ngOnChanges() {
     }
 
     ngAfterViewInit() {
@@ -229,28 +227,14 @@ export class PhotoGalleryComponent implements OnInit, OnChanges {
     private doDelayedLoad(): void {
         if ( this.photoElements && this.photos ) {
             for ( let element of this.photoElements.toArray() ) {
-                let photoId: number = Number( element.nativeElement.getAttribute( 'photoId' ) )
-                let photo: RenderedPhoto = this.photosById.get( photoId );
-
-                if ( photo != null ) {
-                    let top: number = element.nativeElement.getBoundingClientRect().top
-                    let bottom: number = element.nativeElement.getBoundingClientRect().bottom
-
-                    // The element is on screen if either the top of the image is within the window,
-                    // or the bottom of the image is within the window,
-                    // or the top of the image is above the window and the bottom of the image is below.
-                    let isOnScreen: boolean = ( top >= 0 && top < window.innerHeight )
-                        || ( bottom >= 0 && bottom < window.innerHeight )
-                        || ( top < 0 && bottom >= window.innerHeight );
-
-                    photo.isLoaded = photo.isLoaded || isOnScreen;
-                } else {
-                    console.log( "No photo for " + photoId );
-                }
+                element.doDelayedLoad();
             }
         }
     }
 
+    /**
+     * Return the ideal number of columns given the width of the browser viewport.
+     */
     private getResponsiveColumns(): number {
         // "Responsive" -- the ideal number of photos per row depends on the wrapper width
         let numPhotosPerRow: number;

@@ -1,0 +1,8 @@
+<a routerLink="/photo/{{photo.id}}"  (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()" class="wrapper">
+	<img #photoChild
+		[style.width.px]="photo.width"
+		[style.height.px]="photo.height" 
+		[src]="photo.getBestResourceUrl()"
+		[attr.photoId]="photo.id" />
+	<div class="textover" *ngIf="isMouseOver">{{photo.title}}</div>
+</a>
