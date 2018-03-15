@@ -21,7 +21,7 @@ import { environment } from '../../environments/environment';
 import { ImageResource } from './image-resource';
 
 /**
- * Corresponds to the back end Photo. Contains EXIF data and a list (an Array here) of ImageResources.
+ * Corresponds to the back end entity Photo. Contains EXIF data and a list (an Array here) of ImageResources.
  */
 export class Photo {
     id: number;

@@ -68,7 +68,6 @@ export class SiteLinkComponent implements OnInit {
      */
     getTitleLastPart( title: string ): string {
         let words: string[] = title.split( ' ' );
-        console.log( "last part: " + this.assembleTitle( words, 1, words.length - 1 ) );
         return this.assembleTitle( words, 1, words.length - 1 );
     }
 
@@ -82,7 +81,6 @@ export class SiteLinkComponent implements OnInit {
     }
 
     getImageSrc(): string {
-        console.log( "imgSrc: " + ( this.isMouseOver ) ? this.imgSrcHover : this.imgSrc );
         return ( this.isMouseOver ) ? this.imgSrcHover : this.imgSrc;
     }
 }

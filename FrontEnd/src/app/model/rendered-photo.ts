@@ -27,6 +27,7 @@ export class RenderedPhoto extends Photo {
     width: number;
     height: number;
     isVisible: boolean = true;
+    isLoaded: boolean = true;
 
     copyFrom( that: Photo ): RenderedPhoto {
         super.copyFrom( that );
@@ -36,9 +37,12 @@ export class RenderedPhoto extends Photo {
 
     /**
      * Return the best ImageResource for this RenderedPhoto's intrinsic size
-     * (or null if not isVisible).
+     * (or null if not isVisible or not isOnScreen).
      */
-    getBestResource(): ImageResource {
-        return ( !this.isVisible ) ? null : super.getBestResourceByArea( this.width * this.height );
+    getBestResourceUrl(): string {
+        let best: ImageResource = ( !this.isVisible || !this.isLoaded ) ? null : super.getBestResourceByArea( this.width * this.height )
+        let url: string = best == null ? '' : best.url;
+        //        console.log( "Best resource for " + this.id + " (isVisible: " + this.isVisible + ", isOnScreen: " + this.isLoaded + "): '" + url + "'" );
+        return url;
     }
 }
