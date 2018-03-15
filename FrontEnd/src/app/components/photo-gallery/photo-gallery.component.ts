@@ -18,8 +18,8 @@
  * Contact nate [at] nateroe [dot] com
  */
 import {
-    ChangeDetectorRef, Component, ElementRef, HostListener, Input,
-    OnChanges, Output, QueryList, ViewChild, ViewChildren
+    AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input,
+    OnChanges, OnInit, Output, QueryList, ViewChild, ViewChildren
 } from '@angular/core';
 import { RenderedPhoto } from '../../model/rendered-photo';
 import { ImageResource } from '../../model/image-resource';
@@ -30,16 +30,18 @@ import { PhotoService } from '../../services/photo.service';
     templateUrl: './photo-gallery.component.html',
     styleUrls: ['./photo-gallery.component.css']
 } )
-export class PhotoGalleryComponent implements OnChanges {
+export class PhotoGalleryComponent implements OnInit, OnChanges {
     @ViewChild( 'wrapper' ) wrapper: ElementRef
     @ViewChildren( 'photoChild' ) photoElements: QueryList<ElementRef>
 
     @HostListener( 'window:scroll', ['$event'] ) triggerCycle( event: any ) {
         this.resize();
+        this.doDelayedLoad();
     }
 
     @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
         this.layout(); // includes resize
+        this.doDelayedLoad();
     }
 
     // margin in pixels
@@ -48,6 +50,7 @@ export class PhotoGalleryComponent implements OnChanges {
     // photos in the collection
     @Input()
     photos: RenderedPhoto[];
+    photosById: Map<number, RenderedPhoto>;
 
     // photos arranged in rows (see layout()) 
     photoRows: RenderedPhoto[][] = new Array();
@@ -55,10 +58,25 @@ export class PhotoGalleryComponent implements OnChanges {
     constructor( private photoService: PhotoService, public changeDetectorRef: ChangeDetectorRef ) {
     }
 
-    ngOnChanges() {
-        console.log( "PhotoGalleryComponent.onChanges() ---->" );
+    ngOnInit() {
+        console.log( "ngOnInit--------- " );
+        this.photosById = new Map();
+        for ( let photo of this.photos ) {
+            photo.isLoaded = false; // no autoload
+            this.photosById.set( photo.id, photo );
+            console.log( "map photo: " + photo.id );
+        }
         this.layout();
-        console.log( "PhotoGalleryComponent.onChanges() <----" );
+    }
+
+    ngOnChanges() {
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            // delayed load works on the photoElements which are not available until AfterViewInit
+            this.doDelayedLoad();
+        } );
     }
 
     /**
@@ -171,37 +189,40 @@ export class PhotoGalleryComponent implements OnChanges {
             for ( let photo of photoRow ) {
                 photo.width *= rowScale;
                 photo.height *= rowScale;
-                photo.isOnScreen = this.isPhotoOnScreen( photo.id );
             }
         }
 
+        // reflect changes back to the view
         this.changeDetectorRef.detectChanges()
     }
 
-    private isPhotoOnScreen( photoId: number ): boolean {
-        console.log( "--------------------------------------" );
-        console.log( "isPhotoOnScreen(" + photoId + ") called. Elements: " + this.photoElements );
-        let result: boolean = false;
-        if ( this.photoElements ) {
-            let element: any = this.photoElements.toArray().find( element => element.nativeElement.photoId == photoId );
+    /**
+     * Flip each photo's isLoaded flag based on whether the photo has ever been on screen
+     */
+    private doDelayedLoad(): void {
+        if ( this.photoElements && this.photos ) {
+            for ( let element of this.photoElements.toArray() ) {
+                let photoId: number = Number( element.nativeElement.getAttribute( 'photoId' ) )
+                let photo: RenderedPhoto = this.photosById.get( photoId );
 
-            for ( let el of this.photoElements.toArray() ) {
-                console.log( "el: " + el + " photoID: " + el.nativeElement.photoId );
-            }
+                if ( photo != null ) {
+                    let top: number = element.nativeElement.getBoundingClientRect().top
+                    let bottom: number = element.nativeElement.getBoundingClientRect().bottom
 
-            if ( element != null ) {
-                let top: number = element.getBoundingClientRect().top
-                let bottom: number = element.getBoundingClientRect().bottom
+                    // The element is on screen if either the top of the image is within the window,
+                    // or the bottom of the image is within the window,
+                    // or the top of the image is above the window and the bottom of the image is below.
+                    let isOnScreen: boolean = ( top >= 0 && top < window.innerHeight )
+                        || ( bottom >= 0 && bottom < window.innerHeight )
+                        || ( top < 0 && bottom >= window.innerHeight );
 
-                // The element is on screen if either the top of the image is within the window,
-                // or the bottom of the image is within the window,
-                // or the top of the image is above the window and the bottom of the image is below.
-                return ( top >= 0 && top < window.innerHeight )
-                    || ( bottom >= 0 && bottom < window.innerHeight )
-                    || ( top < 0 && bottom >= window.innerHeight );
+                    console.log( "photo " + photo.id + " isLoaded: " + photo.isLoaded + " isOnScreen: " + isOnScreen );
+                    photo.isLoaded = photo.isLoaded || isOnScreen;
+                    console.log( "NOW photo " + photo.id + " isLoaded: " + photo.isLoaded );
+                } else {
+                    console.log( "No photo for " + photoId );
+                }
             }
         }
-
-        return result;
     }
 }
