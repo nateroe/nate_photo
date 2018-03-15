@@ -1,20 +1,20 @@
 /**
  * NatePhoto - A photo catalog and presentation application.
  * Copyright (C) 2018 Nathaniel Roe
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Contact nate [at] nateroe [dot] com
  */
 import {
@@ -31,19 +31,9 @@ import { ThumbnailComponent } from '../thumbnail/thumbnail.component';
     templateUrl: './photo-gallery.component.html',
     styleUrls: ['./photo-gallery.component.css']
 } )
-export class PhotoGalleryComponent implements OnInit {
+export class PhotoGalleryComponent implements OnInit, AfterViewInit {
     @ViewChild( 'wrapper' ) wrapper: ElementRef;
     @ViewChildren( 'photoChild' ) photoElements: QueryList<ThumbnailComponent>;
-
-    @HostListener( 'window:scroll', ['$event'] ) triggerCycle( event: any ) {
-        this.resize();
-        this.doDelayedLoad();
-    }
-
-    @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
-        this.layout(); // includes resize
-        this.doDelayedLoad();
-    }
 
     // margin in pixels
     readonly MARGIN: number = 5;
@@ -80,15 +70,25 @@ export class PhotoGalleryComponent implements OnInit {
 
     photosById: Map<number, RenderedPhoto>;
 
-    // photos arranged in rows (see layout()) 
+    // photos arranged in rows (see layout())
     photoRows: RenderedPhoto[][] = new Array();
+
+    @HostListener( 'window:scroll', ['$event'] ) triggerCycle( event: any ) {
+        this.resize();
+        this.doDelayedLoad();
+    }
+
+    @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
+        this.layout(); // includes resize
+        this.doDelayedLoad();
+    }
 
     constructor( private photoService: PhotoService, public changeDetectorRef: ChangeDetectorRef ) {
     }
 
     ngOnInit() {
         this.photosById = new Map();
-        for ( let photo of this.photos ) {
+        for ( const photo of this.photos ) {
             photo.isLoaded = false; // no autoload
             this.photosById.set( photo.id, photo );
         }
@@ -103,33 +103,32 @@ export class PhotoGalleryComponent implements OnInit {
     }
 
     /**
-     * Arrange the photos into rows 
+     * Arrange the photos into rows
      */
     private layout() {
-        console.log( "PhotoGalleryComponent.layout() ---->  this.photos: " + this.photos );
+        console.log( 'PhotoGalleryComponent.layout() ---->  this.photos: ' + this.photos );
         this.photoRows = new Array();
 
         let curRow: RenderedPhoto[] = new Array();
         let curRowWidth: number = 0;
-        let curRowHeight: number = 0;
         // we will always have at least one row, push the first row.
         this.photoRows.push( curRow );
 
         // "Responsive" -- the ideal number of photos per row depends on the wrapper width
-        let numPhotosPerRow: number = this.getResponsiveColumns();
-        let wrapperWidth: number = this.wrapper.nativeElement.clientWidth;
+        const numPhotosPerRow: number = this.getResponsiveColumns();
+        const wrapperWidth: number = this.wrapper.nativeElement.clientWidth;
         let rowCount: number = 1;
 
         // calculate the ideal image size based on landscape orientation 3:2 aspect
-        let nominalWidth: number = ( wrapperWidth - this.MARGIN * 2 ) / numPhotosPerRow;
-        let nominalHeight: number = nominalWidth * 0.666;
-        let nominalArea: number = nominalWidth * nominalHeight;
+        const nominalWidth: number = ( wrapperWidth - this.MARGIN * 2 ) / numPhotosPerRow;
+        const nominalHeight: number = nominalWidth * 0.666;
+        const nominalArea: number = nominalWidth * nominalHeight;
 
-        for ( let photo of this.photos ) {
-            let bestResource: ImageResource = photo.getBestResourceByArea( nominalArea );
+        for ( const photo of this.photos ) {
+            const bestResource: ImageResource = photo.getBestResourceByArea( nominalArea );
 
             // scale factor of the best resource to nominal height
-            let imageScale: number = nominalHeight / bestResource.height;
+            const imageScale: number = nominalHeight / bestResource.height;
             photo.width = bestResource.width * imageScale;
             photo.height = bestResource.height * imageScale;
 
@@ -139,8 +138,8 @@ export class PhotoGalleryComponent implements OnInit {
             }
 
             // difference between row width and actual width
-            let newDiff = Math.abs( newWidth - wrapperWidth );
-            let oldDiff = Math.abs( curRowWidth - wrapperWidth );
+            const newDiff = Math.abs( newWidth - wrapperWidth );
+            const oldDiff = Math.abs( curRowWidth - wrapperWidth );
 
             //            console.log( "===" );
             //            console.log( "photo: " + photo.title );
@@ -156,12 +155,12 @@ export class PhotoGalleryComponent implements OnInit {
             //            console.log( "oldDiff: " + oldDiff );
 
             // if this photo DOESN'T fit in curRow
-            // (which is to say, if the natural width of the old row is closer to ideal) 
+            // (which is to say, if the natural width of the old row is closer to ideal)
             photo.isVisible = true;
             if ( newDiff > oldDiff ) {
-                if ( this.rowsMax == 0 || rowCount < this.rowsMax ) {
+                if ( this.rowsMax === 0 || rowCount < this.rowsMax ) {
                     // start a new row.
-                    console.log( ">> New Row. rowCount: " + rowCount + " (of " + this.rowsMax + ")" );
+                    console.log( '>> New Row. rowCount: ' + rowCount + ' (of ' + this.rowsMax + ')' );
                     rowCount++;
                     curRow = new Array();
                     this.photoRows.push( curRow );
@@ -188,11 +187,11 @@ export class PhotoGalleryComponent implements OnInit {
      * resize each row (by resizing all the photos in it)  to fit the screen
      */
     private resize() {
-        console.log( "PhotoGalleryComponent.resize() ---->" );
-        for ( let photoRow of this.photoRows ) {
+        console.log( 'PhotoGalleryComponent.resize() ---->' );
+        for ( const photoRow of this.photoRows ) {
             // calculate unscaled row width
             let rowWidth: number = 0;
-            for ( let photo of photoRow ) {
+            for ( const photo of photoRow ) {
                 rowWidth += photo.width;
             }
             if ( photoRow.length > 1 ) {
@@ -211,14 +210,14 @@ export class PhotoGalleryComponent implements OnInit {
             }
 
             // apply to the RenderedPhoto dimension
-            for ( let photo of photoRow ) {
+            for ( const photo of photoRow ) {
                 photo.width *= rowScale;
                 photo.height *= rowScale;
             }
         }
 
         // reflect changes back to the view
-        this.changeDetectorRef.detectChanges()
+        this.changeDetectorRef.detectChanges();
     }
 
     /**
@@ -226,7 +225,7 @@ export class PhotoGalleryComponent implements OnInit {
      */
     private doDelayedLoad(): void {
         if ( this.photoElements && this.photos ) {
-            for ( let element of this.photoElements.toArray() ) {
+            for ( const element of this.photoElements.toArray() ) {
                 element.doDelayedLoad();
             }
         }
@@ -238,7 +237,7 @@ export class PhotoGalleryComponent implements OnInit {
     private getResponsiveColumns(): number {
         // "Responsive" -- the ideal number of photos per row depends on the wrapper width
         let numPhotosPerRow: number;
-        let wrapperWidth: number = this.wrapper.nativeElement.clientWidth;
+        const wrapperWidth: number = this.wrapper.nativeElement.clientWidth;
         if ( wrapperWidth >= 1024 ) {
             numPhotosPerRow = this.colsMax;
         } else if ( wrapperWidth >= 600 ) {

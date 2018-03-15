@@ -1,20 +1,20 @@
 /**
  * NatePhoto - A photo catalog and presentation application.
  * Copyright (C) 2018 Nathaniel Roe
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Contact nate [at] nateroe [dot] com
  */
 import { Injectable } from '@angular/core';
@@ -41,73 +41,73 @@ export class PhotoService {
 
     getPhoto( photoId: number ): Observable<RenderedPhoto> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/id/${photoId}`;
-        console.log( "PhotoServce.getPhoto(" + photoId + ")" );
+        console.log( 'PhotoServce.getPhoto(' + photoId + ')' );
         return this.http.get<RenderedPhoto>( url ).pipe(
             map(( jsonPhoto: RenderedPhoto ) => {
                 return new RenderedPhoto().copyFrom( jsonPhoto );
             } ),
-            tap( data => console.log( "PhotoService.getPhoto(...) results: " + data ) ) );
+            tap( data => console.log( 'PhotoService.getPhoto(...) results: ' + data ) ) );
 
     }
 
     getPhotosByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/expedition/${expeditionId}`;
-        console.log( "PhotoServce.getPhotosByExpedition(" + expeditionId + ")" );
+        console.log( 'PhotoServce.getPhotosByExpedition(' + expeditionId + ')' );
         return this.http.get<RenderedPhoto[]>( url ).pipe(
             map(( data: Photo[] ) => {
-                let result: RenderedPhoto[] = new Array();
+                const result: RenderedPhoto[] = new Array();
 
-                for ( let photo of data ) {
+                for ( const photo of data ) {
                     result.push( new RenderedPhoto().copyFrom( photo ) );
                 }
 
                 return result;
             } ),
-            tap( data => console.log( "PhotoService.getPhotosByExpedition(...) results: " + data ) ) );
+            tap( data => console.log( 'PhotoService.getPhotosByExpedition(...) results: ' + data ) ) );
     }
 
     getPhotoHighlightsByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/expeditionHighlight/${expeditionId}`;
-        console.log( "PhotoServce.getPhotoHighlightsByExpedition(" + expeditionId + ")" );
+        console.log( 'PhotoServce.getPhotoHighlightsByExpedition(' + expeditionId + ')' );
         return this.http.get<RenderedPhoto[]>( url ).pipe(
             map(( data: Photo[] ) => {
-                let result: RenderedPhoto[] = new Array();
+                const result: RenderedPhoto[] = new Array();
 
-                for ( let photo of data ) {
+                for ( const photo of data ) {
                     result.push( new RenderedPhoto().copyFrom( photo ) );
                 }
 
                 return result;
             } ),
-            tap( data => console.log( "PhotoService.getPhotoHighlightsByExpedition(...) results: " + data ) ) );
+            tap( data => console.log( 'PhotoService.getPhotoHighlightsByExpedition(...) results: ' + data ) ) );
     }
 
 
     getBestPhotos(): Observable<RenderedPhoto[]> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/highlights`;
-        console.log( "PhotoServce.getBestPhotos()" );
+        console.log( 'PhotoServce.getBestPhotos()' );
         return this.http.get<Photo[]>( url ).pipe( map(( data: Photo[] ) => {
-            let result: RenderedPhoto[] = new Array();
+            const result: RenderedPhoto[] = new Array();
 
-            for ( let photo of data ) {
+            for ( const photo of data ) {
                 result.push( new RenderedPhoto().copyFrom( photo ) );
             }
 
             return result;
-        } ), tap( data => console.log( "PhotoService.getBestPhotos() results: " + data ) ) );
+        } ), tap( data => console.log( 'PhotoService.getBestPhotos() results: ' + data ) ) );
     }
 
     getAllPhotos(): Observable<RenderedPhoto[]> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/all`;
-        console.log( "PhotoServce.getPhotos()" );
+        console.log( 'PhotoServce.getPhotos()' );
         return this.http.get<Photo[]>( url ).pipe( map(( data: Photo[] ) => {
-            let result: RenderedPhoto[] = new Array();
+            const result: RenderedPhoto[] = new Array();
 
-            for ( let photo of data ) {
+            for ( const photo of data ) {
                 result.push( new RenderedPhoto().copyFrom( photo ) );
             }
 
             return result;
-        } ), tap( data => console.log( "PhotoService.getPhotos() results: " + data ) ) );
+        } ), tap( data => console.log( 'PhotoService.getPhotos() results: ' + data ) ) );
     }
 }
