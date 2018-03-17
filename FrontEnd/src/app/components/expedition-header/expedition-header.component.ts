@@ -25,15 +25,10 @@ import { Expedition } from '../../model/expedition';
     templateUrl: './expedition-header.component.html',
     styleUrls: ['./expedition-header.component.css']
 } )
-export class ExpeditionHeaderComponent implements OnInit {
+export class ExpeditionHeaderComponent {
     @Input()
     expedition: Expedition;
 
     @Input()
     isLink: boolean = true;
-
-    constructor() { }
-
-    ngOnInit() {
-    }
 }

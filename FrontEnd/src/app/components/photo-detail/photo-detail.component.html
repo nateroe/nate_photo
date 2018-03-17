@@ -1,7 +1,7 @@
 <div #wrapper class="wrapper">
 	<div class="center" *ngIf="bestResource">
 		<div class="center">
-			<img class="bg" [attr.src]="bestResource.url" />
+			<img class="bg" [attr.src]="bestResource.url" (click)="zoomView()" />
 		</div>
 		<!--img [attr.src]="bestResource.url" width="1024"
 			height="{{1024 / (bestResource.width / bestResource.height)}}" /-->
@@ -79,3 +79,4 @@
 	</div>
 </div>
 
+<app-zoom-view [photo]="photo" (dismissedEvent)="zoomView()" *ngIf="isZoomVisible"></app-zoom-view>

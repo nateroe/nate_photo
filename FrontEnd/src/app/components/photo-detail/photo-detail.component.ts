@@ -37,6 +37,7 @@ export class PhotoDetailComponent implements OnInit {
 
     photo: RenderedPhoto;
     bestResource: ImageResource;
+    isZoomVisible: boolean = false;
 
     @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
         this.chooseBestResource();
@@ -48,7 +49,7 @@ export class PhotoDetailComponent implements OnInit {
     /**
      * Parse the ID from the route, and use the PhotoService to request the given Photo
      */
-    ngOnInit() {
+    ngOnInit(): void {
         this.route.paramMap
             .switchMap(( params: ParamMap ) => {
                 const photoId: number = parseInt( params.get( 'photoId' ), 10 );
@@ -64,8 +65,12 @@ export class PhotoDetailComponent implements OnInit {
     /**
      * Choose the best resource given the size of our window
      */
-    chooseBestResource() {
+    chooseBestResource(): void {
         const width: number = this.wrapper.nativeElement.clientWidth;
         this.bestResource = this.photo.getBestResourceByArea( width * width * 0.666 );
+    }
+
+    zoomView(): void {
+        this.isZoomVisible = !this.isZoomVisible;
     }
 }

@@ -35,6 +35,7 @@ import { NavigationBarComponent } from './components/navigation-bar/navigation-b
 import { SiteLinkComponent } from './components/site-link/site-link.component';
 import { ExpeditionHeaderComponent } from './components/expedition-header/expedition-header.component';
 import { ThumbnailComponent } from './components/thumbnail/thumbnail.component';
+import { ZoomViewComponent } from './components/zoom-view/zoom-view.component';
 
 @NgModule( {
     declarations: [
@@ -47,7 +48,8 @@ import { ThumbnailComponent } from './components/thumbnail/thumbnail.component';
         NavigationBarComponent,
         SiteLinkComponent,
         ExpeditionHeaderComponent,
-        ThumbnailComponent
+        ThumbnailComponent,
+        ZoomViewComponent
     ],
     imports: [
         BrowserModule,

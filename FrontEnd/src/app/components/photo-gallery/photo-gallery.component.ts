@@ -83,7 +83,7 @@ export class PhotoGalleryComponent implements OnInit, AfterViewInit {
         this.doDelayedLoad();
     }
 
-    constructor( private photoService: PhotoService, public changeDetectorRef: ChangeDetectorRef ) {
+    constructor( private photoService: PhotoService, private changeDetectorRef: ChangeDetectorRef ) {
     }
 
     ngOnInit() {
@@ -235,17 +235,16 @@ export class PhotoGalleryComponent implements OnInit, AfterViewInit {
      * Return the ideal number of columns given the width of the browser viewport.
      */
     private getResponsiveColumns(): number {
-        // "Responsive" -- the ideal number of photos per row depends on the wrapper width
-        let numPhotosPerRow: number;
+        let result: number;
         const wrapperWidth: number = this.wrapper.nativeElement.clientWidth;
         if ( wrapperWidth >= 1024 ) {
-            numPhotosPerRow = this.colsMax;
+            result = this.colsMax;
         } else if ( wrapperWidth >= 600 ) {
-            numPhotosPerRow = this.colsMed;
+            result = this.colsMed;
         } else {
-            numPhotosPerRow = this.colsMin;
+            result = this.colsMin;
         }
 
-        return numPhotosPerRow;
+        return result;
     }
 }

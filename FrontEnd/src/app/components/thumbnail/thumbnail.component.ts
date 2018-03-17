@@ -19,7 +19,6 @@
  */
 import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { RenderedPhoto } from '../../model/rendered-photo';
-import { ImageResource } from '../../model/image-resource';
 
 @Component( {
     selector: 'app-thumbnail',
