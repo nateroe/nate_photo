@@ -29,9 +29,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.nateroe.photo.dao.PhotoDao;
 import com.nateroe.photo.model.ImageResource;
 import com.nateroe.photo.model.Photo;
@@ -40,8 +37,6 @@ import com.nateroe.photo.rest.RestHandler;
 @RestHandler
 @Path("/photo")
 public class PhotoHandler {
-	private static final Logger LOGGER = LoggerFactory.getLogger(PhotoHandler.class);
-
 	// maximum resource resolution (see sanitizeResources(...))
 	private static final int MAX_RES = 2048;
 
