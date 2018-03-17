@@ -38,9 +38,6 @@ export class ZoomViewComponent implements OnChanges {
     photo: RenderedPhoto;
 
     @Input()
-    isVisible: boolean = false;
-
-    @Input()
     viewX: number;
 
     @Input()
@@ -52,7 +49,6 @@ export class ZoomViewComponent implements OnChanges {
     bestResource: ImageResource;
 
     // XXX this safe URL stuff is a hack for my dev environment where my server is running elsewhere.
-    safeStyle: SafeStyle;
     safeUrl: SafeUrl;
 
     offsetX: number = 0;
@@ -66,16 +62,16 @@ export class ZoomViewComponent implements OnChanges {
             this.bestResource = this.photo.images[0];
             if ( this.bestResource ) {
                 if ( !this.bestResource.url.startsWith( environment.restBaseUrl ) ) {
-                    this.safeStyle = this.sanitizer.bypassSecurityTrustStyle( environment.restBaseUrl + this.bestResource.url );
                     this.safeUrl = this.sanitizer.bypassSecurityTrustUrl( environment.restBaseUrl + this.bestResource.url );
                 } else {
-                    this.safeStyle = this.sanitizer.bypassSecurityTrustStyle( this.bestResource.url );
                     this.safeUrl = this.sanitizer.bypassSecurityTrustUrl( this.bestResource.url );
                 }
 
                 for ( const image of this.photo.images ) {
                     console.log( 'image: ' + image.url );
                 }
+
+                this.doOffset( this.viewX, this.viewY );
             }
         }
     }
@@ -89,9 +85,13 @@ export class ZoomViewComponent implements OnChanges {
     }
 
     move( event: MouseEvent ): void {
+        this.doOffset( event.clientX, event.clientY );
+    }
+
+    doOffset( mouseX: number, mouseY: number ): void {
         // normalize mouse coords
-        const nmx: number = event.clientX / window.innerWidth;
-        const nmy: number = event.clientY / window.innerHeight;
+        const nmx: number = mouseX / window.innerWidth;
+        const nmy: number = mouseY / window.innerHeight;
 
         // find the relative offset
         this.offsetX = ( window.innerWidth - this.bestResource.width ) * nmx;

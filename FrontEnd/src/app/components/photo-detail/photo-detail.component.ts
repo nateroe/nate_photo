@@ -39,6 +39,9 @@ export class PhotoDetailComponent implements OnInit {
     bestResource: ImageResource;
     isZoomVisible: boolean = false;
 
+    lastClickX: number;
+    lastClickY: number;
+
     @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
         this.chooseBestResource();
     }
@@ -70,7 +73,16 @@ export class PhotoDetailComponent implements OnInit {
         this.bestResource = this.photo.getBestResourceByArea( width * width * 0.666 );
     }
 
-    zoomView(): void {
+    /**
+     * Toggle the zoom view
+     */
+    zoomView( event?: MouseEvent ): void {
+        if ( event ) {
+            console.log( 'zoomView click: ' + event.clientX + ', ' + event.clientY );
+            this.lastClickX = event.clientX;
+            this.lastClickY = event.clientY;
+        }
+
         this.isZoomVisible = !this.isZoomVisible;
     }
 }
