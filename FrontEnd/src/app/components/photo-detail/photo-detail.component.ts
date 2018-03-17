@@ -36,7 +36,7 @@ export class PhotoDetailComponent implements OnInit {
     @ViewChild( 'wrapper' ) wrapper: ElementRef;
 
     photo: RenderedPhoto;
-    bestResource: ImageResource;
+    bestResourceUrl: string;
     isZoomVisible: boolean = false;
 
     lastClickX: number;
@@ -69,8 +69,21 @@ export class PhotoDetailComponent implements OnInit {
      * Choose the best resource given the size of our window
      */
     chooseBestResource(): void {
-        const width: number = this.wrapper.nativeElement.clientWidth;
-        this.bestResource = this.photo.getBestResourceByArea( width * width * 0.666 );
+        if ( this.photo ) {
+            const ratio: number = this.photo.images[0].width / this.photo.images[0].height;
+            this.photo.height = ( document.documentElement.clientHeight - 50 ) * 0.8;
+            this.photo.width = this.photo.height * ratio;
+
+            if ( this.wrapper && this.photo.width > document.documentElement.clientWidth ) {
+                this.photo.width = this.wrapper.nativeElement.clientWidth;
+                this.photo.height = this.photo.width / ratio;
+            }
+
+            this.bestResourceUrl = this.photo.getBestResourceUrl();
+
+            console.log( 'chooseBestResource: (' + this.photo.width + 'x'
+                + this.photo.height + ' ratio ' + ratio + ') : ' + this.bestResourceUrl );
+        }
     }
 
     /**
@@ -78,7 +91,9 @@ export class PhotoDetailComponent implements OnInit {
      */
     zoomView( event?: MouseEvent ): void {
         if ( event ) {
-            console.log( 'zoomView click: ' + event.clientX + ', ' + event.clientY );
+            // keep track of the point where the user
+            // initially clicked. we'll use it later to set
+            // the initial zoom view panning position
             this.lastClickX = event.clientX;
             this.lastClickY = event.clientY;
         }
