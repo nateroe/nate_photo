@@ -98,8 +98,8 @@ export class ZoomViewComponent implements OnChanges {
         const screenHeight: number = document.documentElement.clientHeight;
 
         // normalize mouse coords
-        let nmx: number = 1.0 - mouseX / screenWidth;
-        let nmy: number = 1.0 - mouseY / screenHeight;
+        let nmx: number = mouseX / screenWidth;
+        let nmy: number = mouseY / screenHeight;
 
         // enlarge mouse area
         nmx = ( nmx - 0.5 ) * 1.15 + 0.5;
