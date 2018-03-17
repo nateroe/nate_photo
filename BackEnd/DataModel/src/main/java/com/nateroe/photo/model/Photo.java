@@ -69,13 +69,13 @@ public class Photo extends AbstractEntity {
 	@XmlTransient
 	private String origFileName;
 
+	// separate queries to find the Expedition, just the id here
+	private Long expeditionId;
+
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL,
 			orphanRemoval = true)
 	@OrderBy("width DESC")
 	private List<ImageResource> images = new LinkedList<>();
-
-	// separate queries to find the expedition
-	private Long expeditionId;
 
 // XXX ---- this stuff isn't required yet and it's easier to ignore it for now.
 //	private String mapUrl;
@@ -99,6 +99,11 @@ public class Photo extends AbstractEntity {
 		for (ImageResource imageResource : imageResources) {
 			imageResource.setParent(this);
 		}
+	}
+
+	public boolean removeImageResource(ImageResource imageResource) {
+		imageResource.setParent(null);
+		return images.remove(imageResource);
 	}
 
 	public Float getAltitude() {
