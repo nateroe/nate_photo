@@ -84,8 +84,12 @@ export class ZoomViewComponent implements OnChanges {
         return this.bestResource.height;
     }
 
-    move( event: MouseEvent ): void {
+    mouseMove( event: MouseEvent ): void {
         this.doOffset( event.clientX, event.clientY );
+    }
+
+    touchMove( event: TouchEvent ): void {
+        this.doOffset( event.touches.item( 0 ).clientX, event.touches.item( 0 ).clientY );
     }
 
     doOffset( mouseX: number, mouseY: number ): void {
