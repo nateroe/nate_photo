@@ -1,14 +1,16 @@
-<div class="photo" 
-		[style.width.px]="getWidth()"
-		[style.height.px]="getHeight()"
-		[style.left.px]="offsetX"
-		[style.top.px]="offsetY"
-		(mousemove)="mouseMove($event)" 
-		(touchmove)="touchMove($event)" 
-		*ngIf="bestResource" >
-	<img 
-		[src]="safeUrl" 
-		[width]="bestResource.width"
-		[height]="bestResource.height" 
-		(click)="dismissedEvent.emit()" />
+<div class="wrapper">
+	<div class="photo" 
+			[style.width.px]="getWidth()"
+			[style.height.px]="getHeight()"
+			[style.left.px]="offsetX"
+			[style.top.px]="offsetY"
+			(mousemove)="mouseMove($event)" 
+			(touchmove)="touchMove($event)" 
+			*ngIf="bestResource" >
+		<img 
+			[src]="safeUrl" 
+			[width]="bestResource.width"
+			[height]="bestResource.height" 
+			(click)="dismissedEvent.emit()" />
+	</div>
 </div>

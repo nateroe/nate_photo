@@ -98,12 +98,25 @@ export class ZoomViewComponent implements OnChanges {
         const screenHeight: number = document.documentElement.clientHeight;
 
         // normalize mouse coords
-        const nmx: number = mouseX / screenWidth;
-        const nmy: number = mouseY / screenHeight;
+        let nmx: number = 1.0 - mouseX / screenWidth;
+        let nmy: number = 1.0 - mouseY / screenHeight;
+
+        // enlarge mouse area
+        nmx = ( nmx - 0.5 ) * 1.15 + 0.5;
+        nmy = ( nmy - 0.5 ) * 1.15 + 0.5;
 
         // find the relative offset
         this.offsetX = ( screenWidth - this.bestResource.width ) * nmx;
         this.offsetY = ( screenHeight - this.bestResource.height ) * nmy;
+
+        // ensure that the top and left boundaries of the larger image are never exceeded
+        // (this could be improved; relative points should map to the entire valid area)
+        this.offsetX = Math.min( 0, this.offsetX );
+        this.offsetY = Math.min( 0, this.offsetY );
+
+        // ensure that the right and bottom boundaries are respected
+        this.offsetX = Math.max( this.offsetX, screenWidth - this.bestResource.width );
+        this.offsetY = Math.max( this.offsetY, screenHeight - this.bestResource.height );
 
         this.offsetX += window.pageXOffset;
         this.offsetY += window.pageYOffset;
