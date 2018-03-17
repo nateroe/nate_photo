@@ -90,25 +90,29 @@ export class ZoomViewComponent implements OnChanges {
 
     touchMove( event: TouchEvent ): void {
         this.doOffset( event.touches.item( 0 ).clientX, event.touches.item( 0 ).clientY );
+        event.preventDefault();
     }
 
     doOffset( mouseX: number, mouseY: number ): void {
+        const screenWidth: number = document.documentElement.clientWidth;
+        const screenHeight: number = document.documentElement.clientHeight;
+
         // normalize mouse coords
-        const nmx: number = mouseX / window.innerWidth;
-        const nmy: number = mouseY / window.innerHeight;
+        const nmx: number = mouseX / screenWidth;
+        const nmy: number = mouseY / screenHeight;
 
         // find the relative offset
-        this.offsetX = ( window.innerWidth - this.bestResource.width ) * nmx;
-        this.offsetY = ( window.innerHeight - this.bestResource.height ) * nmy;
+        this.offsetX = ( screenWidth - this.bestResource.width ) * nmx;
+        this.offsetY = ( screenHeight - this.bestResource.height ) * nmy;
 
         this.offsetX += window.pageXOffset;
         this.offsetY += window.pageYOffset;
 
-        //        console.log( '-----------------------------------' );
-        //        console.log( 'mouse position: ' + event.clientX + ', ' + event.clientY );
-        //        console.log( 'screen size: ' + window.innerWidth + ', ' + window.innerHeight );
-        //        console.log( 'bestResource size: ' + this.bestResource.width + ', ' + this.bestResource.height );
-        //        console.log( 'normalize mouse coords: ' + nmx + ', ' + nmy );
-        //        console.log( 'offset: ' + this.offsetX + ', ' + this.offsetY );
+        console.log( '-----------------------------------' );
+        console.log( 'mouse position: ' + mouseX + ', ' + mouseY );
+        console.log( 'screen size: ' + screenWidth + ', ' + screenHeight );
+        console.log( 'bestResource size: ' + this.bestResource.width + ', ' + this.bestResource.height );
+        console.log( 'normalize mouse coords: ' + nmx + ', ' + nmy );
+        console.log( 'offset: ' + this.offsetX + ', ' + this.offsetY );
     }
 }
