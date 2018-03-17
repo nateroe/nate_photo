@@ -96,5 +96,15 @@ export class ZoomViewComponent implements OnChanges {
         // find the relative offset
         this.offsetX = ( window.innerWidth - this.bestResource.width ) * nmx;
         this.offsetY = ( window.innerHeight - this.bestResource.height ) * nmy;
+
+        this.offsetX += window.pageXOffset;
+        this.offsetY += window.pageYOffset;
+
+        //        console.log( '-----------------------------------' );
+        //        console.log( 'mouse position: ' + event.clientX + ', ' + event.clientY );
+        //        console.log( 'screen size: ' + window.innerWidth + ', ' + window.innerHeight );
+        //        console.log( 'bestResource size: ' + this.bestResource.width + ', ' + this.bestResource.height );
+        //        console.log( 'normalize mouse coords: ' + nmx + ', ' + nmy );
+        //        console.log( 'offset: ' + this.offsetX + ', ' + this.offsetY );
     }
 }
