@@ -17,7 +17,8 @@
  *
  * Contact nate [at] nateroe [dot] com
  */
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import { RenderedPhoto } from '../../model/rendered-photo';
@@ -30,10 +31,12 @@ import { ImageResource } from '../../model/image-resource';
 @Component( {
     selector: 'app-photo',
     templateUrl: './photo-detail.component.html',
-    styleUrls: ['./photo-detail.component.css']
+    styleUrls: ['./photo-detail.component.css'],
+    providers: [DecimalPipe]
 } )
-export class PhotoDetailComponent implements OnInit {
+export class PhotoDetailComponent implements OnInit, AfterViewInit {
     @ViewChild( 'wrapper' ) wrapper: ElementRef;
+    @ViewChildren( 'wrapper' ) wrappers: QueryList<ElementRef>;
 
     photo: RenderedPhoto;
     bestResourceUrl: string;
@@ -43,10 +46,11 @@ export class PhotoDetailComponent implements OnInit {
     lastClickY: number;
 
     @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
+        console.log( 'resize' );
         this.chooseBestResource();
     }
 
-    constructor( private route: ActivatedRoute, private photoService: PhotoService ) {
+    constructor( private route: ActivatedRoute, private photoService: PhotoService, private decimalPipe: DecimalPipe ) {
     }
 
     /**
@@ -61,8 +65,19 @@ export class PhotoDetailComponent implements OnInit {
             .subscribe(
             data => {
                 this.photo = data;
+                console.log( 'data arrives' );
                 this.chooseBestResource();
             } );
+    }
+
+    ngAfterViewInit(): void {
+        this.wrappers.changes.subscribe(( elements: QueryList<ElementRef> ) => {
+            // this.wrapper isn't available until this subscription
+            setTimeout(() => {
+                // but changes can't occur during this method, so setTimeout
+                this.chooseBestResource();
+            } );
+        } );
     }
 
     /**
@@ -70,19 +85,29 @@ export class PhotoDetailComponent implements OnInit {
      */
     chooseBestResource(): void {
         if ( this.photo ) {
+            //            const windowWidth: number = document.documentElement.clientWidth; //   window.innerWidth;
+            //            const windowHeight: number = document.documentElement.clientHeight; // window.innerHeight;
+            const windowWidth: number = window.innerWidth;
+            const windowHeight: number = window.innerHeight;
+
             const ratio: number = this.photo.images[0].width / this.photo.images[0].height;
-            this.photo.height = ( document.documentElement.clientHeight - 50 ) * 0.8;
+            this.photo.height = ( windowHeight - 50 ) * 0.8;
             this.photo.width = this.photo.height * ratio;
 
-            if ( this.wrapper && this.photo.width > document.documentElement.clientWidth ) {
+            if ( this.wrapper && this.photo.width > windowWidth ) {
                 this.photo.width = this.wrapper.nativeElement.clientWidth;
                 this.photo.height = this.photo.width / ratio;
             }
 
             this.bestResourceUrl = this.photo.getBestResourceUrl();
 
-            console.log( 'chooseBestResource: (' + this.photo.width + 'x'
-                + this.photo.height + ' ratio ' + ratio + ') : ' + this.bestResourceUrl );
+            //            console.log( 'chooseBestResource: (' + this.photo.width + ' x '
+            //                + this.photo.height + ' ratio ' + ratio + ') : ' + this.bestResourceUrl );
+            //            console.log( 'Display photo at ' + this.photo.width + ' x ' + this.photo.height );
+            //            console.log( 'window dim: ' + window.innerWidth + ' x ' + window.innerHeight );
+            //            console.log( 'document dim: ' + document.documentElement.clientWidth + ' x ' + document.documentElement.clientHeight );
+            //            console.log( 'wrapper: ' + this.wrapper );
+            //            console.log( '------' );
         }
     }
 

@@ -59,6 +59,7 @@ export class ZoomViewComponent implements OnChanges {
 
     ngOnChanges(): void {
         if ( this.photo && this.photo.images ) {
+            // best resource is biggest available resource
             this.bestResource = this.photo.images[0];
             if ( this.bestResource ) {
                 if ( !this.bestResource.url.startsWith( environment.restBaseUrl ) ) {
@@ -94,8 +95,8 @@ export class ZoomViewComponent implements OnChanges {
     }
 
     doOffset( mouseX: number, mouseY: number ): void {
-        const screenWidth: number = document.documentElement.clientWidth;
-        const screenHeight: number = document.documentElement.clientHeight;
+        const screenWidth: number = window.innerWidth;
+        const screenHeight: number = window.innerHeight;
 
         // normalize mouse coords
         let nmx: number = mouseX / screenWidth;
@@ -105,27 +106,37 @@ export class ZoomViewComponent implements OnChanges {
         nmx = ( nmx - 0.5 ) * 1.15 + 0.5;
         nmy = ( nmy - 0.5 ) * 1.15 + 0.5;
 
-        // find the relative offset
-        this.offsetX = ( screenWidth - this.bestResource.width ) * nmx;
-        this.offsetY = ( screenHeight - this.bestResource.height ) * nmy;
+        // find the relative offsetX
+        if ( screenWidth <= this.bestResource.width ) {
+            // if the photo is bigger than the screen, use mouse position
+            this.offsetX = ( screenWidth - this.bestResource.width ) * nmx;
+            // ensure that the top and left boundaries of the larger image are never exceeded
+            this.offsetX = Math.min( 0, this.offsetX );
+            // ensure that the right and bottom boundaries are respected
+            this.offsetX = Math.max( this.offsetX, screenWidth - this.bestResource.width );
+        } else {
+            // if the photo is smaller than the screen, center it
+            this.offsetX = ( screenWidth - this.bestResource.width ) * 0.5;
+        }
 
-        // ensure that the top and left boundaries of the larger image are never exceeded
-        // (this could be improved; relative points should map to the entire valid area)
-        this.offsetX = Math.min( 0, this.offsetX );
-        this.offsetY = Math.min( 0, this.offsetY );
+        // find the relative offsetY
+        if ( screenHeight <= this.bestResource.height ) {
+            // if the photo is bigger than the screen, use mouse position
+            this.offsetY = ( screenHeight - this.bestResource.height ) * nmy;
+            this.offsetY = Math.min( 0, this.offsetY );
+            this.offsetY = Math.max( this.offsetY, screenHeight - this.bestResource.height );
+        } else {
+            // if the photo is smaller than the screen, center it
+            this.offsetY = ( screenHeight - this.bestResource.height ) * 0.5;
+        }
 
-        // ensure that the right and bottom boundaries are respected
-        this.offsetX = Math.max( this.offsetX, screenWidth - this.bestResource.width );
-        this.offsetY = Math.max( this.offsetY, screenHeight - this.bestResource.height );
-
-        this.offsetX += window.pageXOffset;
-        this.offsetY += window.pageYOffset;
-
-        console.log( '-----------------------------------' );
-        console.log( 'mouse position: ' + mouseX + ', ' + mouseY );
-        console.log( 'screen size: ' + screenWidth + ', ' + screenHeight );
-        console.log( 'bestResource size: ' + this.bestResource.width + ', ' + this.bestResource.height );
-        console.log( 'normalize mouse coords: ' + nmx + ', ' + nmy );
-        console.log( 'offset: ' + this.offsetX + ', ' + this.offsetY );
+        //       console.log( '-----------------------------------' );
+        //        console.log( 'mouse position: ' + mouseX + ', ' + mouseY );
+        //        console.log( 'screen size: ' + screenWidth + ', ' + screenHeight );
+        //        console.log( 'window.inner: ' + window.innerWidth + ', ' + window.innerHeight );
+        //        console.log( 'window.devicePixelRatio: ' + window.devicePixelRatio );
+        //        console.log( 'bestResource size: ' + this.bestResource.width + ', ' + this.bestResource.height );
+        //        console.log( 'normalize mouse coords: ' + nmx + ', ' + nmy );
+        //        console.log( 'offset: ' + this.offsetX + ', ' + this.offsetY );
     }
 }
