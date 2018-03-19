@@ -26,6 +26,7 @@ import { AppComponent } from './app.component';
 import { PhotoDetailComponent } from './components/photo-detail/photo-detail.component';
 import { PhotoService } from './services/photo.service';
 import { ExpeditionService } from './services/expedition.service';
+import { GalleryContextService } from './services/gallery-context.service';
 import { AppRoutingModule } from './/app-routing.module';
 import { PhotoGalleryComponent } from './components/photo-gallery/photo-gallery.component';
 import { ExpeditionDetailComponent } from './components/expedition-detail/expedition-detail.component';
@@ -58,7 +59,8 @@ import { ZoomViewComponent } from './components/zoom-view/zoom-view.component';
     ],
     providers: [
         PhotoService,
-        ExpeditionService
+        ExpeditionService,
+        GalleryContextService
     ],
     bootstrap: [AppComponent]
 } )

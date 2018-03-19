@@ -1,7 +1,12 @@
 <div #wrapper class="wrapper">
 	<div *ngFor='let photoRow of photoRows' class="row">
 		<div *ngFor='let photo of photoRow' class="photo">
-			<app-thumbnail [photo]="photo" #photoChild></app-thumbnail>
+			<app-thumbnail #photoChild 
+				[photo]="photo" 
+				[galleryUrl]="location.path()" 
+				[photoIndex]="indexById.get(photo.id)"
+				[photos]="photos">
+			</app-thumbnail>
 		</div>
 	</div>
 </div>

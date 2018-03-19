@@ -18,7 +18,9 @@
  * Contact nate [at] nateroe [dot] com
  */
 import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { RenderedPhoto } from '../../model/rendered-photo';
+import { GalleryContextService } from '../../services/gallery-context.service';
 
 @Component( {
     selector: 'app-thumbnail',
@@ -31,9 +33,25 @@ export class ThumbnailComponent implements OnInit {
     @Input()
     photo: RenderedPhoto;
 
+    @Input()
+    galleryUrl: string;
+
+    @Input()
+    photoIndex: number;
+
+    @Input()
+    photos: RenderedPhoto[];
+
     isMouseOver: boolean = false;
 
-    constructor( public changeDetectorRef: ChangeDetectorRef ) { }
+    galleryContextId: number;
+
+    // XXX when the routerlink is clicked, this component has to call the gallery context service to
+    // register the click and somehow pass the new gallery context id along.
+    // registerGalleryClick( url: string, index: number, photos: Photo[] )
+
+
+    constructor( private router: Router, private galleryContextService: GalleryContextService ) { }
 
     ngOnInit() {
     }
@@ -65,5 +83,18 @@ export class ThumbnailComponent implements OnInit {
         } else {
             console.log( 'No photo for ' + this.photo.id );
         }
+    }
+
+    doClick() {
+        this.galleryContextId = this.galleryContextService.registerGalleryClick( this.galleryUrl, this.photoIndex, this.photos );
+        console.log( 'new context: ' + this.galleryContextId );
+        //        [routerLink]="['/photo/', photo.id]"
+        //            [queryParams]="['contextId', getContext()]"
+        this.router.navigate( ['/photo/' + this.photo.id], { queryParams: { 'contextId': this.galleryContextId } } );
+    }
+
+    getContext(): number {
+        console.log( 'get context: ' + this.galleryContextId );
+        return this.galleryContextId;
     }
 }

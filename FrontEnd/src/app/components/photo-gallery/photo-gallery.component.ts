@@ -21,6 +21,7 @@ import {
     AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input,
     OnChanges, OnInit, Output, QueryList, ViewChild, ViewChildren
 } from '@angular/core';
+import { Location } from '@angular/common';
 import { RenderedPhoto } from '../../model/rendered-photo';
 import { ImageResource } from '../../model/image-resource';
 import { PhotoService } from '../../services/photo.service';
@@ -67,8 +68,8 @@ export class PhotoGalleryComponent implements OnInit, AfterViewInit {
     @Input()
     rowsMax: number = 0;
 
-
     photosById: Map<number, RenderedPhoto>;
+    indexById: Map<number, number>;
 
     // photos arranged in rows (see layout())
     photoRows: RenderedPhoto[][] = new Array();
@@ -83,14 +84,18 @@ export class PhotoGalleryComponent implements OnInit, AfterViewInit {
         this.doDelayedLoad();
     }
 
-    constructor( private photoService: PhotoService, private changeDetectorRef: ChangeDetectorRef ) {
+    constructor( private photoService: PhotoService, private changeDetectorRef: ChangeDetectorRef, private location: Location ) {
     }
 
     ngOnInit() {
         this.photosById = new Map();
+        this.indexById = new Map();
+        let i: number = 0;
         for ( const photo of this.photos ) {
             photo.isLoaded = false; // no autoload
             this.photosById.set( photo.id, photo );
+            this.indexById.set( photo.id, i );
+            i++;
         }
         this.layout();
     }
