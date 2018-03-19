@@ -17,16 +17,20 @@
  *
  * Contact nate [at] nateroe [dot] com
  */
-import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import {
+    AfterViewInit, Component, ElementRef, HostListener, Input,
+    OnInit, OnChanges, QueryList, ViewChild, ViewChildren
+} from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Params } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import { RenderedPhoto } from '../../model/rendered-photo';
+import { GalleryContextService } from '../../services/gallery-context.service';
 import { PhotoService } from '../../services/photo.service';
 import { ImageResource } from '../../model/image-resource';
 
 /**
- * Component for a single Photo
+ * Component for a single Photo's detail page.
  */
 @Component( {
     selector: 'app-photo',
@@ -34,7 +38,7 @@ import { ImageResource } from '../../model/image-resource';
     styleUrls: ['./photo-detail.component.css'],
     providers: [DecimalPipe]
 } )
-export class PhotoDetailComponent implements OnInit, AfterViewInit {
+export class PhotoDetailComponent implements OnInit, AfterViewInit, OnChanges {
     @ViewChild( 'wrapper' ) wrapper: ElementRef;
     @ViewChildren( 'wrapper' ) wrappers: QueryList<ElementRef>;
 
@@ -45,18 +49,33 @@ export class PhotoDetailComponent implements OnInit, AfterViewInit {
     lastClickX: number;
     lastClickY: number;
 
+    galleryContextId: number;
+
+    nextId: number;
+    previousId: number;
+    galleryUrl: string;
+
     @HostListener( 'window:resize', ['$event'] ) windowResize( event: any ) {
-        console.log( 'resize' );
         this.chooseBestResource();
     }
 
-    constructor( private route: ActivatedRoute, private photoService: PhotoService, private decimalPipe: DecimalPipe ) {
+    constructor( private route: ActivatedRoute, private photoService: PhotoService, private decimalPipe: DecimalPipe,
+        private galleryContextService: GalleryContextService ) {
+    }
+
+    ngOnInit(): void {
+        this.doStuff();
     }
 
     /**
      * Parse the ID from the route, and use the PhotoService to request the given Photo
      */
-    ngOnInit(): void {
+    ngOnChanges(): void {
+        this.doStuff();
+    }
+
+    doStuff(): void {
+        console.log( '-PhotoDetail.doStuff()' );
         this.route.paramMap
             .switchMap(( params: ParamMap ) => {
                 const photoId: number = parseInt( params.get( 'photoId' ), 10 );
@@ -64,10 +83,26 @@ export class PhotoDetailComponent implements OnInit, AfterViewInit {
             } )
             .subscribe(
             data => {
+                console.log( '---PhotoDetail gets data' );
                 this.photo = data;
-                console.log( 'data arrives' );
                 this.chooseBestResource();
+
+                this.route.queryParams.subscribe(( params: Params ) => {
+                    this.galleryContextId = Number( params['contextId'] );
+
+                    this.nextId = this.galleryContextService.getNextPhotoId( this.galleryContextId );
+                    this.previousId = this.galleryContextService.getPreviousPhotoId( this.galleryContextId );
+                    this.galleryUrl = this.galleryContextService.getGalleryUrl( this.galleryContextId );
+
+                    console.log( '---PhotoDetail' );
+                    console.log( 'galleryContextId:' + this.galleryContextId );
+                    console.log( 'nextId:' + this.nextId );
+                    console.log( 'previousId:' + this.previousId );
+                    console.log( 'galleryUrl:' + this.galleryUrl );
+                } );
+
             } );
+
     }
 
     ngAfterViewInit(): void {

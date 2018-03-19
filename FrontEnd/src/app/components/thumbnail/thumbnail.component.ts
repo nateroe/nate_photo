@@ -44,13 +44,6 @@ export class ThumbnailComponent implements OnInit {
 
     isMouseOver: boolean = false;
 
-    galleryContextId: number;
-
-    // XXX when the routerlink is clicked, this component has to call the gallery context service to
-    // register the click and somehow pass the new gallery context id along.
-    // registerGalleryClick( url: string, index: number, photos: Photo[] )
-
-
     constructor( private router: Router, private galleryContextService: GalleryContextService ) { }
 
     ngOnInit() {
@@ -86,15 +79,8 @@ export class ThumbnailComponent implements OnInit {
     }
 
     doClick() {
-        this.galleryContextId = this.galleryContextService.registerGalleryClick( this.galleryUrl, this.photoIndex, this.photos );
-        console.log( 'new context: ' + this.galleryContextId );
-        //        [routerLink]="['/photo/', photo.id]"
-        //            [queryParams]="['contextId', getContext()]"
-        this.router.navigate( ['/photo/' + this.photo.id], { queryParams: { 'contextId': this.galleryContextId } } );
-    }
-
-    getContext(): number {
-        console.log( 'get context: ' + this.galleryContextId );
-        return this.galleryContextId;
+        const galleryContextId: number = this.galleryContextService.registerGalleryClick( this.galleryUrl, this.photoIndex, this.photos );
+        console.log( 'galleryContextId: ' + galleryContextId );
+        this.router.navigate( ['/photo/' + this.photo.id], { queryParams: { contextId: galleryContextId } } );
     }
 }

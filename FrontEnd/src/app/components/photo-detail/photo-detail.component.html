@@ -2,6 +2,17 @@
 	<div class="section	">
 		<img class="bg" [attr.src]="bestResourceUrl" (click)="zoomView($event)" [width]="photo.width" [height]="photo.height" />
 	</div>
+	<div *ngIf="galleryUrl"><a [routerLink]="galleryUrl"><img src="assets/icons_close.png" /></a></div>
+	<div *ngIf="nextId"><a 
+			[routerLink]="'/photo/' + nextId" 
+			[queryParams]="{contextId: galleryContextId}"  
+			(click)="galleryContextService.goNextPhoto(galleryContextId)"
+		><img src="assets/icons_next.png"/></a></div>
+	<div *ngIf="previousId"><a 
+			[routerLink]="'/photo/' + previousId" 
+			[queryParams]="{contextId: galleryContextId}"  
+			(click)="galleryContextService.goPreviousPhoto(galleryContextId)"
+		><img src="assets/icons_previous.png" /></a></div>
 	<div class="row">
 		<div class="leftColumn section">
 			<div class="title">{{photo.title}}</div>

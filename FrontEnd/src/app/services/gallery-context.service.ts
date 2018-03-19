@@ -62,12 +62,40 @@ export class GalleryContextService {
      * @return the galleryContextId for this gallery context
      */
     registerGalleryClick( url: string, index: number, photos: Photo[] ): number {
-        this.lastGalleryUrl = url;
+        this.lastGalleryUrl = ( url ) ? url : '/';
         this.lastIndex = index;
         this.photos = photos;
+        this.lastGalleryContextId++;
+        this.log( 'registerGalleryClick' );
 
-        // increment first, then return so that the newly returned ID is current
-        return ++this.lastGalleryContextId;
+        return this.lastGalleryContextId;
+    }
+
+    private log( message: string ) {
+        console.log( '-----------' + message + '-----------' );
+        console.log( 'url: ' + this.lastGalleryUrl );
+        console.log( 'lastGalleryContextId : ' + this.lastGalleryContextId );
+        console.log( 'lastIndex : ' + this.lastIndex );
+    }
+
+    private getNextIndex(): number {
+        let result: number = this.lastIndex;
+        if ( this.lastIndex < this.photos.length - 2 ) {
+            result++;
+        } else {
+            result = 1;
+        }
+        return result;
+    }
+
+    private getPreviousIndex(): number {
+        let result: number = this.lastIndex;
+        if ( this.lastIndex > 0 ) {
+            result--;
+        } else {
+            result = this.photos.length - 1;
+        }
+        return result;
     }
 
     /**
@@ -78,13 +106,8 @@ export class GalleryContextService {
         let result: number = null;
         if ( galleryContextId === this.lastGalleryContextId ) {
             if ( this.photos ) {
-                if ( this.lastIndex < this.photos.length - 2 ) {
-                    this.lastIndex++;
-                } else {
-                    this.lastIndex = 1;
-                }
+                result = this.photos[this.getNextIndex()].id;
             }
-            result = this.photos[this.lastIndex].id;
         }
         return result;
     }
@@ -97,13 +120,8 @@ export class GalleryContextService {
         let result: number = null;
         if ( galleryContextId === this.lastGalleryContextId ) {
             if ( this.photos ) {
-                if ( this.lastIndex > 0 ) {
-                    this.lastIndex--;
-                } else {
-                    this.lastIndex = this.photos.length - 1;
-                }
+                result = this.photos[this.getPreviousIndex()].id;
             }
-            result = this.photos[this.lastIndex].id;
         }
         return result;
     }
@@ -114,5 +132,19 @@ export class GalleryContextService {
      */
     getGalleryUrl( galleryContextId: number ): string {
         return ( galleryContextId === this.lastGalleryContextId ) ? this.lastGalleryUrl : null;
+    }
+
+    goNextPhoto( galleryContextId ) {
+        if ( this.lastGalleryContextId === galleryContextId ) {
+            this.lastIndex = this.getNextIndex();
+        }
+        console.log( 'GalleryContextService.goNextPhoto(): ' + this.lastIndex );
+    }
+
+    goPreviousPhoto( galleryContextId ) {
+        if ( this.lastGalleryContextId === galleryContextId ) {
+            this.lastIndex = this.getPreviousIndex();
+        }
+        console.log( 'GalleryContextService.goPreviousPhoto(): ' + this.lastIndex );
     }
 }

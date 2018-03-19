@@ -85,6 +85,7 @@ export class PhotoGalleryComponent implements OnInit, AfterViewInit {
     }
 
     constructor( private photoService: PhotoService, private changeDetectorRef: ChangeDetectorRef, private location: Location ) {
+        console.log( 'gallery path: ' + location.path() );
     }
 
     ngOnInit() {
