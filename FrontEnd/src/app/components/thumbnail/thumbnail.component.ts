@@ -22,6 +22,12 @@ import { Router } from '@angular/router';
 import { RenderedPhoto } from '../../model/rendered-photo';
 import { GalleryContextService } from '../../services/gallery-context.service';
 
+/**
+ * A ThumbnailComponent encapsulates the behavior of a thumbnail within a gallery.
+ * - delayed loading
+ * - mouse hover
+ * - link activation (storing the gallery context during navigation)
+ */
 @Component( {
     selector: 'app-thumbnail',
     templateUrl: './thumbnail.component.html',
