@@ -4,17 +4,6 @@
 		<div>
 			<hr>
 		</div>
-		<div *ngIf='expeditionHighlights && expeditionHighlights.get(expedition.id)' class="row">
-			<div *ngFor='let photo of expeditionHighlights.get(expedition.id)' class="photo">
-				<div *ngIf='photo.isVisible'>
-					<a routerLink="/photo/{{photo.id}}">
-						<img
-							[style.width.px]="photo.width"
-							[style.height.px]="photo.height" 
-							[src]="photo.getBestResource()?.url" />
-					</a>
-				</div>
-			</div>
-		</div>
+		<app-photo-gallery [colsMax]="5" [colsMed]="3" [colsMin]="2" [rowsMax]="1" [photos]="expeditionHighlights.get(expedition.id)" *ngIf='expeditionHighlights && expeditionHighlights.get(expedition.id)'></app-photo-gallery>
 	</div>
 </div>

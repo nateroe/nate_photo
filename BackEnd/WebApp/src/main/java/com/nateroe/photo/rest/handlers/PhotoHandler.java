@@ -30,12 +30,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.nateroe.photo.dao.PhotoDao;
+import com.nateroe.photo.model.ImageResource;
 import com.nateroe.photo.model.Photo;
 import com.nateroe.photo.rest.RestHandler;
 
 @RestHandler
 @Path("/photo")
 public class PhotoHandler {
+	// maximum resource resolution (see sanitizeResources(...))
+	private static final int MAX_RES = 2048;
+
 	@EJB
 	private PhotoDao photoDao;
 
@@ -48,7 +52,7 @@ public class PhotoHandler {
 			throw new NotFoundException();
 		}
 
-		return photo;
+		return sanitizeResources(photo);
 	}
 
 	@GET
@@ -60,7 +64,7 @@ public class PhotoHandler {
 			throw new NotFoundException();
 		}
 
-		return photos;
+		return sanitizeResources(photos);
 	}
 
 	@GET
@@ -72,14 +76,14 @@ public class PhotoHandler {
 			throw new NotFoundException();
 		}
 
-		return photos;
+		return sanitizeResources(photos);
 	}
 
 	@GET
 	@Path("expedition/{expeditionId}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public List<Photo> getPhotosByExpedition(@PathParam("expeditionId") long expeditionId) {
-		return photoDao.findByExpeditionId(expeditionId);
+		return sanitizeResources(photoDao.findByExpeditionId(expeditionId));
 	}
 
 	@GET
@@ -87,6 +91,23 @@ public class PhotoHandler {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public List<Photo> getPhotosByExpeditionHighlight(
 			@PathParam("expeditionId") long expeditionId) {
-		return photoDao.findHighlightsByExpeditionId(expeditionId);
+		return sanitizeResources(photoDao.findHighlightsByExpeditionId(expeditionId));
+	}
+
+	private List<Photo> sanitizeResources(List<Photo> photos) {
+		for (Photo photo : photos) {
+			sanitizeResources(photo);
+		}
+		return photos;
+	}
+
+	private Photo sanitizeResources(Photo photo) {
+		for (ImageResource resource : photo.getImageResources()) {
+			if (resource.getWidth() > MAX_RES || resource.getHeight() > MAX_RES) {
+				photo.removeImageResource(resource);
+			}
+		}
+
+		return photo;
 	}
 }

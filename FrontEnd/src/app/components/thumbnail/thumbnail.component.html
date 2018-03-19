@@ -1,0 +1,13 @@
+<a 	(mouseenter)="mouseEnter()" 
+	(mouseleave)="mouseLeave()" 
+	(click)="doClick()" 
+	class="wrapper"
+>
+	<img #photoChild
+		[style.width.px]="photo.width"
+		[style.height.px]="photo.height" 
+		[src]="photo.getBestResourceUrl()"
+		[attr.photoId]="photo.id" 
+	/>
+	<div class="textover shadedLight" *ngIf="isMouseOver">{{photo.title}}</div>
+</a>

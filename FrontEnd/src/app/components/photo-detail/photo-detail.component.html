@@ -1,81 +1,89 @@
-<div #wrapper class="wrapper">
-	<div class="center" *ngIf="bestResource">
-		<div class="center">
-			<img class="bg" [attr.src]="bestResource.url" />
+<div #wrapper class="wrapper" *ngIf="photo">
+	<div class="section">
+		<img class="photo" [attr.src]="bestResourceUrl" (click)="zoomView($event)" [width]="photo.width" [height]="photo.height" />
+		<div *ngIf="galleryUrl" class="button closeButton"><a [routerLink]="galleryUrl"><img src="assets/icons_close.png" /></a></div>
+		<div *ngIf="nextId" class="button nextButton"><a 
+				[routerLink]="'/photo/' + nextId" 
+				[queryParams]="{contextId: galleryContextId}"  
+				(click)="galleryContextService.goNextPhoto(galleryContextId)"
+			><img src="assets/icons_next.png"/></a></div>
+		<div *ngIf="previousId" class="button previousButton"><a 
+				[routerLink]="'/photo/' + previousId" 
+				[queryParams]="{contextId: galleryContextId}"  
+				(click)="galleryContextService.goPreviousPhoto(galleryContextId)"
+			><img src="assets/icons_previous.png" /></a></div>
+	</div>
+	<div class="row">
+		<div class="leftColumn section">
+			<div class="title">{{photo.title}}</div>
+			<div class="copy">{{photo.description}}</div>
 		</div>
-		<!--img [attr.src]="bestResource.url" width="1024"
-			height="{{1024 / (bestResource.width / bestResource.height)}}" /-->
-		<div class="row center">
-			<div class="leftColumn">
-				<div class="title">{{photo.title}}</div>
-				<div class="copy">{{photo.description}}</div>
-			</div>
-			<div class="rightColumn">
-				<table>
-					<tr>
-						<td><span class="exif">Date</span></td>
-						<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-						<td>{{photo.date | date:'MMMM d, yyyy'}}</td>
-					</tr>
-					<tr>
-						<td><span class="exif">Camera</span></td>
-						<td></td>
-						<td>{{photo.camera}}</td>
-					</tr>
-					<tr>
-						<td><span class="exif">Lens</span></td>
-						<td></td>
-						<td>{{photo.lens}}</td>
-					</tr>
-					<tr *ngIf="photo.focalLength">
-						<td><span class="exif">Focal Length</span></td>
-						<td></td>
-						<td>{{photo.focalLength}} mm</td>
-					</tr>
-					<tr *ngIf="photo.focusDistance">
-						<td><span class="exif">Focus Dist</span></td>
-						<td></td>
-						<td>{{photo.focusDistance}} m (approx.)</td>
-					</tr>
-					<tr>
-						<td><span class="exif">Aperture</span></td>
-						<td></td>
-						<td>&#402;/{{photo.aperture}}</td>
-					</tr>
-					<tr>
-						<td><span class="exif">Shutter</span></td>
-						<td></td>
-						<td>{{photo.shutterSpeed}}s</td>
-					</tr>
-					<tr>
-						<td><span class="exif">ISO</span></td>
-						<td></td>
-						<td>{{photo.iso}}</td>
-					</tr>
-					<tr *ngIf="photo.flash">
-						<td><span class="exif">Flash</span></td>
-						<td></td>
-						<td>{{photo.getFlashString()}}</td>
-					</tr>
-					<tr *ngIf="photo.latitude">
-						<td><span class="exif">Latitude</span></td>
-						<td></td>
-						<td>{{photo.latitude}}</td>
-					</tr>
-					<tr *ngIf="photo.longitude">
-						<td><span class="exif">Longitude</span></td>
-						<td></td>
-						<td>{{photo.longitude}}</td>
-					</tr>
-					<tr *ngIf="photo.altitude">
-						<td><span class="exif">Altitude</span></td>
-						<td></td>
-						<td>{{photo.altitude}}</td>
-					</tr>
-				</table>
-				<div class="finePrint">{{photo.copyright}} {{photo.usageTerms}}</div>
-			</div>
+		<div class="rightColumn">
+			<table>
+				<tr>
+					<td class="exif">Date</td>
+					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+					<td>{{photo.date | date:'MMMM d, yyyy'}}</td>
+				</tr>
+				<tr>
+					<td class="exif">Camera</td>
+					<td></td> 
+					<td>{{photo.camera}}</td>
+				</tr>
+				<tr>
+					<td class="exif">Lens</td>
+					<td></td>
+					<td>{{photo.lens}}</td>
+				</tr>
+				<tr *ngIf="photo.focalLength">
+					<td class="exif">Focal Length</td>
+					<td></td>
+					<td>{{photo.focalLength}} mm</td>
+				</tr>
+				<tr *ngIf="photo.focusDistance">
+					<td class="exif">Focus Dist</td>
+					<td></td>
+					<td>{{photo.focusDistance}} m (approx.)</td>
+				</tr>
+				<tr>
+					<td class="exif">Aperture</td>
+					<td></td>
+					<td>&#402;/{{photo.aperture}}</td>
+				</tr>
+				<tr>
+					<td class="exif">Shutter</td>
+					<td></td>
+					<td>{{photo.shutterSpeed}}s</td>
+				</tr>
+				<tr>
+					<td class="exif">ISO</td>
+					<td></td>
+					<td>{{photo.iso}}</td>
+				</tr>
+				<tr *ngIf="photo.flash">
+					<td class="exif">Flash</td>
+					<td></td>
+					<td>{{photo.getFlashString()}}</td>
+				</tr>
+				<tr *ngIf="photo.latitude">
+					<td class="exif">Latitude</td>
+					<td></td>
+					<td>{{photo.latitude}}</td>
+				</tr>
+				<tr *ngIf="photo.longitude">
+					<td class="exif">Longitude</td>
+					<td></td>
+					<td>{{photo.longitude}}</td>
+				</tr>
+				<tr *ngIf="photo.altitude">
+					<td class="exif">Altitude</td>
+					<td></td>
+					<td>{{photo.altitude}}</td>
+				</tr>
+			</table>
+			<div class="finePrint">{{photo.copyright}} {{photo.usageTerms}}</div>
 		</div>
 	</div>
 </div>
 
+<app-zoom-view [photo]="photo" [viewX]="lastClickX" [viewY]="lastClickY" (dismissedEvent)="zoomView()" *ngIf="isZoomVisible"></app-zoom-view>

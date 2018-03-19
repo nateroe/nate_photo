@@ -1,4 +1,47 @@
 
+.section {
+	width: 100%;
+	padding-bottom: 30px;
+	position: relative;
+}
+
+.photo {
+	display: block;
+	margin: auto;
+	cursor: zoom-in;
+}
+
+.button {
+	position: absolute;
+	cursor: pointer;	
+}
+
+.closeButton {
+	top: 10px;
+	right: 10px;
+}
+
+.nextButton {
+	top: 50%;
+	right: 10px;
+	transform: translate(0, -22px);
+}
+
+.previousButton {
+	top: 50%;
+	left: 10px;
+	transform: translate(0, -22px);
+}
+
+
+.leftColumn {
+	flex: 60%;
+}
+
+.rightColumn {
+	flex: 40%;
+}
+
 td {
 	font-size: 14px;
 	font-weight: 400;
@@ -6,30 +49,6 @@ td {
 
 .exif {
 	font-weight: 600;
-	color: #add6ff;
-}
-
-.center {
-	width: 100%;
-	height: auto;
-}
-
-.center img {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	cursor: zoom-in;
-	width: 100%;
-}
-
-img.bg {
-	min-height: 100%;
-	min-width: 256px;
-}
-
-.debugDiv {
-	border: 1px solid;
-	color: red;
 }
 
 @media only screen and (max-width: 700px) {

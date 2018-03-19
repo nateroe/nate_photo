@@ -72,3 +72,11 @@ a:hover, a.active {
 .nowrap {
 	white-space: nowrap;
 }
+
+.shadedLight {
+	background: rgba(0, 0, 0, 0.5);  /* partially transparent black */
+}
+
+.shadedDark {
+	background: rgba(0, 0, 0, 0.75);  
+}

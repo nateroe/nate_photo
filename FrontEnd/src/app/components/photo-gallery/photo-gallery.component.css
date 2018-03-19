@@ -4,10 +4,6 @@
 	overflow: hidden;
 }
 
-.inner {
-	position: relative;
-}
-
 .row {
 	overflow: hidden;
 	display: flex;
