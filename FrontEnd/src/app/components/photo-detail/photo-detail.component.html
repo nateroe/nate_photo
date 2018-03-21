@@ -21,62 +21,62 @@
 		<div class="rightColumn">
 			<table>
 				<tr>
-					<td class="exif">Date</td>
+					<th>Date</th>
 					<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 					<td>{{photo.date | date:'MMMM d, yyyy'}}</td>
 				</tr>
 				<tr>
-					<td class="exif">Camera</td>
+					<th>Camera</th>
 					<td></td> 
 					<td>{{photo.camera}}</td>
 				</tr>
 				<tr>
-					<td class="exif">Lens</td>
+					<th>Lens</th>
 					<td></td>
 					<td>{{photo.lens}}</td>
 				</tr>
 				<tr *ngIf="photo.focalLength">
-					<td class="exif">Focal Length</td>
+					<th>Focal Length</th>
 					<td></td>
 					<td>{{photo.focalLength}} mm</td>
 				</tr>
 				<tr *ngIf="photo.focusDistance">
-					<td class="exif">Focus Dist</td>
+					<th>Focus Dist</th>
 					<td></td>
 					<td>{{photo.focusDistance}} m (approx.)</td>
 				</tr>
 				<tr>
-					<td class="exif">Aperture</td>
+					<th>Aperture</th>
 					<td></td>
 					<td>&#402;/{{photo.aperture}}</td>
 				</tr>
 				<tr>
-					<td class="exif">Shutter</td>
+					<th>Shutter</th>
 					<td></td>
 					<td>{{photo.shutterSpeed}}s</td>
 				</tr>
 				<tr>
-					<td class="exif">ISO</td>
+					<th>ISO</th>
 					<td></td>
 					<td>{{photo.iso}}</td>
 				</tr>
 				<tr *ngIf="photo.flash">
-					<td class="exif">Flash</td>
+					<th>Flash</th>
 					<td></td>
 					<td>{{photo.getFlashString()}}</td>
 				</tr>
 				<tr *ngIf="photo.latitude">
-					<td class="exif">Latitude</td>
+					<th>Latitude</th>
 					<td></td>
 					<td>{{photo.latitude}}</td>
 				</tr>
 				<tr *ngIf="photo.longitude">
-					<td class="exif">Longitude</td>
+					<th>Longitude</th>
 					<td></td>
 					<td>{{photo.longitude}}</td>
 				</tr>
 				<tr *ngIf="photo.altitude">
-					<td class="exif">Altitude</td>
+					<th>Altitude</th>
 					<td></td>
 					<td>{{photo.altitude}}</td>
 				</tr>
