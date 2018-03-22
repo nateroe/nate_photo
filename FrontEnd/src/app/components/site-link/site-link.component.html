@@ -1,10 +1,7 @@
 <a routerLink="{{linkDestination}}" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
-
-	<!-- isImageFirst: {{isImageFirst}} -->
-
-	<span class="nowrap" *ngIf="isImageFirst"> <img src="{{getImageSrc()}}"> {{getTitleFirstWord(linkText)}}</span>
+	<span class="nowrap" *ngIf="isImageFirst"><svg width="30" height="30"><use attr.xlink:href="#{{svgId}}"></use></svg> {{getTitleFirstWord(linkText)}}</span>
 	<span *ngIf="isImageFirst">{{getTitleLastPart(linkText)}}</span>
 	
 	<span  *ngIf="!isImageFirst">{{getTitleFirstPart(linkText)}}</span>
-	<span class="nowrap" *ngIf="!isImageFirst">{{getTitleLastWord(linkText)}} <img src="{{getImageSrc()}}"></span>
+	<span class="nowrap" *ngIf="!isImageFirst">{{getTitleLastWord(linkText)}} <svg width="18" height="18"><use attr.xlink:href="#{{svgId}}"></use></svg></span>
 </a>

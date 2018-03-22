@@ -1,21 +1,25 @@
 <div #wrapper class="wrapper" *ngIf="photo">
 	<div class="section">
 		<img class="photo" [attr.src]="bestResourceUrl" (click)="zoomView($event)" [width]="photo.width" [height]="photo.height" />
-		<div *ngIf="galleryUrl" class="button closeButton"><a [routerLink]="galleryUrl"><img src="assets/icons_close.png" /></a></div>
-		<div *ngIf="nextId" class="button nextButton"><a 
+		<div *ngIf="galleryUrl" class="button closeButton shadedDark"><a [routerLink]="galleryUrl">
+				<svg width="22" height="22"><use xlink:href="#icon_close"></use></svg>
+		</a></div>
+		<div *ngIf="nextId" class="button nextButton shadedDark"><a 
 				[routerLink]="'/photo/' + nextId" 
 				[queryParams]="{contextId: galleryContextId}"  
-				(click)="galleryContextService.goNextPhoto(galleryContextId)"
-			><img src="assets/icons_next.png"/></a></div>
-		<div *ngIf="previousId" class="button previousButton"><a 
+				(click)="galleryContextService.goNextPhoto(galleryContextId)">
+			<svg width="44" height="44"><use xlink:href="#icon_next"></use></svg>
+		</a></div>
+		<div *ngIf="previousId" class="button previousButton shadedDark"><a 
 				[routerLink]="'/photo/' + previousId" 
 				[queryParams]="{contextId: galleryContextId}"  
-				(click)="galleryContextService.goPreviousPhoto(galleryContextId)"
-			><img src="assets/icons_previous.png" /></a></div>
+				(click)="galleryContextService.goPreviousPhoto(galleryContextId)">
+			<svg width="44" height="44"><use xlink:href="#icon_previous"></use></svg>
+		</a></div>
 	</div>
 	<div class="row">
 		<div class="leftColumn section">
-			<div class="title">{{photo.title}}</div>
+			<div class="title">{{photo.title}}</div>	
 			<div class="copy">{{photo.description}}</div>
 		</div>
 		<div class="rightColumn">

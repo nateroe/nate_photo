@@ -35,10 +35,7 @@ export class SiteLinkComponent implements OnInit {
     linkText: string;
 
     @Input()
-    imgSrc: string;
-
-    @Input()
-    imgSrcHover: string;
+    svgId: string;
 
     isMouseOver: boolean = false;
 
@@ -97,9 +94,5 @@ export class SiteLinkComponent implements OnInit {
 
     getTitleFirstWord( title: string ): string {
         return title.split( ' ' )[0];
-    }
-
-    getImageSrc(): string {
-        return ( this.isMouseOver ) ? this.imgSrcHover : this.imgSrc;
     }
 }

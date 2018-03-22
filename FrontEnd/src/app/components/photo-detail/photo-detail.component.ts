@@ -60,7 +60,7 @@ export class PhotoDetailComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     constructor( private route: ActivatedRoute, private photoService: PhotoService, private decimalPipe: DecimalPipe,
-        private galleryContextService: GalleryContextService ) {
+        public galleryContextService: GalleryContextService ) {
     }
 
     ngOnInit(): void {

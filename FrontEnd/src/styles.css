@@ -37,6 +37,14 @@ a:hover, a.active {
 	color: #ffc000;
 }
 
+svg {
+  fill: #ffffff;
+}
+
+a:hover svg {
+  fill: #ffc000;
+}
+
 .finePrint {
 	font-size: 10px;
 	font-style: italic;
