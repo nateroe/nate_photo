@@ -29,7 +29,6 @@ import { environment } from '../../environments/environment';
 import { Photo } from '../model/photo';
 import { RenderedPhoto } from '../model/rendered-photo';
 import { ImageResource } from '../model/image-resource';
-import { PHOTO } from './mock-photo';
 
 /**
  * Service to request Photo data
@@ -81,7 +80,6 @@ export class PhotoService {
             } ),
             tap( data => console.log( 'PhotoService.getPhotoHighlightsByExpedition(...) results: ' + data ) ) );
     }
-
 
     getBestPhotos(): Observable<RenderedPhoto[]> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/highlights`;

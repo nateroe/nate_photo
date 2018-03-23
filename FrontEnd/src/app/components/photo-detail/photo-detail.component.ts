@@ -24,6 +24,11 @@ import {
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, ParamMap, Params } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/first';
+import { Observable } from 'rxjs/Observable';
+import { combineLatest } from 'rxjs/observable/combineLatest';
+
 import { RenderedPhoto } from '../../model/rendered-photo';
 import { GalleryContextService } from '../../services/gallery-context.service';
 import { PhotoService } from '../../services/photo.service';
@@ -67,42 +72,40 @@ export class PhotoDetailComponent implements OnInit, AfterViewInit, OnChanges {
         this.doStuff();
     }
 
-    /**
-     * Parse the ID from the route, and use the PhotoService to request the given Photo
-     */
     ngOnChanges(): void {
         this.doStuff();
     }
 
+    /**
+     * Parse the ID from the route, and use the PhotoService to request the given Photo
+     */
     doStuff(): void {
         console.log( '-PhotoDetail.doStuff()' );
-        this.route.paramMap
-            .switchMap(( params: ParamMap ) => {
-                const photoId: number = parseInt( params.get( 'photoId' ), 10 );
-                return this.photoService.getPhoto( photoId );
-            } )
-            .subscribe(
-            data => {
-                console.log( '---PhotoDetail gets data' );
-                this.photo = data;
-                this.chooseBestResource();
 
-                this.route.queryParams.subscribe(( params: Params ) => {
-                    this.galleryContextId = Number( params['contextId'] );
+        combineLatest( this.route.params, this.route.queryParams, ( params, qparams ) => ( { params, qparams } ) ).subscribe(
+            ( combined ) => {
+                const photoId: number = parseInt( combined.params['photoId'], 10 );
+                //            this.galleryContextId = Number( params['contextId'] );
+                this.galleryContextId = parseInt( combined.qparams['contextId'], 10 );
+                console.log( 'SET galleryContextId:' + this.galleryContextId );
+                console.log( '-PhotoDetail.switchMap()' );
+                return this.photoService.getPhoto( photoId ).subscribe(
+                    data => {
+                        console.log( '---PhotoDetail gets data' );
+                        this.photo = data;
+                        this.chooseBestResource();
 
-                    this.nextId = this.galleryContextService.getNextPhotoId( this.galleryContextId );
-                    this.previousId = this.galleryContextService.getPreviousPhotoId( this.galleryContextId );
-                    this.galleryUrl = this.galleryContextService.getGalleryUrl( this.galleryContextId );
+                        this.nextId = this.galleryContextService.getNextPhotoId( this.galleryContextId );
+                        this.previousId = this.galleryContextService.getPreviousPhotoId( this.galleryContextId );
+                        this.galleryUrl = this.galleryContextService.getGalleryUrl( this.galleryContextId );
 
-                    console.log( '---PhotoDetail' );
-                    console.log( 'galleryContextId:' + this.galleryContextId );
-                    console.log( 'nextId:' + this.nextId );
-                    console.log( 'previousId:' + this.previousId );
-                    console.log( 'galleryUrl:' + this.galleryUrl );
-                } );
-
+                        console.log( '---PhotoDetail' );
+                        console.log( 'galleryContextId:' + this.galleryContextId );
+                        console.log( 'nextId:' + this.nextId );
+                        console.log( 'previousId:' + this.previousId );
+                        console.log( 'galleryUrl:' + this.galleryUrl );
+                    } );
             } );
-
     }
 
     ngAfterViewInit(): void {
