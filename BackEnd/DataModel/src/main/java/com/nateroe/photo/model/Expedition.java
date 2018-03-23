@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Objects;
 
@@ -45,6 +46,7 @@ public class Expedition extends AbstractEntity {
 	 * expedition is updated by a new import. "systemName" is the file name of the directory from
 	 * which the expedition was imported.
 	 */
+	@XmlTransient
 	private String systemName;
 
 	// XXX it's too early to deal with Places
@@ -117,7 +119,7 @@ public class Expedition extends AbstractEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(getId(), title, systemName, description, beginDate, endDate);
+		return Objects.hashCode(getId(), title, description, beginDate, endDate);
 	}
 
 	@Override
@@ -133,7 +135,6 @@ public class Expedition extends AbstractEntity {
 
 			returnVal = Objects.equal(this.getId(), other.getId())
 					&& Objects.equal(this.title, other.title)
-					&& Objects.equal(this.systemName, other.systemName)
 					&& Objects.equal(this.description, other.description)
 					&& Objects.equal(this.beginDate, other.beginDate)
 					&& Objects.equal(this.endDate, other.endDate);

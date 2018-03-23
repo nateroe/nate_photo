@@ -36,8 +36,10 @@ public abstract class AbstractEntity {
 		return id;
 	}
 
-	@SuppressWarnings("unused")
-	private void setId(Long id) {
+	/**
+	 * Only public for test. Never use this.
+	 */
+	public void setId(Long id) {
 		this.id = id;
 	}
 }
