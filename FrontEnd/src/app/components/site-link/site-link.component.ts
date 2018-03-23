@@ -19,6 +19,10 @@
  */
 import { Component, Input, OnInit } from '@angular/core';
 
+/**
+ * A link on the site, integrating an icon. Special word-wrapping rules so
+ * that the icon wraps with the first or last word, depending if isImageFirst.
+ */
 @Component( {
     selector: 'app-site-link',
     templateUrl: './site-link.component.html',
@@ -37,19 +41,9 @@ export class SiteLinkComponent implements OnInit {
     @Input()
     svgId: string;
 
-    isMouseOver: boolean = false;
-
     constructor() { }
 
     ngOnInit() {
-    }
-
-    mouseEnter(): void {
-        this.isMouseOver = true;
-    }
-
-    mouseLeave(): void {
-        this.isMouseOver = false;
     }
 
     /**

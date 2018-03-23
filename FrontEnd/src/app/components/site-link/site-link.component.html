@@ -1,4 +1,4 @@
-<a routerLink="{{linkDestination}}" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+<a routerLink="{{linkDestination}}">
 	<span class="nowrap" *ngIf="isImageFirst"><svg width="30" height="30"><use attr.xlink:href="#{{svgId}}"></use></svg> {{getTitleFirstWord(linkText)}}</span>
 	<span *ngIf="isImageFirst">{{getTitleLastPart(linkText)}}</span>
 	
