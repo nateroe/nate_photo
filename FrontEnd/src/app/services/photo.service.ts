@@ -40,13 +40,12 @@ export class PhotoService {
 
     getPhoto( photoId: number ): Observable<RenderedPhoto> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/id/${photoId}`;
-        console.log( 'PhotoServce.getPhoto(' + photoId + ')' );
+        console.log( 'PhotoService.getPhoto(' + photoId + ')' );
         return this.http.get<RenderedPhoto>( url ).pipe(
-            map(( jsonPhoto: RenderedPhoto ) => {
+            map(( jsonPhoto: Photo ) => {
                 return new RenderedPhoto().copyFrom( jsonPhoto );
             } ),
             tap( data => console.log( 'PhotoService.getPhoto(...) results: ' + data ) ) );
-
     }
 
     getPhotosByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
