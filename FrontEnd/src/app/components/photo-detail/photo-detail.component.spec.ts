@@ -10,8 +10,8 @@ import { SiteLinkComponent } from '../site-link/site-link.component';
 import { ZoomViewComponent } from '../zoom-view/zoom-view.component';
 import { PhotoDetailComponent } from './photo-detail.component';
 import { PhotoService } from '../../services/photo.service';
-import { GalleryContextService } from '../../services/gallery-context.service';
 import { MockPhotoService } from '../../services/mock/mock-photo.service';
+import { GalleryContextService } from '../../services/gallery-context.service';
 
 // XXX i stubbed this in but will it be useful?
 class MockActiveRoute {
