@@ -37,7 +37,7 @@ import { RENDERED_PHOTO, RENDERED_PHOTOS } from '../../model/mock/mock-rendered-
  */
 @Injectable()
 export class MockPhotoService {
-    constructor( private http: HttpClient ) {
+    constructor() {
     }
 
     getPhoto( photoId: number ): Observable<RenderedPhoto> {
