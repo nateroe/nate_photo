@@ -45,19 +45,18 @@ export class MockPhotoService {
     }
 
     getPhotosByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
-        return Observable.create( RENDERED_PHOTOS );
+        return Observable.of( RENDERED_PHOTOS );
     }
 
     getPhotoHighlightsByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
-        return Observable.create( RENDERED_PHOTOS );
+        return Observable.of( RENDERED_PHOTOS );
     }
 
-
     getBestPhotos(): Observable<RenderedPhoto[]> {
-        return Observable.create( RENDERED_PHOTOS );
+        return Observable.of( RENDERED_PHOTOS );
     }
 
     getAllPhotos(): Observable<RenderedPhoto[]> {
-        return Observable.create( RENDERED_PHOTOS );
+        return Observable.of( RENDERED_PHOTOS );
     }
 }
