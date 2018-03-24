@@ -23,7 +23,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { PhotoService } from './photo.service';
 import { PHOTO, PHOTOS } from '../model/mock/mock-photo';
-import { environment } from '../../environments/environment';
 
 describe( 'PhotoService', () => {
     let httpClient: HttpClient;
@@ -50,16 +49,16 @@ describe( 'PhotoService', () => {
         // Subscribe to the service under test
         service.getPhoto( PHOTO.id ).subscribe(
             data => {
-                // Expect to get the test photo in response
+                // Expect the test photo in response
                 expect( data.id ).toEqual( PHOTO.id );
                 expect( data.title ).toEqual( PHOTO.title );
             } );
 
-        // expect a GET request for the photo
+        // expect an HTTP GET request for the photo
         const req = httpTestingController.expectOne( `/NatePhotoWebApp/rest/photo/id/${PHOTO.id}` );
         expect( req.request.method ).toEqual( 'GET' );
 
-        // respond with the test photo
+        // respond to GET with the test photo
         req.flush( PHOTO );
 
         // verify GET was made

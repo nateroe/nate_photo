@@ -18,14 +18,25 @@
  * Contact nate [at] nateroe [dot] com
  */
 import { TestBed, inject } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { ExpeditionService } from './expedition.service';
+import { EXPEDITION, EXPEDITIONS } from '../model/mock/mock-expedition';
 
 describe( 'ExpeditionService', () => {
+    let httpClient: HttpClient;
+    let httpTestingController: HttpTestingController;
+
     beforeEach(() => {
         TestBed.configureTestingModule( {
-            providers: [ExpeditionService]
+            providers: [ExpeditionService],
+            imports: [HttpClientTestingModule]
         } );
+
+        // Inject the http service and test controller for each test
+        httpClient = TestBed.get( HttpClient );
+        httpTestingController = TestBed.get( HttpTestingController );
     } );
 
     it( 'should be created', inject( [ExpeditionService], ( service: ExpeditionService ) => {
