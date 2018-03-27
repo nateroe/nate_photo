@@ -17,7 +17,10 @@
  *
  * Contact nate [at] nateroe [dot] com
  */
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, OnChanges } from '@angular/core';
+import {
+    ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input,
+    OnInit, Output, OnChanges, ViewChild
+} from '@angular/core';
 import { DomSanitizer, SafeStyle, SafeUrl } from '@angular/platform-browser';
 
 import { RenderedPhoto } from '../../model/rendered-photo';
@@ -34,6 +37,8 @@ import { environment } from '../../../environments/environment';
     styleUrls: ['./zoom-view.component.css']
 } )
 export class ZoomViewComponent implements OnChanges {
+    @ViewChild( 'wrapper' ) wrapper: ElementRef;
+
     @Input()
     photo: RenderedPhoto;
 
@@ -53,6 +58,13 @@ export class ZoomViewComponent implements OnChanges {
 
     offsetX: number = 0;
     offsetY: number = 0;
+
+    wrapperOffsetX: number = 0;
+    wrapperOffsetY: number = 0;
+
+    @HostListener( 'window:scroll', ['$event'] ) triggerCycle( event: any ) {
+        this.doWrapperOffset();
+    }
 
     constructor( private sanitizer: DomSanitizer, private changeDetectorRef: ChangeDetectorRef ) {
     }
@@ -75,6 +87,8 @@ export class ZoomViewComponent implements OnChanges {
                 this.doOffset( this.viewX, this.viewY );
             }
         }
+
+        this.doWrapperOffset();
     }
 
     getWidth(): number {
@@ -130,7 +144,7 @@ export class ZoomViewComponent implements OnChanges {
             this.offsetY = ( screenHeight - this.bestResource.height ) * 0.5;
         }
 
-        //       console.log( '-----------------------------------' );
+        //        console.log( '-----------------------------------' );
         //        console.log( 'mouse position: ' + mouseX + ', ' + mouseY );
         //        console.log( 'screen size: ' + screenWidth + ', ' + screenHeight );
         //        console.log( 'window.inner: ' + window.innerWidth + ', ' + window.innerHeight );
@@ -138,5 +152,12 @@ export class ZoomViewComponent implements OnChanges {
         //        console.log( 'bestResource size: ' + this.bestResource.width + ', ' + this.bestResource.height );
         //        console.log( 'normalize mouse coords: ' + nmx + ', ' + nmy );
         //        console.log( 'offset: ' + this.offsetX + ', ' + this.offsetY );
+    }
+
+    doWrapperOffset() {
+        if ( this.wrapper ) {
+            this.wrapperOffsetX = window.scrollX;
+            this.wrapperOffsetY = window.scrollY;
+        }
     }
 }

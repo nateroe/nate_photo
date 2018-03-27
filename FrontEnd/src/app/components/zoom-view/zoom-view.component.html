@@ -1,4 +1,6 @@
-<div class="wrapper shadedDark">
+<div #wrapper class="wrapper shadedDark"
+		[style.left.px]="wrapperOffsetX"
+		[style.top.px]="wrapperOffsetY">
 	<div class="photo" 
 			[style.width.px]="getWidth()"
 			[style.height.px]="getHeight()"
