@@ -6,8 +6,10 @@
 		<span *ngIf="!isLink">{{expedition.title}}</span>
 	</div>
 	<div class="rightColumn smallText bottomAligned rightAligned">
-		<div class="beginDate">{{expedition.beginDate | date:'MMMM d, y'}}</div>
-		<div *ngIf='expedition.isMultiDay()' class="endDate">-
-			{{expedition.endDate | date:'MMMM d, y'}}</div>
+		{{expedition.beginDate | date:'MMMM d, y'}}
+		<span *ngIf='expedition.isMultiDay()'>-
+			{{expedition.endDate | date:'MMMM d, y'}}</span>
 	</div>
+</div>
+<div class="row">
 </div>
