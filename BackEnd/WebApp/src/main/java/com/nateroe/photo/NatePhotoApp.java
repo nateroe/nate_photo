@@ -18,7 +18,7 @@
  * Contact nate [at] nateroe [dot] com
  */
 
-package com.nateroe.photo.rest;
+package com.nateroe.photo;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +27,8 @@ import javax.ws.rs.ApplicationPath;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.nateroe.photo.rest.RestHandler;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 

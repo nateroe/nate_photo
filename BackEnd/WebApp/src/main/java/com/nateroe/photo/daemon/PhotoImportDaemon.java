@@ -62,6 +62,12 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nateroe.photo.dao.ExpeditionDao;
@@ -69,6 +75,8 @@ import com.nateroe.photo.dao.PhotoDao;
 import com.nateroe.photo.model.Expedition;
 import com.nateroe.photo.model.ImageResource;
 import com.nateroe.photo.model.Photo;
+import com.nateroe.photo.system.AppProperties;
+import com.nateroe.photo.system.AppPropertyKey;
 import com.nateroe.photo.util.SystemUtil;
 
 /**
@@ -79,24 +87,6 @@ import com.nateroe.photo.util.SystemUtil;
 @WebListener
 public class PhotoImportDaemon implements ServletContextListener, Runnable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PhotoImportDaemon.class);
-
-	/**
-	 * Files to be imported are dumped in the handoff directory by the user
-	 */
-	private static final String HANDOFF_DIRECTORY = "/var/photo/handoff/";
-
-	/**
-	 * Results (scaled images and the imported original file) go in the destination directory
-	 */
-	private static final String DESTINATION_DIRECTORY = "/var/photo/www/";
-
-	/**
-	 * The files in the destination director are served at this URL path
-	 */
-	private static final String URL_PATH = "/res/";
-
-	private static final int LARGE_WIDTH = 2048;
-	private static final int SMALL_WIDTH = 256;
 
 	@Resource(lookup = "java:jboss/ee/concurrency/scheduler/PhotoImportDaemonExecutor")
 	private ManagedScheduledExecutorService scheduler;
@@ -145,7 +135,7 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 			};
 
 			// Stream the delivery directory's contents and filter
-			Path dir = Paths.get(HANDOFF_DIRECTORY);
+			Path dir = Paths.get(AppProperties.getString(AppPropertyKey.HANDOFF_DIRECTORY));
 			// SimpleDateFormat is not threadsafe so instantiate a new one every time.
 			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			boolean hasDoneWork = false;
@@ -178,8 +168,9 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 				// exiftool leaves "*_original" files behind,
 				// so if we did any image importing, then delete all
 				// such files from the destination directory
-				try (DirectoryStream<Path> dirStream = Files
-						.newDirectoryStream(Paths.get(DESTINATION_DIRECTORY), "*_original")) {
+				try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(
+						Paths.get(AppProperties.getString(AppPropertyKey.DESTINATION_DIRECTORY)),
+						"*_original")) {
 					for (Path path : dirStream) {
 						delete(path);
 					}
@@ -201,6 +192,9 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 		}
 	}
 
+	/**
+	 * Import an Expedition (ie, a directory filled with photos)
+	 */
 	private void acceptExpedition(Path expeditionPath) throws IOException {
 		// If present in the expedition folder, expedition.json will be read
 		File jsonFile = expeditionPath.resolve("expedition.json").toFile();
@@ -391,7 +385,9 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 				// Generate scaled image resources for every power of 2 division between LARGE_WIDTH
 				// and SMALL_WIDTH
-				for (int maxDimension = LARGE_WIDTH; maxDimension >= SMALL_WIDTH; maxDimension /= 2) {
+				final int largeWidth = AppProperties.getInt(AppPropertyKey.LARGE_WIDTH);
+				final int smallWidth = AppProperties.getInt(AppPropertyKey.SMALL_WIDTH);
+				for (int maxDimension = largeWidth; maxDimension >= smallWidth; maxDimension /= 2) {
 					// constrain the largest dimension to a fixed value and
 					// scale the other dimension to maintain aspect
 					double scalingFactor;
@@ -410,7 +406,9 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 					BufferedImage scaledImage = getScaledInstance(image, width, height);
 
 					String fileName = generateFileName();
-					Path dest = Paths.get(DESTINATION_DIRECTORY + File.separator + fileName);
+					Path dest = Paths
+							.get(AppProperties.getString(AppPropertyKey.DESTINATION_DIRECTORY)
+									+ File.separator + fileName);
 					encodeJpeg(scaledImage, 0.9f, dest.toFile());
 
 					// copy only specific EXIF tags
@@ -421,8 +419,20 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 							+ dest;
 					SystemUtil.executeScript(command);
 
+					String url;
+					if (AppProperties.getBoolean(AppPropertyKey.IS_USE_S3)) {
+						// upload mipmap to S3
+						uploadImage(dest.toFile());
+						FileUtils.deleteQuietly(dest.toFile());
+						url = AppProperties.getString(AppPropertyKey.URL_PATH)
+								+ AppProperties.getString(AppPropertyKey.S3_BUCKET_NAME) + "/"
+								+ fileName;
+					} else {
+						url = AppProperties.getString(AppPropertyKey.URL_PATH) + fileName;
+					}
+
 					ImageResource imageResource = new ImageResource();
-					imageResource.setUrl(URL_PATH + fileName);
+					imageResource.setUrl(url);
 					imageResource.setWidth(width);
 					imageResource.setHeight(height);
 					photo.addImageResource(imageResource);
@@ -433,7 +443,8 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 				// Copy the original image to destination
 				String fileName = generateFileName();
-				Path dest = Paths.get(DESTINATION_DIRECTORY + File.separator + fileName);
+				Path dest = Paths.get(AppProperties.getString(AppPropertyKey.DESTINATION_DIRECTORY)
+						+ File.separator + fileName);
 				FileUtils.copyFile(jpegFile, dest.toFile());
 
 				// delete all EXIF tags from the new copy
@@ -449,8 +460,20 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 						+ dest;
 				SystemUtil.executeScript(command);
 
+				String url;
+				if (AppProperties.getBoolean(AppPropertyKey.IS_USE_S3)) {
+					// upload mipmap to S3
+					uploadImage(dest.toFile());
+					FileUtils.deleteQuietly(dest.toFile());
+					url = AppProperties.getString(AppPropertyKey.URL_PATH)
+							+ AppProperties.getString(AppPropertyKey.S3_BUCKET_NAME) + "/"
+							+ fileName;
+				} else {
+					url = AppProperties.getString(AppPropertyKey.URL_PATH) + fileName;
+				}
+
 				ImageResource imageResource = new ImageResource();
-				imageResource.setUrl(URL_PATH + fileName);
+				imageResource.setUrl(url);
 				imageResource.setWidth(origWidth);
 				imageResource.setHeight(origHeight);
 				photo.addImageResource(imageResource);
@@ -463,21 +486,23 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 				// at this point, delete all old (original) resources
 				for (ImageResource resource : oldResources) {
-					String pathString = DESTINATION_DIRECTORY + File.separator + File.separator
+					String pathString = AppProperties
+							.getString(AppPropertyKey.DESTINATION_DIRECTORY) + File.separator
 							+ resource.getFileName();
 					delete(Paths.get(pathString));
 				}
 
 				if (LOGGER.isInfoEnabled()) {
 					float seconds = (float) (System.currentTimeMillis() - startTime) / 1000.0f;
-					LOGGER.info("File import successful: {} in {}", fileName,
+					LOGGER.info("File import successful: {} in {}s", fileName,
 							String.format("%3.1fs", seconds));
 				}
 			} catch (Throwable t) {
 				// If any exception, roll back the processed files
 				String fileFilter = jpegFile.getName() + "_*";
-				try (DirectoryStream<Path> stream = Files
-						.newDirectoryStream(Paths.get(DESTINATION_DIRECTORY), fileFilter)) {
+				try (DirectoryStream<Path> stream = Files.newDirectoryStream(
+						Paths.get(AppProperties.getString(AppPropertyKey.DESTINATION_DIRECTORY)),
+						fileFilter)) {
 					for (Path path : stream) {
 						LOGGER.info("Rolling back failed import. Delete file {}", path);
 						Files.delete(path);
@@ -493,9 +518,6 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 	/**
 	 * Try to parse, returning null on failure (failing silently)
-	 * 
-	 * @param integerString
-	 * @return
 	 */
 	private static Integer parseInt(String integerString) {
 		Integer result = null;
@@ -508,9 +530,6 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 	/**
 	 * Try to parse, returning null on failure (failing silently)
-	 * 
-	 * @param floatString
-	 * @return
 	 */
 	private static Float parseFloat(String floatString) {
 		Float result = null;
@@ -523,9 +542,6 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 
 	/**
 	 * Try to parse, returning null on failure (failing silently)
-	 * 
-	 * @param dateString
-	 * @return
 	 */
 	private static Date parseDate(String dateString) {
 		Date result = null;
@@ -541,6 +557,9 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 		return result;
 	}
 
+	/**
+	 * Create a scaled version of the given BufferedImage
+	 */
 	private static BufferedImage getScaledInstance(BufferedImage image, int targetWidth,
 			int targetHeight) {
 		int type = (image.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
@@ -556,6 +575,9 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 		return returnVal;
 	}
 
+	/**
+	 * Encode a BufferedImage with JPEG using the specified quality factor
+	 */
 	private static void encodeJpeg(BufferedImage image, float quality, File file)
 			throws IOException {
 		JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
@@ -568,6 +590,9 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 		writer.write(null, new IIOImage(image, null, null), jpegParams);
 	}
 
+	/**
+	 * Generate a filename from a new random UUID
+	 */
 	private static String generateFileName() {
 		String result;
 		do {
@@ -583,6 +608,25 @@ public class PhotoImportDaemon implements ServletContextListener, Runnable {
 		File file = path.toFile();
 		if (file.exists()) {
 			FileUtils.deleteQuietly(file);
+		}
+	}
+
+	/**
+	 * Upload the given file to S3
+	 */
+	private static void uploadImage(File file) {
+		try {
+			// XXX cache the S3 instance
+			final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_2)
+					.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(
+							AppProperties.getString(AppPropertyKey.S3_ACCESS_KEY),
+							AppProperties.getString(AppPropertyKey.S3_SECRET_KEY))))
+					.build();
+			s3.putObject(AppProperties.getString(AppPropertyKey.S3_BUCKET_NAME), file.getName(),
+					file);
+			LOGGER.info("Saved to S3: {}", file.getName());
+		} catch (AmazonServiceException e) {
+			LOGGER.warn("Failed to save to S3", e);
 		}
 	}
 }
