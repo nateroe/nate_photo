@@ -1,6 +1,11 @@
 <div #wrapper class="wrapper" *ngIf="photo">
 	<div class="section">
-		<img class="photo" [attr.src]="bestResourceUrl" (click)="zoomView($event)" [width]="photo.width" [height]="photo.height" />
+		<img class="photo" 
+				[attr.src]="bestResourceUrl" 
+				(click)="zoomView($event)" 
+				[width]="photo.width" 
+				[height]="photo.height"
+			/>
 		<div *ngIf="galleryUrl" class="button closeButton shadedDark"><a [routerLink]="galleryUrl">
 				<svg width="22" height="22"><use xlink:href="#icon_close"></use></svg>
 		</a></div>

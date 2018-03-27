@@ -41,6 +41,10 @@ svg {
   fill: #ffffff;
 }
 
+img {
+	background: #383838; 
+}
+
 a:hover svg {
   fill: #ffc000;
 }

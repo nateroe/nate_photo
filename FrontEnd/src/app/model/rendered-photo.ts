@@ -59,7 +59,8 @@ export class RenderedPhoto extends Photo {
         const areaRatio: number = window.devicePixelRatio * window.devicePixelRatio;
         const best: ImageResource =
             ( !this.isVisible || !this.isLoaded ) ? null : super.getBestResourceByArea( this.width * this.height * areaRatio );
-        const url: string = best == null ? '' : best.url;
+        const url: string = best == null ? 'assets/blank-pixel.png' : best.url;
+        console.log( 'best URL for ' + this.id + ' is ' + url );
         return url;
     }
 }
