@@ -27,6 +27,15 @@ import { ImageResource } from '../../model/image-resource';
 import { PhotoService } from '../../services/photo.service';
 import { ThumbnailComponent } from '../thumbnail/thumbnail.component';
 
+/**
+ * PhotoGallery is any collection of photo thumbnails that each link to photo details.
+ *
+ * Acknowledgement to Benjamin Brandmeier, whose angular2-image-gallery project I read
+ * quite closely. I found it to be an especially helpful example of displaying this style
+ * of gallery using Angular 2 (or 5).
+ *
+ * https://github.com/BenjaminBrandmeier/angular2-image-gallery
+ */
 @Component( {
     selector: 'app-photo-gallery',
     templateUrl: './photo-gallery.component.html',
@@ -203,7 +212,6 @@ export class PhotoGalleryComponent implements OnInit, AfterViewInit {
             if ( photoRow.length > 1 ) {
                 rowWidth += this.MARGIN * ( photoRow.length - 1 );
             }
-
 
             // determine the scale factor for the row
             let rowScale: number;
