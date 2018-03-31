@@ -38,15 +38,26 @@ import com.nateroe.photo.rest.RestHandler;
 @Path("/photo")
 public class PhotoHandler {
 	// maximum resource resolution (see sanitizeResources(...))
-	private static final int MAX_RES = 2048;
+	// hard-coding this is a temporary measure; eventually it will depend on viewer role
+	public static final int MAX_RES = 2048;
 
 	@EJB
 	private PhotoDao photoDao;
 
+	public PhotoHandler() {
+	}
+
+	/**
+	 * for test
+	 */
+	public PhotoHandler(PhotoDao photoDao) {
+		this.photoDao = photoDao;
+	}
+
 	@GET
 	@Path("id/{photoId}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Photo getPhotobyId(@PathParam("photoId") long photoId) {
+	public Photo getPhotoById(@PathParam("photoId") long photoId) {
 		Photo photo = photoDao.findByPrimaryKey(photoId);
 		if (photo == null) {
 			throw new NotFoundException();

@@ -41,6 +41,13 @@ public abstract class AbstractDao<T, ID extends Serializable> {
 				AbstractDao.class)[0];
 	}
 
+	/**
+	 * for test
+	 */
+	public void setEntityManager(EntityManager entityManager) {
+		this.em = entityManager;
+	}
+
 	public void save(T entity) {
 		em.persist(entity);
 	}

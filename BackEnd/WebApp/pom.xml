@@ -107,6 +107,11 @@
 			<artifactId>fast-classpath-scanner</artifactId>
 			<version>2.18.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.11.301</version>
+		</dependency>
 
 		<!-- provided -->
 		<dependency>
@@ -129,5 +134,12 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.16.0</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 </project>

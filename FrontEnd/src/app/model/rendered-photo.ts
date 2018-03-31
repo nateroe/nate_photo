@@ -29,6 +29,11 @@ export class RenderedPhoto extends Photo {
     isVisible: boolean = true;
     isLoaded: boolean = true;
 
+    /**
+     * Create a RenderedPhoto from the given Photo (or Object with properties of a Photo)
+     *
+     * @param that
+     */
     copyFrom( that: Photo ): RenderedPhoto {
         super.copyFrom( that );
         // width and height are ignored because "that" is a Photo (not RenderedPhoto)
@@ -40,7 +45,9 @@ export class RenderedPhoto extends Photo {
      * (or null if not isVisible or not isOnScreen).
      */
     getBestResource(): ImageResource {
-        return ( !this.isVisible || !this.isLoaded ) ? null : super.getBestResourceByArea( this.width * this.height );
+        // areaRatio is the pixel ratio of one square CSS pixel
+        const areaRatio: number = window.devicePixelRatio * window.devicePixelRatio;
+        return ( !this.isVisible || !this.isLoaded ) ? null : super.getBestResourceByArea( this.width * this.height * areaRatio );
     }
 
     /**
@@ -48,9 +55,12 @@ export class RenderedPhoto extends Photo {
      * (or null if not isVisible or not isOnScreen).
      */
     getBestResourceUrl(): string {
+        // areaRatio is the pixel ratio of one square CSS pixel
+        const areaRatio: number = window.devicePixelRatio * window.devicePixelRatio;
         const best: ImageResource =
-            ( !this.isVisible || !this.isLoaded ) ? null : super.getBestResourceByArea( this.width * this.height );
-        const url: string = best == null ? '' : best.url;
+            ( !this.isVisible || !this.isLoaded ) ? null : super.getBestResourceByArea( this.width * this.height * areaRatio );
+        const url: string = best == null ? 'assets/blank-pixel.png' : best.url;
+        console.log( 'best URL for ' + this.id + ' is ' + url );
         return url;
     }
 }

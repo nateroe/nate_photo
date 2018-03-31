@@ -300,6 +300,7 @@ public class Photo extends AbstractEntity {
 					&& Objects.equal(this.focalLength, other.focalLength) //
 					&& Objects.equal(this.focusDistance, other.focusDistance) //
 					&& Objects.equal(this.copyright, other.copyright) //
+					&& Objects.equal(this.usageTerms, other.usageTerms) //
 					&& Objects.equal(this.isPublished, other.isPublished);
 		}
 
@@ -309,7 +310,8 @@ public class Photo extends AbstractEntity {
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(getId(), title, description, rating, date, camera, lens, aperture,
-				shutterSpeed, iso, flash, focalLength, focusDistance, copyright, isPublished);
+				shutterSpeed, iso, flash, focalLength, focusDistance, copyright, usageTerms,
+				isPublished);
 	}
 
 	@Override

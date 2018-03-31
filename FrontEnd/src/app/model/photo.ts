@@ -45,6 +45,13 @@ export class Photo {
     isPublished: boolean;
     images: ImageResource[];
 
+    /**
+     * Copy all data from that Photo, creating new child objects.
+     * This solves an unmarshalling problem where JSON objects are
+     * unmarshalled to Object,.
+     *
+     * @param that
+     */
     copyFrom( that: Photo ): Photo {
         Object.assign( this, that );
         this.date = new Date( that.date );
@@ -59,6 +66,11 @@ export class Photo {
         return this;
     }
 
+    /**
+     * Return the best resource for the given area, in square image pixels.
+     *
+     * @param area
+     */
     getBestResourceByArea( area: number ): ImageResource {
         let result: ImageResource = null;
 

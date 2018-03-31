@@ -29,7 +29,6 @@ import { environment } from '../../environments/environment';
 import { Photo } from '../model/photo';
 import { RenderedPhoto } from '../model/rendered-photo';
 import { ImageResource } from '../model/image-resource';
-import { PHOTO } from './mock-photo';
 
 /**
  * Service to request Photo data
@@ -41,13 +40,12 @@ export class PhotoService {
 
     getPhoto( photoId: number ): Observable<RenderedPhoto> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/id/${photoId}`;
-        console.log( 'PhotoServce.getPhoto(' + photoId + ')' );
+        console.log( 'PhotoService.getPhoto(' + photoId + ')' );
         return this.http.get<RenderedPhoto>( url ).pipe(
-            map(( jsonPhoto: RenderedPhoto ) => {
+            map(( jsonPhoto: Photo ) => {
                 return new RenderedPhoto().copyFrom( jsonPhoto );
             } ),
             tap( data => console.log( 'PhotoService.getPhoto(...) results: ' + data ) ) );
-
     }
 
     getPhotosByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
@@ -81,7 +79,6 @@ export class PhotoService {
             } ),
             tap( data => console.log( 'PhotoService.getPhotoHighlightsByExpedition(...) results: ' + data ) ) );
     }
-
 
     getBestPhotos(): Observable<RenderedPhoto[]> {
         const url = environment.restBaseUrl + `/NatePhotoWebApp/rest/photo/highlights`;

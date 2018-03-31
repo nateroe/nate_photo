@@ -18,17 +18,50 @@
  * Contact nate [at] nateroe [dot] com
  */
 import { TestBed, inject } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { PhotoService } from './photo.service';
+import { PHOTO, PHOTOS } from '../model/mock/mock-photo';
 
 describe( 'PhotoService', () => {
+    let httpClient: HttpClient;
+    let httpTestingController: HttpTestingController;
+
     beforeEach(() => {
         TestBed.configureTestingModule( {
-            providers: [PhotoService]
+            providers: [PhotoService],
+            imports: [HttpClientTestingModule]
         } );
+
+        // Inject the http service and test controller for each test
+        httpClient = TestBed.get( HttpClient );
+        httpTestingController = TestBed.get( HttpTestingController );
     } );
 
     it( 'should be created', inject( [PhotoService], ( service: PhotoService ) => {
         expect( service ).toBeTruthy();
+    } ) );
+
+    it( 'should get photo by ID', inject( [PhotoService], ( service: PhotoService ) => {
+        expect( service ).toBeTruthy();
+
+        // Subscribe to the service under test
+        service.getPhoto( PHOTO.id ).subscribe(
+            data => {
+                // Expect the test photo in response
+                expect( data.id ).toEqual( PHOTO.id );
+                expect( data.title ).toEqual( PHOTO.title );
+            } );
+
+        // expect an HTTP GET request for the photo
+        const req = httpTestingController.expectOne( `/NatePhotoWebApp/rest/photo/id/${PHOTO.id}` );
+        expect( req.request.method ).toEqual( 'GET' );
+
+        // respond to GET with the test photo
+        req.flush( PHOTO );
+
+        // verify GET was made
+        httpTestingController.verify();
     } ) );
 } );

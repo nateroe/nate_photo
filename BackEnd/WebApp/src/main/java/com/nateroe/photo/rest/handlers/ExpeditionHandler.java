@@ -20,10 +20,17 @@ public class ExpeditionHandler {
 	@EJB
 	private ExpeditionDao expeditionDao;
 
+	public ExpeditionHandler() {
+	}
+
+	public ExpeditionHandler(ExpeditionDao expeditionDao) {
+		this.expeditionDao = expeditionDao;
+	}
+
 	@GET
 	@Path("id/{expeditionId}")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Expedition getExpeditionbyId(@PathParam("expeditionId") long expeditionId) {
+	public Expedition getExpeditionById(@PathParam("expeditionId") long expeditionId) {
 		Expedition expedition = expeditionDao.findByPrimaryKey(expeditionId);
 		if (expedition == null) {
 			throw new NotFoundException();
