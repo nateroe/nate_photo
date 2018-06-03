@@ -20,10 +20,8 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators/map';
-import { tap } from 'rxjs/operators/tap';
-import { catchError } from 'rxjs/operators/catchError';
+import { Observable } from 'rxjs';
+import { map ,  tap ,  catchError } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { Photo } from '../model/photo';

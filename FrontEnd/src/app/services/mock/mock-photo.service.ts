@@ -20,11 +20,9 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import { map } from 'rxjs/operators/map';
-import { tap } from 'rxjs/operators/tap';
-import { catchError } from 'rxjs/operators/catchError';
+import { Observable } from 'rxjs';
+import { of as observableOf } from 'rxjs';
+import { map ,  tap ,  catchError } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import { Photo } from '../../model/photo';
@@ -41,22 +39,22 @@ export class MockPhotoService {
     }
 
     getPhoto( photoId: number ): Observable<RenderedPhoto> {
-        return Observable.of( RENDERED_PHOTO );
+        return observableOf( RENDERED_PHOTO );
     }
 
     getPhotosByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
-        return Observable.of( RENDERED_PHOTOS );
+        return observableOf( RENDERED_PHOTOS );
     }
 
     getPhotoHighlightsByExpedition( expeditionId: number ): Observable<RenderedPhoto[]> {
-        return Observable.of( RENDERED_PHOTOS );
+        return observableOf( RENDERED_PHOTOS );
     }
 
     getBestPhotos(): Observable<RenderedPhoto[]> {
-        return Observable.of( RENDERED_PHOTOS );
+        return observableOf( RENDERED_PHOTOS );
     }
 
     getAllPhotos(): Observable<RenderedPhoto[]> {
-        return Observable.of( RENDERED_PHOTOS );
+        return observableOf( RENDERED_PHOTOS );
     }
 }

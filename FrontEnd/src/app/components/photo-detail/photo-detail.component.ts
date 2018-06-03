@@ -23,11 +23,10 @@ import {
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, ParamMap, Params } from '@angular/router';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/first';
-import { Observable } from 'rxjs/Observable';
-import { combineLatest } from 'rxjs/observable/combineLatest';
+
+
+
+import { Observable ,  combineLatest } from 'rxjs';
 
 import { RenderedPhoto } from '../../model/rendered-photo';
 import { GalleryContextService } from '../../services/gallery-context.service';

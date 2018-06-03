@@ -19,7 +19,7 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import 'rxjs/add/operator/switchMap';
+import { switchMap } from 'rxjs/operators';
 import { ExpeditionService } from '../../services/expedition.service';
 import { PhotoService } from '../../services/photo.service';
 import { Expedition } from '../../model/expedition';
@@ -38,11 +38,11 @@ export class ExpeditionDetailComponent implements OnInit {
     constructor( private route: ActivatedRoute, private expeditionService: ExpeditionService, private photoService: PhotoService ) { }
 
     ngOnInit() {
-        this.route.paramMap
-            .switchMap(( params: ParamMap ) => {
+        this.route.paramMap.pipe(
+            switchMap(( params: ParamMap ) => {
                 let expeditionId: number = parseInt( params.get( 'expeditionId' ), 10 );
                 return this.expeditionService.getExpedition( expeditionId );
-            } )
+            } ))
             .subscribe(
             expedition => {
                 this.expedition = expedition;

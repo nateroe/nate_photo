@@ -18,8 +18,8 @@
  * Contact nate [at] nateroe [dot] com
  */
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
+import { Observable } from 'rxjs';
+import { of as observableOf } from 'rxjs';
 
 import { Expedition } from '../../model/expedition';
 import { EXPEDITION, EXPEDITIONS } from '../../model/mock/mock-expedition';
@@ -33,10 +33,10 @@ export class MockExpeditionService {
     }
 
     getExpedition( id: number ): Observable<Expedition> {
-        return Observable.of( EXPEDITION );
+        return observableOf( EXPEDITION );
     }
 
     getAllExpeditions(): Observable<Expedition[]> {
-        return Observable.of( EXPEDITIONS );
+        return observableOf( EXPEDITIONS );
     }
 }
