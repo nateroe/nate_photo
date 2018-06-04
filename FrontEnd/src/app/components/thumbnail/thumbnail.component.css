@@ -1,11 +1,12 @@
 .wrapper {
 	margin-right: 5px;
 	position: relative;
-	cursor: pointer;	
+	cursor: pointer;
 }
 
 .textover {
 	position: absolute;
 	bottom: 8px;
-	width: 100%;  
+	width: 100%;
+	color: #ffc000;
 }

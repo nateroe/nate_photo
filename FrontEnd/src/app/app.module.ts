@@ -18,6 +18,7 @@
  * Contact nate [at] nateroe [dot] com
  */
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -38,7 +39,7 @@ import { ExpeditionHeaderComponent } from './components/expedition-header/expedi
 import { ThumbnailComponent } from './components/thumbnail/thumbnail.component';
 import { ZoomViewComponent } from './components/zoom-view/zoom-view.component';
 
-@NgModule( {
+@NgModule({
     declarations: [
         AppComponent,
         PhotoDetailComponent,
@@ -54,8 +55,9 @@ import { ZoomViewComponent } from './components/zoom-view/zoom-view.component';
     ],
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         HttpClientModule,
-        AppRoutingModule
+        AppRoutingModule,
     ],
     providers: [
         PhotoService,
@@ -63,5 +65,5 @@ import { ZoomViewComponent } from './components/zoom-view/zoom-view.component';
         GalleryContextService
     ],
     bootstrap: [AppComponent]
-} )
+})
 export class AppModule { }

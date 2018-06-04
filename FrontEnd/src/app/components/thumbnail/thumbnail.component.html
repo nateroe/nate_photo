@@ -9,5 +9,5 @@
 		[src]="photo.getBestResourceUrl()"
 		[attr.photoId]="photo.id" 
 	/>
-	<div class="textover shadedLight" *ngIf="isMouseOver">{{photo.title}}</div>
+	<div class="textover shadedLight" [@hoverStateTrigger]="hoverState">{{photo.title}}</div>
 </a>

@@ -19,6 +19,14 @@
  */
 import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import {
+    trigger,
+    state,
+    style,
+    animate,
+    transition
+} from '@angular/animations';
+
 import { RenderedPhoto } from '../../model/rendered-photo';
 import { GalleryContextService } from '../../services/gallery-context.service';
 
@@ -28,13 +36,27 @@ import { GalleryContextService } from '../../services/gallery-context.service';
  * - mouse hover
  * - link activation (storing the gallery context during navigation)
  */
-@Component( {
+@Component({
     selector: 'app-thumbnail',
     templateUrl: './thumbnail.component.html',
-    styleUrls: ['./thumbnail.component.css']
-} )
+    styleUrls: ['./thumbnail.component.css'],
+    animations: [
+        trigger('hoverStateTrigger', [
+            state('inactive', style({
+                opacity: 0,
+                transform: 'translateY(-50%)'
+            })),
+            state('active', style({
+                opacity: 1,
+                transform: 'translateY(0)'
+            })),
+            transition('inactive => active', animate('100ms ease-in')),
+            transition('active => inactive', animate('300ms ease-out'))
+        ])
+    ]
+})
 export class ThumbnailComponent implements OnInit {
-    @ViewChild( 'photoChild' ) photoElement: ElementRef;
+    @ViewChild('photoChild') photoElement: ElementRef;
 
     @Input()
     photo: RenderedPhoto;
@@ -48,45 +70,45 @@ export class ThumbnailComponent implements OnInit {
     @Input()
     photos: RenderedPhoto[];
 
-    isMouseOver: boolean = false;
+    hoverState: string = 'inactive';
 
-    constructor( private router: Router, private galleryContextService: GalleryContextService ) { }
+    constructor(private router: Router, private galleryContextService: GalleryContextService) { }
 
     ngOnInit() {
     }
 
     mouseEnter(): void {
-        this.isMouseOver = true;
+        this.hoverState = 'active';
     }
 
     mouseLeave(): void {
-        this.isMouseOver = false;
+        this.hoverState = 'inactive';
     }
 
     /**
      * Flip this photo's isLoaded flag based on whether the photo has ever been on screen
      */
     doDelayedLoad(): void {
-        if ( this.photoElement && this.photo ) {
+        if (this.photoElement && this.photo) {
             const top: number = this.photoElement.nativeElement.getBoundingClientRect().top;
             const bottom: number = this.photoElement.nativeElement.getBoundingClientRect().bottom;
 
             // The element is on screen if either the top of the image is within the window,
             // or the bottom of the image is within the window,
             // or the top of the image is above the window and the bottom of the image is below.
-            const isOnScreen: boolean = ( top >= 0 && top < window.innerHeight )
-                || ( bottom >= 0 && bottom < window.innerHeight )
-                || ( top < 0 && bottom >= window.innerHeight );
+            const isOnScreen: boolean = (top >= 0 && top < window.innerHeight)
+                || (bottom >= 0 && bottom < window.innerHeight)
+                || (top < 0 && bottom >= window.innerHeight);
 
             this.photo.isLoaded = this.photo.isLoaded || isOnScreen;
         } else {
-            console.log( 'No photo for ' + this.photo.id );
+            console.log('No photo for ' + this.photo.id);
         }
     }
 
     doClick() {
-        const galleryContextId: number = this.galleryContextService.registerGalleryClick( this.galleryUrl, this.photoIndex, this.photos );
-        console.log( 'galleryContextId: ' + galleryContextId );
-        this.router.navigate( ['/photo/' + this.photo.id], { queryParams: { contextId: galleryContextId } } );
+        const galleryContextId: number = this.galleryContextService.registerGalleryClick(this.galleryUrl, this.photoIndex, this.photos);
+        console.log('galleryContextId: ' + galleryContextId);
+        this.router.navigate(['/photo/' + this.photo.id], { queryParams: { contextId: galleryContextId } });
     }
 }
