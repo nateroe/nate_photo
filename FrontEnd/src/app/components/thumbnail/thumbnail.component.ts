@@ -56,7 +56,7 @@ import { GalleryContextService } from '../../services/gallery-context.service';
     ]
 })
 export class ThumbnailComponent implements OnInit {
-    @ViewChild('photoChild') photoElement: ElementRef;
+    @ViewChild('photoChild', { static: true }) photoElement: ElementRef;
 
     @Input()
     photo: RenderedPhoto;

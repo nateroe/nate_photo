@@ -35,7 +35,7 @@ import { PhotoService } from '../../services/photo.service';
     styleUrls: ['./expedition-gallery.component.css']
 } )
 export class ExpeditionGalleryComponent implements OnInit {
-    @ViewChild( 'wrapper' ) wrapper: ElementRef;
+    @ViewChild('wrapper', { static: true }) wrapper: ElementRef;
 
     // margin in pixels
     readonly MARGIN: number = 5;

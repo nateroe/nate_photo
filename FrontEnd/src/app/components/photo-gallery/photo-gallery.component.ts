@@ -42,7 +42,7 @@ import { ThumbnailComponent } from '../thumbnail/thumbnail.component';
     styleUrls: ['./photo-gallery.component.css']
 } )
 export class PhotoGalleryComponent implements OnInit, AfterViewInit {
-    @ViewChild( 'wrapper' ) wrapper: ElementRef;
+    @ViewChild('wrapper', { static: true }) wrapper: ElementRef;
     @ViewChildren( 'photoChild' ) photoElements: QueryList<ThumbnailComponent>;
 
     // margin in pixels

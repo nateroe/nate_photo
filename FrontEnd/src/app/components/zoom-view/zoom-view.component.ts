@@ -37,7 +37,7 @@ import { environment } from '../../../environments/environment';
     styleUrls: ['./zoom-view.component.css']
 } )
 export class ZoomViewComponent implements OnChanges {
-    @ViewChild( 'wrapper' ) wrapper: ElementRef;
+    @ViewChild('wrapper', { static: true }) wrapper: ElementRef;
 
     @Input()
     photo: RenderedPhoto;

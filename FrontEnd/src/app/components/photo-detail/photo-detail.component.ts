@@ -43,7 +43,7 @@ import { ImageResource } from '../../model/image-resource';
     providers: [DecimalPipe]
 } )
 export class PhotoDetailComponent implements OnInit, AfterViewInit, OnChanges {
-    @ViewChild( 'wrapper' ) wrapper: ElementRef;
+    @ViewChild('wrapper', { static: false }) wrapper: ElementRef;
     @ViewChildren( 'wrapper' ) wrappers: QueryList<ElementRef>;
 
     photo: RenderedPhoto;
